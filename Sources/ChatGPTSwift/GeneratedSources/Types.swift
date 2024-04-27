@@ -21,12 +21,6 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /completions`.
     /// - Remark: Generated from `#/paths//completions/post(createCompletion)`.
     func createCompletion(_ input: Operations.createCompletion.Input) async throws -> Operations.createCompletion.Output
-    /// Creates a new edit for the provided input, instruction, and parameters.
-    ///
-    /// - Remark: HTTP `POST /edits`.
-    /// - Remark: Generated from `#/paths//edits/post(createEdit)`.
-    @available(*, deprecated)
-    func createEdit(_ input: Operations.createEdit.Input) async throws -> Operations.createEdit.Output
     /// Creates an image given a prompt.
     ///
     /// - Remark: HTTP `POST /images/generations`.
@@ -67,9 +61,9 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `GET /files`.
     /// - Remark: Generated from `#/paths//files/get(listFiles)`.
     func listFiles(_ input: Operations.listFiles.Input) async throws -> Operations.listFiles.Output
-    /// Upload a file that can be used across various endpoints/features. The size of all the files uploaded by one organization can be up to 100 GB.
+    /// Upload a file that can be used across various endpoints. The size of all the files uploaded by one organization can be up to 100 GB.
     ///
-    /// The size of individual files for can be a maximum of 512MB. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.
+    /// The size of individual files can be a maximum of 512 MB or 2 million tokens for Assistants. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.
     ///
     /// Please [contact us](https://help.openai.com/) if you need to increase these storage limits.
     ///
@@ -98,7 +92,7 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `GET /fine_tuning/jobs`.
     /// - Remark: Generated from `#/paths//fine_tuning/jobs/get(listPaginatedFineTuningJobs)`.
     func listPaginatedFineTuningJobs(_ input: Operations.listPaginatedFineTuningJobs.Input) async throws -> Operations.listPaginatedFineTuningJobs.Output
-    /// Creates a job that fine-tunes a specified model from a given dataset.
+    /// Creates a fine-tuning job which begins the process of creating a new model from a given dataset.
     ///
     /// Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
     ///
@@ -128,47 +122,12 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /fine_tuning/jobs/{fine_tuning_job_id}/cancel`.
     /// - Remark: Generated from `#/paths//fine_tuning/jobs/{fine_tuning_job_id}/cancel/post(cancelFineTuningJob)`.
     func cancelFineTuningJob(_ input: Operations.cancelFineTuningJob.Input) async throws -> Operations.cancelFineTuningJob.Output
-    /// List your organization's fine-tuning jobs
+    /// List checkpoints for a fine-tuning job.
     ///
     ///
-    /// - Remark: HTTP `GET /fine-tunes`.
-    /// - Remark: Generated from `#/paths//fine-tunes/get(listFineTunes)`.
-    @available(*, deprecated)
-    func listFineTunes(_ input: Operations.listFineTunes.Input) async throws -> Operations.listFineTunes.Output
-    /// Creates a job that fine-tunes a specified model from a given dataset.
-    ///
-    /// Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-    ///
-    /// [Learn more about fine-tuning](/docs/guides/legacy-fine-tuning)
-    ///
-    ///
-    /// - Remark: HTTP `POST /fine-tunes`.
-    /// - Remark: Generated from `#/paths//fine-tunes/post(createFineTune)`.
-    @available(*, deprecated)
-    func createFineTune(_ input: Operations.createFineTune.Input) async throws -> Operations.createFineTune.Output
-    /// Gets info about the fine-tune job.
-    ///
-    /// [Learn more about fine-tuning](/docs/guides/legacy-fine-tuning)
-    ///
-    ///
-    /// - Remark: HTTP `GET /fine-tunes/{fine_tune_id}`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/get(retrieveFineTune)`.
-    @available(*, deprecated)
-    func retrieveFineTune(_ input: Operations.retrieveFineTune.Input) async throws -> Operations.retrieveFineTune.Output
-    /// Immediately cancel a fine-tune job.
-    ///
-    ///
-    /// - Remark: HTTP `POST /fine-tunes/{fine_tune_id}/cancel`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/cancel/post(cancelFineTune)`.
-    @available(*, deprecated)
-    func cancelFineTune(_ input: Operations.cancelFineTune.Input) async throws -> Operations.cancelFineTune.Output
-    /// Get fine-grained status updates for a fine-tune job.
-    ///
-    ///
-    /// - Remark: HTTP `GET /fine-tunes/{fine_tune_id}/events`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/events/get(listFineTuneEvents)`.
-    @available(*, deprecated)
-    func listFineTuneEvents(_ input: Operations.listFineTuneEvents.Input) async throws -> Operations.listFineTuneEvents.Output
+    /// - Remark: HTTP `GET /fine_tuning/jobs/{fine_tuning_job_id}/checkpoints`.
+    /// - Remark: Generated from `#/paths//fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/get(listFineTuningJobCheckpoints)`.
+    func listFineTuningJobCheckpoints(_ input: Operations.listFineTuningJobCheckpoints.Input) async throws -> Operations.listFineTuningJobCheckpoints.Output
     /// Lists the currently available models, and provides basic information about each one such as the owner and availability.
     ///
     /// - Remark: HTTP `GET /models`.
@@ -184,7 +143,7 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `DELETE /models/{model}`.
     /// - Remark: Generated from `#/paths//models/{model}/delete(deleteModel)`.
     func deleteModel(_ input: Operations.deleteModel.Input) async throws -> Operations.deleteModel.Output
-    /// Classifies if text violates OpenAI's Content Policy
+    /// Classifies if text is potentially harmful.
     ///
     /// - Remark: HTTP `POST /moderations`.
     /// - Remark: Generated from `#/paths//moderations/post(createModeration)`.
@@ -300,36 +259,91 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `GET /threads/{thread_id}/runs/{run_id}/steps/{step_id}`.
     /// - Remark: Generated from `#/paths//threads/{thread_id}/runs/{run_id}/steps/{step_id}/get(getRunStep)`.
     func getRunStep(_ input: Operations.getRunStep.Input) async throws -> Operations.getRunStep.Output
-    /// Returns a list of assistant files.
+    /// Returns a list of vector stores.
     ///
-    /// - Remark: HTTP `GET /assistants/{assistant_id}/files`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/get(listAssistantFiles)`.
-    func listAssistantFiles(_ input: Operations.listAssistantFiles.Input) async throws -> Operations.listAssistantFiles.Output
-    /// Create an assistant file by attaching a [File](/docs/api-reference/files) to an [assistant](/docs/api-reference/assistants).
+    /// - Remark: HTTP `GET /vector_stores`.
+    /// - Remark: Generated from `#/paths//vector_stores/get(listVectorStores)`.
+    func listVectorStores(_ input: Operations.listVectorStores.Input) async throws -> Operations.listVectorStores.Output
+    /// Create a vector store.
     ///
-    /// - Remark: HTTP `POST /assistants/{assistant_id}/files`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/post(createAssistantFile)`.
-    func createAssistantFile(_ input: Operations.createAssistantFile.Input) async throws -> Operations.createAssistantFile.Output
-    /// Retrieves an AssistantFile.
+    /// - Remark: HTTP `POST /vector_stores`.
+    /// - Remark: Generated from `#/paths//vector_stores/post(createVectorStore)`.
+    func createVectorStore(_ input: Operations.createVectorStore.Input) async throws -> Operations.createVectorStore.Output
+    /// Retrieves a vector store.
     ///
-    /// - Remark: HTTP `GET /assistants/{assistant_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/get(getAssistantFile)`.
-    func getAssistantFile(_ input: Operations.getAssistantFile.Input) async throws -> Operations.getAssistantFile.Output
-    /// Delete an assistant file.
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/get(getVectorStore)`.
+    func getVectorStore(_ input: Operations.getVectorStore.Input) async throws -> Operations.getVectorStore.Output
+    /// Modifies a vector store.
     ///
-    /// - Remark: HTTP `DELETE /assistants/{assistant_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/delete(deleteAssistantFile)`.
-    func deleteAssistantFile(_ input: Operations.deleteAssistantFile.Input) async throws -> Operations.deleteAssistantFile.Output
-    /// Returns a list of message files.
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/post(modifyVectorStore)`.
+    func modifyVectorStore(_ input: Operations.modifyVectorStore.Input) async throws -> Operations.modifyVectorStore.Output
+    /// Delete a vector store.
     ///
-    /// - Remark: HTTP `GET /threads/{thread_id}/messages/{message_id}/files`.
-    /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/get(listMessageFiles)`.
-    func listMessageFiles(_ input: Operations.listMessageFiles.Input) async throws -> Operations.listMessageFiles.Output
-    /// Retrieves a message file.
+    /// - Remark: HTTP `DELETE /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/delete(deleteVectorStore)`.
+    func deleteVectorStore(_ input: Operations.deleteVectorStore.Input) async throws -> Operations.deleteVectorStore.Output
+    /// Returns a list of vector store files.
     ///
-    /// - Remark: HTTP `GET /threads/{thread_id}/messages/{message_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/{file_id}/get(getMessageFile)`.
-    func getMessageFile(_ input: Operations.getMessageFile.Input) async throws -> Operations.getMessageFile.Output
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/get(listVectorStoreFiles)`.
+    func listVectorStoreFiles(_ input: Operations.listVectorStoreFiles.Input) async throws -> Operations.listVectorStoreFiles.Output
+    /// Create a vector store file by attaching a [File](/docs/api-reference/files) to a [vector store](/docs/api-reference/vector-stores/object).
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/post(createVectorStoreFile)`.
+    func createVectorStoreFile(_ input: Operations.createVectorStoreFile.Input) async throws -> Operations.createVectorStoreFile.Output
+    /// Retrieves a vector store file.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/files/{file_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/get(getVectorStoreFile)`.
+    func getVectorStoreFile(_ input: Operations.getVectorStoreFile.Input) async throws -> Operations.getVectorStoreFile.Output
+    /// Delete a vector store file. This will remove the file from the vector store but the file itself will not be deleted. To delete the file, use the [delete file](/docs/api-reference/files/delete) endpoint.
+    ///
+    /// - Remark: HTTP `DELETE /vector_stores/{vector_store_id}/files/{file_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/delete(deleteVectorStoreFile)`.
+    func deleteVectorStoreFile(_ input: Operations.deleteVectorStoreFile.Input) async throws -> Operations.deleteVectorStoreFile.Output
+    /// Create a vector store file batch.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/file_batches`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/post(createVectorStoreFileBatch)`.
+    func createVectorStoreFileBatch(_ input: Operations.createVectorStoreFileBatch.Input) async throws -> Operations.createVectorStoreFileBatch.Output
+    /// Retrieves a vector store file batch.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/file_batches/{batch_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/get(getVectorStoreFileBatch)`.
+    func getVectorStoreFileBatch(_ input: Operations.getVectorStoreFileBatch.Input) async throws -> Operations.getVectorStoreFileBatch.Output
+    /// Cancel a vector store file batch. This attempts to cancel the processing of files in this batch as soon as possible.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/post(cancelVectorStoreFileBatch)`.
+    func cancelVectorStoreFileBatch(_ input: Operations.cancelVectorStoreFileBatch.Input) async throws -> Operations.cancelVectorStoreFileBatch.Output
+    /// Returns a list of vector store files in a batch.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/file_batches/{batch_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/files/get(listFilesInVectorStoreBatch)`.
+    func listFilesInVectorStoreBatch(_ input: Operations.listFilesInVectorStoreBatch.Input) async throws -> Operations.listFilesInVectorStoreBatch.Output
+    /// List your organization's batches.
+    ///
+    /// - Remark: HTTP `GET /batches`.
+    /// - Remark: Generated from `#/paths//batches/get(listBatches)`.
+    func listBatches(_ input: Operations.listBatches.Input) async throws -> Operations.listBatches.Output
+    /// Creates and executes a batch from an uploaded file of requests
+    ///
+    /// - Remark: HTTP `POST /batches`.
+    /// - Remark: Generated from `#/paths//batches/post(createBatch)`.
+    func createBatch(_ input: Operations.createBatch.Input) async throws -> Operations.createBatch.Output
+    /// Retrieves a batch.
+    ///
+    /// - Remark: HTTP `GET /batches/{batch_id}`.
+    /// - Remark: Generated from `#/paths//batches/{batch_id}/get(retrieveBatch)`.
+    func retrieveBatch(_ input: Operations.retrieveBatch.Input) async throws -> Operations.retrieveBatch.Output
+    /// Cancels an in-progress batch.
+    ///
+    /// - Remark: HTTP `POST /batches/{batch_id}/cancel`.
+    /// - Remark: Generated from `#/paths//batches/{batch_id}/cancel/post(cancelBatch)`.
+    func cancelBatch(_ input: Operations.cancelBatch.Input) async throws -> Operations.cancelBatch.Output
 }
 
 /// Convenience overloads for operation inputs.
@@ -356,20 +370,6 @@ extension APIProtocol {
         body: Operations.createCompletion.Input.Body
     ) async throws -> Operations.createCompletion.Output {
         try await createCompletion(Operations.createCompletion.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Creates a new edit for the provided input, instruction, and parameters.
-    ///
-    /// - Remark: HTTP `POST /edits`.
-    /// - Remark: Generated from `#/paths//edits/post(createEdit)`.
-    @available(*, deprecated)
-    public func createEdit(
-        headers: Operations.createEdit.Input.Headers = .init(),
-        body: Operations.createEdit.Input.Body
-    ) async throws -> Operations.createEdit.Output {
-        try await createEdit(Operations.createEdit.Input(
             headers: headers,
             body: body
         ))
@@ -478,9 +478,9 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// Upload a file that can be used across various endpoints/features. The size of all the files uploaded by one organization can be up to 100 GB.
+    /// Upload a file that can be used across various endpoints. The size of all the files uploaded by one organization can be up to 100 GB.
     ///
-    /// The size of individual files for can be a maximum of 512MB. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.
+    /// The size of individual files can be a maximum of 512 MB or 2 million tokens for Assistants. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.
     ///
     /// Please [contact us](https://help.openai.com/) if you need to increase these storage limits.
     ///
@@ -549,7 +549,7 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// Creates a job that fine-tunes a specified model from a given dataset.
+    /// Creates a fine-tuning job which begins the process of creating a new model from a given dataset.
     ///
     /// Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
     ///
@@ -613,78 +613,17 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// List your organization's fine-tuning jobs
+    /// List checkpoints for a fine-tuning job.
     ///
     ///
-    /// - Remark: HTTP `GET /fine-tunes`.
-    /// - Remark: Generated from `#/paths//fine-tunes/get(listFineTunes)`.
-    @available(*, deprecated)
-    public func listFineTunes(headers: Operations.listFineTunes.Input.Headers = .init()) async throws -> Operations.listFineTunes.Output {
-        try await listFineTunes(Operations.listFineTunes.Input(headers: headers))
-    }
-    /// Creates a job that fine-tunes a specified model from a given dataset.
-    ///
-    /// Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-    ///
-    /// [Learn more about fine-tuning](/docs/guides/legacy-fine-tuning)
-    ///
-    ///
-    /// - Remark: HTTP `POST /fine-tunes`.
-    /// - Remark: Generated from `#/paths//fine-tunes/post(createFineTune)`.
-    @available(*, deprecated)
-    public func createFineTune(
-        headers: Operations.createFineTune.Input.Headers = .init(),
-        body: Operations.createFineTune.Input.Body
-    ) async throws -> Operations.createFineTune.Output {
-        try await createFineTune(Operations.createFineTune.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Gets info about the fine-tune job.
-    ///
-    /// [Learn more about fine-tuning](/docs/guides/legacy-fine-tuning)
-    ///
-    ///
-    /// - Remark: HTTP `GET /fine-tunes/{fine_tune_id}`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/get(retrieveFineTune)`.
-    @available(*, deprecated)
-    public func retrieveFineTune(
-        path: Operations.retrieveFineTune.Input.Path,
-        headers: Operations.retrieveFineTune.Input.Headers = .init()
-    ) async throws -> Operations.retrieveFineTune.Output {
-        try await retrieveFineTune(Operations.retrieveFineTune.Input(
-            path: path,
-            headers: headers
-        ))
-    }
-    /// Immediately cancel a fine-tune job.
-    ///
-    ///
-    /// - Remark: HTTP `POST /fine-tunes/{fine_tune_id}/cancel`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/cancel/post(cancelFineTune)`.
-    @available(*, deprecated)
-    public func cancelFineTune(
-        path: Operations.cancelFineTune.Input.Path,
-        headers: Operations.cancelFineTune.Input.Headers = .init()
-    ) async throws -> Operations.cancelFineTune.Output {
-        try await cancelFineTune(Operations.cancelFineTune.Input(
-            path: path,
-            headers: headers
-        ))
-    }
-    /// Get fine-grained status updates for a fine-tune job.
-    ///
-    ///
-    /// - Remark: HTTP `GET /fine-tunes/{fine_tune_id}/events`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/events/get(listFineTuneEvents)`.
-    @available(*, deprecated)
-    public func listFineTuneEvents(
-        path: Operations.listFineTuneEvents.Input.Path,
-        query: Operations.listFineTuneEvents.Input.Query = .init(),
-        headers: Operations.listFineTuneEvents.Input.Headers = .init()
-    ) async throws -> Operations.listFineTuneEvents.Output {
-        try await listFineTuneEvents(Operations.listFineTuneEvents.Input(
+    /// - Remark: HTTP `GET /fine_tuning/jobs/{fine_tuning_job_id}/checkpoints`.
+    /// - Remark: Generated from `#/paths//fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/get(listFineTuningJobCheckpoints)`.
+    public func listFineTuningJobCheckpoints(
+        path: Operations.listFineTuningJobCheckpoints.Input.Path,
+        query: Operations.listFineTuningJobCheckpoints.Input.Query = .init(),
+        headers: Operations.listFineTuningJobCheckpoints.Input.Headers = .init()
+    ) async throws -> Operations.listFineTuningJobCheckpoints.Output {
+        try await listFineTuningJobCheckpoints(Operations.listFineTuningJobCheckpoints.Input(
             path: path,
             query: query,
             headers: headers
@@ -723,7 +662,7 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// Classifies if text violates OpenAI's Content Policy
+    /// Classifies if text is potentially harmful.
     ///
     /// - Remark: HTTP `POST /moderations`.
     /// - Remark: Generated from `#/paths//moderations/post(createModeration)`.
@@ -1043,86 +982,233 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// Returns a list of assistant files.
+    /// Returns a list of vector stores.
     ///
-    /// - Remark: HTTP `GET /assistants/{assistant_id}/files`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/get(listAssistantFiles)`.
-    public func listAssistantFiles(
-        path: Operations.listAssistantFiles.Input.Path,
-        query: Operations.listAssistantFiles.Input.Query = .init(),
-        headers: Operations.listAssistantFiles.Input.Headers = .init()
-    ) async throws -> Operations.listAssistantFiles.Output {
-        try await listAssistantFiles(Operations.listAssistantFiles.Input(
-            path: path,
+    /// - Remark: HTTP `GET /vector_stores`.
+    /// - Remark: Generated from `#/paths//vector_stores/get(listVectorStores)`.
+    public func listVectorStores(
+        query: Operations.listVectorStores.Input.Query = .init(),
+        headers: Operations.listVectorStores.Input.Headers = .init()
+    ) async throws -> Operations.listVectorStores.Output {
+        try await listVectorStores(Operations.listVectorStores.Input(
             query: query,
             headers: headers
         ))
     }
-    /// Create an assistant file by attaching a [File](/docs/api-reference/files) to an [assistant](/docs/api-reference/assistants).
+    /// Create a vector store.
     ///
-    /// - Remark: HTTP `POST /assistants/{assistant_id}/files`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/post(createAssistantFile)`.
-    public func createAssistantFile(
-        path: Operations.createAssistantFile.Input.Path,
-        headers: Operations.createAssistantFile.Input.Headers = .init(),
-        body: Operations.createAssistantFile.Input.Body
-    ) async throws -> Operations.createAssistantFile.Output {
-        try await createAssistantFile(Operations.createAssistantFile.Input(
+    /// - Remark: HTTP `POST /vector_stores`.
+    /// - Remark: Generated from `#/paths//vector_stores/post(createVectorStore)`.
+    public func createVectorStore(
+        headers: Operations.createVectorStore.Input.Headers = .init(),
+        body: Operations.createVectorStore.Input.Body
+    ) async throws -> Operations.createVectorStore.Output {
+        try await createVectorStore(Operations.createVectorStore.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Retrieves a vector store.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/get(getVectorStore)`.
+    public func getVectorStore(
+        path: Operations.getVectorStore.Input.Path,
+        headers: Operations.getVectorStore.Input.Headers = .init()
+    ) async throws -> Operations.getVectorStore.Output {
+        try await getVectorStore(Operations.getVectorStore.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Modifies a vector store.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/post(modifyVectorStore)`.
+    public func modifyVectorStore(
+        path: Operations.modifyVectorStore.Input.Path,
+        headers: Operations.modifyVectorStore.Input.Headers = .init(),
+        body: Operations.modifyVectorStore.Input.Body
+    ) async throws -> Operations.modifyVectorStore.Output {
+        try await modifyVectorStore(Operations.modifyVectorStore.Input(
             path: path,
             headers: headers,
             body: body
         ))
     }
-    /// Retrieves an AssistantFile.
+    /// Delete a vector store.
     ///
-    /// - Remark: HTTP `GET /assistants/{assistant_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/get(getAssistantFile)`.
-    public func getAssistantFile(
-        path: Operations.getAssistantFile.Input.Path,
-        headers: Operations.getAssistantFile.Input.Headers = .init()
-    ) async throws -> Operations.getAssistantFile.Output {
-        try await getAssistantFile(Operations.getAssistantFile.Input(
+    /// - Remark: HTTP `DELETE /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/delete(deleteVectorStore)`.
+    public func deleteVectorStore(
+        path: Operations.deleteVectorStore.Input.Path,
+        headers: Operations.deleteVectorStore.Input.Headers = .init()
+    ) async throws -> Operations.deleteVectorStore.Output {
+        try await deleteVectorStore(Operations.deleteVectorStore.Input(
             path: path,
             headers: headers
         ))
     }
-    /// Delete an assistant file.
+    /// Returns a list of vector store files.
     ///
-    /// - Remark: HTTP `DELETE /assistants/{assistant_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/delete(deleteAssistantFile)`.
-    public func deleteAssistantFile(
-        path: Operations.deleteAssistantFile.Input.Path,
-        headers: Operations.deleteAssistantFile.Input.Headers = .init()
-    ) async throws -> Operations.deleteAssistantFile.Output {
-        try await deleteAssistantFile(Operations.deleteAssistantFile.Input(
-            path: path,
-            headers: headers
-        ))
-    }
-    /// Returns a list of message files.
-    ///
-    /// - Remark: HTTP `GET /threads/{thread_id}/messages/{message_id}/files`.
-    /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/get(listMessageFiles)`.
-    public func listMessageFiles(
-        path: Operations.listMessageFiles.Input.Path,
-        query: Operations.listMessageFiles.Input.Query = .init(),
-        headers: Operations.listMessageFiles.Input.Headers = .init()
-    ) async throws -> Operations.listMessageFiles.Output {
-        try await listMessageFiles(Operations.listMessageFiles.Input(
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/get(listVectorStoreFiles)`.
+    public func listVectorStoreFiles(
+        path: Operations.listVectorStoreFiles.Input.Path,
+        query: Operations.listVectorStoreFiles.Input.Query = .init(),
+        headers: Operations.listVectorStoreFiles.Input.Headers = .init()
+    ) async throws -> Operations.listVectorStoreFiles.Output {
+        try await listVectorStoreFiles(Operations.listVectorStoreFiles.Input(
             path: path,
             query: query,
             headers: headers
         ))
     }
-    /// Retrieves a message file.
+    /// Create a vector store file by attaching a [File](/docs/api-reference/files) to a [vector store](/docs/api-reference/vector-stores/object).
     ///
-    /// - Remark: HTTP `GET /threads/{thread_id}/messages/{message_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/{file_id}/get(getMessageFile)`.
-    public func getMessageFile(
-        path: Operations.getMessageFile.Input.Path,
-        headers: Operations.getMessageFile.Input.Headers = .init()
-    ) async throws -> Operations.getMessageFile.Output {
-        try await getMessageFile(Operations.getMessageFile.Input(
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/post(createVectorStoreFile)`.
+    public func createVectorStoreFile(
+        path: Operations.createVectorStoreFile.Input.Path,
+        headers: Operations.createVectorStoreFile.Input.Headers = .init(),
+        body: Operations.createVectorStoreFile.Input.Body
+    ) async throws -> Operations.createVectorStoreFile.Output {
+        try await createVectorStoreFile(Operations.createVectorStoreFile.Input(
+            path: path,
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Retrieves a vector store file.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/files/{file_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/get(getVectorStoreFile)`.
+    public func getVectorStoreFile(
+        path: Operations.getVectorStoreFile.Input.Path,
+        headers: Operations.getVectorStoreFile.Input.Headers = .init()
+    ) async throws -> Operations.getVectorStoreFile.Output {
+        try await getVectorStoreFile(Operations.getVectorStoreFile.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Delete a vector store file. This will remove the file from the vector store but the file itself will not be deleted. To delete the file, use the [delete file](/docs/api-reference/files/delete) endpoint.
+    ///
+    /// - Remark: HTTP `DELETE /vector_stores/{vector_store_id}/files/{file_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/delete(deleteVectorStoreFile)`.
+    public func deleteVectorStoreFile(
+        path: Operations.deleteVectorStoreFile.Input.Path,
+        headers: Operations.deleteVectorStoreFile.Input.Headers = .init()
+    ) async throws -> Operations.deleteVectorStoreFile.Output {
+        try await deleteVectorStoreFile(Operations.deleteVectorStoreFile.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Create a vector store file batch.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/file_batches`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/post(createVectorStoreFileBatch)`.
+    public func createVectorStoreFileBatch(
+        path: Operations.createVectorStoreFileBatch.Input.Path,
+        headers: Operations.createVectorStoreFileBatch.Input.Headers = .init(),
+        body: Operations.createVectorStoreFileBatch.Input.Body
+    ) async throws -> Operations.createVectorStoreFileBatch.Output {
+        try await createVectorStoreFileBatch(Operations.createVectorStoreFileBatch.Input(
+            path: path,
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Retrieves a vector store file batch.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/file_batches/{batch_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/get(getVectorStoreFileBatch)`.
+    public func getVectorStoreFileBatch(
+        path: Operations.getVectorStoreFileBatch.Input.Path,
+        headers: Operations.getVectorStoreFileBatch.Input.Headers = .init()
+    ) async throws -> Operations.getVectorStoreFileBatch.Output {
+        try await getVectorStoreFileBatch(Operations.getVectorStoreFileBatch.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Cancel a vector store file batch. This attempts to cancel the processing of files in this batch as soon as possible.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/post(cancelVectorStoreFileBatch)`.
+    public func cancelVectorStoreFileBatch(
+        path: Operations.cancelVectorStoreFileBatch.Input.Path,
+        headers: Operations.cancelVectorStoreFileBatch.Input.Headers = .init()
+    ) async throws -> Operations.cancelVectorStoreFileBatch.Output {
+        try await cancelVectorStoreFileBatch(Operations.cancelVectorStoreFileBatch.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Returns a list of vector store files in a batch.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/file_batches/{batch_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/files/get(listFilesInVectorStoreBatch)`.
+    public func listFilesInVectorStoreBatch(
+        path: Operations.listFilesInVectorStoreBatch.Input.Path,
+        query: Operations.listFilesInVectorStoreBatch.Input.Query = .init(),
+        headers: Operations.listFilesInVectorStoreBatch.Input.Headers = .init()
+    ) async throws -> Operations.listFilesInVectorStoreBatch.Output {
+        try await listFilesInVectorStoreBatch(Operations.listFilesInVectorStoreBatch.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// List your organization's batches.
+    ///
+    /// - Remark: HTTP `GET /batches`.
+    /// - Remark: Generated from `#/paths//batches/get(listBatches)`.
+    public func listBatches(
+        query: Operations.listBatches.Input.Query = .init(),
+        headers: Operations.listBatches.Input.Headers = .init()
+    ) async throws -> Operations.listBatches.Output {
+        try await listBatches(Operations.listBatches.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Creates and executes a batch from an uploaded file of requests
+    ///
+    /// - Remark: HTTP `POST /batches`.
+    /// - Remark: Generated from `#/paths//batches/post(createBatch)`.
+    public func createBatch(
+        headers: Operations.createBatch.Input.Headers = .init(),
+        body: Operations.createBatch.Input.Body
+    ) async throws -> Operations.createBatch.Output {
+        try await createBatch(Operations.createBatch.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Retrieves a batch.
+    ///
+    /// - Remark: HTTP `GET /batches/{batch_id}`.
+    /// - Remark: Generated from `#/paths//batches/{batch_id}/get(retrieveBatch)`.
+    public func retrieveBatch(
+        path: Operations.retrieveBatch.Input.Path,
+        headers: Operations.retrieveBatch.Input.Headers = .init()
+    ) async throws -> Operations.retrieveBatch.Output {
+        try await retrieveBatch(Operations.retrieveBatch.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Cancels an in-progress batch.
+    ///
+    /// - Remark: HTTP `POST /batches/{batch_id}/cancel`.
+    /// - Remark: Generated from `#/paths//batches/{batch_id}/cancel/post(cancelBatch)`.
+    public func cancelBatch(
+        path: Operations.cancelBatch.Input.Path,
+        headers: Operations.cancelBatch.Input.Headers = .init()
+    ) async throws -> Operations.cancelBatch.Output {
+        try await cancelBatch(Operations.cancelBatch.Input(
             path: path,
             headers: headers
         ))
@@ -1260,16 +1346,9 @@ public enum Components {
                 public var value1: Swift.String?
                 /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/model/value2`.
                 @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
-                    case babbage_hyphen_002 = "babbage-002"
-                    case davinci_hyphen_002 = "davinci-002"
                     case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_instruct = "gpt-3.5-turbo-instruct"
-                    case text_hyphen_davinci_hyphen_003 = "text-davinci-003"
-                    case text_hyphen_davinci_hyphen_002 = "text-davinci-002"
-                    case text_hyphen_davinci_hyphen_001 = "text-davinci-001"
-                    case code_hyphen_davinci_hyphen_002 = "code-davinci-002"
-                    case text_hyphen_curie_hyphen_001 = "text-curie-001"
-                    case text_hyphen_babbage_hyphen_001 = "text-babbage-001"
-                    case text_hyphen_ada_hyphen_001 = "text-ada-001"
+                    case davinci_hyphen_002 = "davinci-002"
+                    case babbage_hyphen_002 = "babbage-002"
                 }
                 /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/model/value2`.
                 public var value2: Components.Schemas.CreateCompletionRequest.modelPayload.Value2Payload?
@@ -1402,14 +1481,14 @@ public enum Components {
             public var echo: Swift.Bool?
             /// Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
             ///
-            /// [See more information about frequency and presence penalties.](/docs/guides/gpt/parameter-details)
+            /// [See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/frequency_penalty`.
             public var frequency_penalty: Swift.Double?
             /// Modify the likelihood of specified tokens appearing in the completion.
             ///
-            /// Accepts a JSON object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
+            /// Accepts a JSON object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
             ///
             /// As an example, you can pass `{"50256": -100}` to prevent the <|endoftext|> token from being generated.
             ///
@@ -1434,21 +1513,21 @@ public enum Components {
             }
             /// Modify the likelihood of specified tokens appearing in the completion.
             ///
-            /// Accepts a JSON object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
+            /// Accepts a JSON object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
             ///
             /// As an example, you can pass `{"50256": -100}` to prevent the <|endoftext|> token from being generated.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/logit_bias`.
             public var logit_bias: Components.Schemas.CreateCompletionRequest.logit_biasPayload?
-            /// Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
+            /// Include the log probabilities on the `logprobs` most likely output tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
             ///
             /// The maximum value for `logprobs` is 5.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/logprobs`.
             public var logprobs: Swift.Int?
-            /// The maximum number of [tokens](/tokenizer) to generate in the completion.
+            /// The maximum number of [tokens](/tokenizer) that can be generated in the completion.
             ///
             /// The token count of your prompt plus `max_tokens` cannot exceed the model's context length. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
             ///
@@ -1464,7 +1543,7 @@ public enum Components {
             public var n: Swift.Int?
             /// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
             ///
-            /// [See more information about frequency and presence penalties.](/docs/guides/gpt/parameter-details)
+            /// [See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/presence_penalty`.
@@ -1526,6 +1605,9 @@ public enum Components {
             public var stream: Swift.Bool?
             /// The suffix that comes after a completion of inserted text.
             ///
+            /// This parameter is only supported for `gpt-3.5-turbo-instruct`.
+            ///
+            ///
             /// - Remark: Generated from `#/components/schemas/CreateCompletionRequest/suffix`.
             public var suffix: Swift.String?
             /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
@@ -1556,8 +1638,8 @@ public enum Components {
             ///   - echo: Echo back the prompt in addition to the completion
             ///   - frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
             ///   - logit_bias: Modify the likelihood of specified tokens appearing in the completion.
-            ///   - logprobs: Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
-            ///   - max_tokens: The maximum number of [tokens](/tokenizer) to generate in the completion.
+            ///   - logprobs: Include the log probabilities on the `logprobs` most likely output tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
+            ///   - max_tokens: The maximum number of [tokens](/tokenizer) that can be generated in the completion.
             ///   - n: How many completions to generate for each prompt.
             ///   - presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
             ///   - seed: If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result.
@@ -1652,7 +1734,7 @@ public enum Components {
                 ///
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateCompletionResponse/choicesPayload/finish_reason`.
-                public var finish_reason: Components.Schemas.CreateCompletionResponse.choicesPayloadPayload.finish_reasonPayload?
+                public var finish_reason: Components.Schemas.CreateCompletionResponse.choicesPayloadPayload.finish_reasonPayload
                 /// - Remark: Generated from `#/components/schemas/CreateCompletionResponse/choicesPayload/index`.
                 public var index: Swift.Int
                 /// - Remark: Generated from `#/components/schemas/CreateCompletionResponse/choicesPayload/logprobs`.
@@ -1722,7 +1804,7 @@ public enum Components {
                 ///   - logprobs:
                 ///   - text:
                 public init(
-                    finish_reason: Components.Schemas.CreateCompletionResponse.choicesPayloadPayload.finish_reasonPayload? = nil,
+                    finish_reason: Components.Schemas.CreateCompletionResponse.choicesPayloadPayload.finish_reasonPayload,
                     index: Swift.Int,
                     logprobs: Components.Schemas.CreateCompletionResponse.choicesPayloadPayload.logprobsPayload? = nil,
                     text: Swift.String
@@ -1864,7 +1946,7 @@ public enum Components {
                 ///
                 /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestMessageContentPartImage/image_url/url`.
                 public var url: Swift.String
-                /// Specifies the detail level of the image.
+                /// Specifies the detail level of the image. Learn more in the [Vision guide](/docs/guides/vision/low-or-high-fidelity-image-understanding).
                 ///
                 /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestMessageContentPartImage/image_url/detail`.
                 @frozen public enum detailPayload: String, Codable, Hashable, Sendable {
@@ -1872,7 +1954,7 @@ public enum Components {
                     case low = "low"
                     case high = "high"
                 }
-                /// Specifies the detail level of the image.
+                /// Specifies the detail level of the image. Learn more in the [Vision guide](/docs/guides/vision/low-or-high-fidelity-image-understanding).
                 ///
                 /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestMessageContentPartImage/image_url/detail`.
                 public var detail: Components.Schemas.ChatCompletionRequestMessageContentPartImage.image_urlPayload.detailPayload?
@@ -1880,7 +1962,7 @@ public enum Components {
                 ///
                 /// - Parameters:
                 ///   - url: Either a URL of the image or the base64 encoded image data.
-                ///   - detail: Specifies the detail level of the image.
+                ///   - detail: Specifies the detail level of the image. Learn more in the [Vision guide](/docs/guides/vision/low-or-high-fidelity-image-understanding).
                 public init(
                     url: Swift.String,
                     detail: Components.Schemas.ChatCompletionRequestMessageContentPartImage.image_urlPayload.detailPayload? = nil
@@ -2015,7 +2097,7 @@ public enum Components {
             /// The contents of the system message.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestSystemMessage/content`.
-            public var content: Swift.String?
+            public var content: Swift.String
             /// The role of the messages author, in this case `system`.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestSystemMessage/role`.
@@ -2026,21 +2108,29 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestSystemMessage/role`.
             public var role: Components.Schemas.ChatCompletionRequestSystemMessage.rolePayload
+            /// An optional name for the participant. Provides the model information to differentiate between participants of the same role.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestSystemMessage/name`.
+            public var name: Swift.String?
             /// Creates a new `ChatCompletionRequestSystemMessage`.
             ///
             /// - Parameters:
             ///   - content: The contents of the system message.
             ///   - role: The role of the messages author, in this case `system`.
+            ///   - name: An optional name for the participant. Provides the model information to differentiate between participants of the same role.
             public init(
-                content: Swift.String? = nil,
-                role: Components.Schemas.ChatCompletionRequestSystemMessage.rolePayload
+                content: Swift.String,
+                role: Components.Schemas.ChatCompletionRequestSystemMessage.rolePayload,
+                name: Swift.String? = nil
             ) {
                 self.content = content
                 self.role = role
+                self.name = name
             }
             public enum CodingKeys: String, CodingKey {
                 case content
                 case role
+                case name
             }
         }
         /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestUserMessage`.
@@ -2091,7 +2181,7 @@ public enum Components {
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestUserMessage/content`.
-            public var content: Components.Schemas.ChatCompletionRequestUserMessage.contentPayload?
+            public var content: Components.Schemas.ChatCompletionRequestUserMessage.contentPayload
             /// The role of the messages author, in this case `user`.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestUserMessage/role`.
@@ -2102,26 +2192,34 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestUserMessage/role`.
             public var role: Components.Schemas.ChatCompletionRequestUserMessage.rolePayload
+            /// An optional name for the participant. Provides the model information to differentiate between participants of the same role.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestUserMessage/name`.
+            public var name: Swift.String?
             /// Creates a new `ChatCompletionRequestUserMessage`.
             ///
             /// - Parameters:
             ///   - content: The contents of the user message.
             ///   - role: The role of the messages author, in this case `user`.
+            ///   - name: An optional name for the participant. Provides the model information to differentiate between participants of the same role.
             public init(
-                content: Components.Schemas.ChatCompletionRequestUserMessage.contentPayload? = nil,
-                role: Components.Schemas.ChatCompletionRequestUserMessage.rolePayload
+                content: Components.Schemas.ChatCompletionRequestUserMessage.contentPayload,
+                role: Components.Schemas.ChatCompletionRequestUserMessage.rolePayload,
+                name: Swift.String? = nil
             ) {
                 self.content = content
                 self.role = role
+                self.name = name
             }
             public enum CodingKeys: String, CodingKey {
                 case content
                 case role
+                case name
             }
         }
         /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestAssistantMessage`.
         public struct ChatCompletionRequestAssistantMessage: Codable, Hashable, Sendable {
-            /// The contents of the assistant message.
+            /// The contents of the assistant message. Required unless `tool_calls` or `function_call` is specified.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestAssistantMessage/content`.
@@ -2136,6 +2234,10 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestAssistantMessage/role`.
             public var role: Components.Schemas.ChatCompletionRequestAssistantMessage.rolePayload
+            /// An optional name for the participant. Provides the model information to differentiate between participants of the same role.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestAssistantMessage/name`.
+            public var name: Swift.String?
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestAssistantMessage/tool_calls`.
             public var tool_calls: Components.Schemas.ChatCompletionMessageToolCalls?
             /// Deprecated and replaced by `tool_calls`. The name and arguments of a function that should be called, as generated by the model.
@@ -2176,24 +2278,28 @@ public enum Components {
             /// Creates a new `ChatCompletionRequestAssistantMessage`.
             ///
             /// - Parameters:
-            ///   - content: The contents of the assistant message.
+            ///   - content: The contents of the assistant message. Required unless `tool_calls` or `function_call` is specified.
             ///   - role: The role of the messages author, in this case `assistant`.
+            ///   - name: An optional name for the participant. Provides the model information to differentiate between participants of the same role.
             ///   - tool_calls:
             ///   - function_call: Deprecated and replaced by `tool_calls`. The name and arguments of a function that should be called, as generated by the model.
             public init(
                 content: Swift.String? = nil,
                 role: Components.Schemas.ChatCompletionRequestAssistantMessage.rolePayload,
+                name: Swift.String? = nil,
                 tool_calls: Components.Schemas.ChatCompletionMessageToolCalls? = nil,
                 function_call: Components.Schemas.ChatCompletionRequestAssistantMessage.function_callPayload? = nil
             ) {
                 self.content = content
                 self.role = role
+                self.name = name
                 self.tool_calls = tool_calls
                 self.function_call = function_call
             }
             public enum CodingKeys: String, CodingKey {
                 case content
                 case role
+                case name
                 case tool_calls
                 case function_call
             }
@@ -2213,7 +2319,7 @@ public enum Components {
             /// The contents of the tool message.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestToolMessage/content`.
-            public var content: Swift.String?
+            public var content: Swift.String
             /// Tool call that this message is responding to.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestToolMessage/tool_call_id`.
@@ -2226,7 +2332,7 @@ public enum Components {
             ///   - tool_call_id: Tool call that this message is responding to.
             public init(
                 role: Components.Schemas.ChatCompletionRequestToolMessage.rolePayload,
-                content: Swift.String? = nil,
+                content: Swift.String,
                 tool_call_id: Swift.String
             ) {
                 self.role = role
@@ -2252,7 +2358,7 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestFunctionMessage/role`.
             public var role: Components.Schemas.ChatCompletionRequestFunctionMessage.rolePayload
-            /// The return value from the function call, to return to the model.
+            /// The contents of the function message.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionRequestFunctionMessage/content`.
             public var content: Swift.String?
@@ -2264,7 +2370,7 @@ public enum Components {
             ///
             /// - Parameters:
             ///   - role: The role of the messages author, in this case `function`.
-            ///   - content: The return value from the function call, to return to the model.
+            ///   - content: The contents of the function message.
             ///   - name: The name of the function to call.
             public init(
                 role: Components.Schemas.ChatCompletionRequestFunctionMessage.rolePayload,
@@ -2281,9 +2387,9 @@ public enum Components {
                 case name
             }
         }
-        /// The parameters the functions accepts, described as a JSON Schema object. See the [guide](/docs/guides/gpt/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format.
+        /// The parameters the functions accepts, described as a JSON Schema object. See the [guide](/docs/guides/text-generation/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format. 
         ///
-        /// To describe a function that accepts no parameters, provide the value `{"type": "object", "properties": {}}`.
+        /// Omitting `parameters` defines a function with an empty parameter list.
         ///
         /// - Remark: Generated from `#/components/schemas/FunctionParameters`.
         public struct FunctionParameters: Codable, Hashable, Sendable {
@@ -2315,7 +2421,7 @@ public enum Components {
             /// - Remark: Generated from `#/components/schemas/ChatCompletionFunctions/name`.
             public var name: Swift.String
             /// - Remark: Generated from `#/components/schemas/ChatCompletionFunctions/parameters`.
-            public var parameters: Components.Schemas.FunctionParameters
+            public var parameters: Components.Schemas.FunctionParameters?
             /// Creates a new `ChatCompletionFunctions`.
             ///
             /// - Parameters:
@@ -2325,7 +2431,7 @@ public enum Components {
             public init(
                 description: Swift.String? = nil,
                 name: Swift.String,
-                parameters: Components.Schemas.FunctionParameters
+                parameters: Components.Schemas.FunctionParameters? = nil
             ) {
                 self.description = description
                 self.name = name
@@ -2399,7 +2505,7 @@ public enum Components {
             /// - Remark: Generated from `#/components/schemas/FunctionObject/name`.
             public var name: Swift.String
             /// - Remark: Generated from `#/components/schemas/FunctionObject/parameters`.
-            public var parameters: Components.Schemas.FunctionParameters
+            public var parameters: Components.Schemas.FunctionParameters?
             /// Creates a new `FunctionObject`.
             ///
             /// - Parameters:
@@ -2409,7 +2515,7 @@ public enum Components {
             public init(
                 description: Swift.String? = nil,
                 name: Swift.String,
-                parameters: Components.Schemas.FunctionParameters
+                parameters: Components.Schemas.FunctionParameters? = nil
             ) {
                 self.description = description
                 self.name = name
@@ -2424,7 +2530,7 @@ public enum Components {
         /// Controls which (if any) function is called by the model.
         /// `none` means the model will not call a function and instead generates a message.
         /// `auto` means the model can pick between generating a message or calling a function.
-        /// Specifying a particular function via `{"type: "function", "function": {"name": "my_function"}}` forces the model to call that function.
+        /// Specifying a particular function via `{"type": "function", "function": {"name": "my_function"}}` forces the model to call that function.
         ///
         /// `none` is the default when no functions are present. `auto` is the default if functions are present.
         ///
@@ -2488,7 +2594,7 @@ public enum Components {
             /// The type of the tool. Currently, only `function` is supported.
             ///
             /// - Remark: Generated from `#/components/schemas/ChatCompletionNamedToolChoice/type`.
-            public var _type: Components.Schemas.ChatCompletionNamedToolChoice._typePayload?
+            public var _type: Components.Schemas.ChatCompletionNamedToolChoice._typePayload
             /// - Remark: Generated from `#/components/schemas/ChatCompletionNamedToolChoice/function`.
             public struct functionPayload: Codable, Hashable, Sendable {
                 /// The name of the function to call.
@@ -2507,15 +2613,15 @@ public enum Components {
                 }
             }
             /// - Remark: Generated from `#/components/schemas/ChatCompletionNamedToolChoice/function`.
-            public var function: Components.Schemas.ChatCompletionNamedToolChoice.functionPayload?
+            public var function: Components.Schemas.ChatCompletionNamedToolChoice.functionPayload
             /// Creates a new `ChatCompletionNamedToolChoice`.
             ///
             /// - Parameters:
             ///   - _type: The type of the tool. Currently, only `function` is supported.
             ///   - function:
             public init(
-                _type: Components.Schemas.ChatCompletionNamedToolChoice._typePayload? = nil,
-                function: Components.Schemas.ChatCompletionNamedToolChoice.functionPayload? = nil
+                _type: Components.Schemas.ChatCompletionNamedToolChoice._typePayload,
+                function: Components.Schemas.ChatCompletionNamedToolChoice.functionPayload
             ) {
                 self._type = _type
                 self.function = function
@@ -2858,6 +2964,10 @@ public enum Components {
                 public var value1: Swift.String?
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/model/value2`.
                 @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
+                    case gpt_hyphen_4_hyphen_turbo = "gpt-4-turbo"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_2024_hyphen_04_hyphen_09 = "gpt-4-turbo-2024-04-09"
+                    case gpt_hyphen_4_hyphen_0125_hyphen_preview = "gpt-4-0125-preview"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_preview = "gpt-4-turbo-preview"
                     case gpt_hyphen_4_hyphen_1106_hyphen_preview = "gpt-4-1106-preview"
                     case gpt_hyphen_4_hyphen_vision_hyphen_preview = "gpt-4-vision-preview"
                     case gpt_hyphen_4 = "gpt-4"
@@ -2866,11 +2976,12 @@ public enum Components {
                     case gpt_hyphen_4_hyphen_32k = "gpt-4-32k"
                     case gpt_hyphen_4_hyphen_32k_hyphen_0314 = "gpt-4-32k-0314"
                     case gpt_hyphen_4_hyphen_32k_hyphen_0613 = "gpt-4-32k-0613"
-                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106 = "gpt-3.5-turbo-1106"
                     case gpt_hyphen_3_period_5_hyphen_turbo = "gpt-3.5-turbo"
                     case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k = "gpt-3.5-turbo-16k"
                     case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0301 = "gpt-3.5-turbo-0301"
                     case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0613 = "gpt-3.5-turbo-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106 = "gpt-3.5-turbo-1106"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0125 = "gpt-3.5-turbo-0125"
                     case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k_hyphen_0613 = "gpt-3.5-turbo-16k-0613"
                 }
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/model/value2`.
@@ -2922,7 +3033,7 @@ public enum Components {
             public var model: Components.Schemas.CreateChatCompletionRequest.modelPayload
             /// Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
             ///
-            /// [See more information about frequency and presence penalties.](/docs/guides/gpt/parameter-details)
+            /// [See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/frequency_penalty`.
@@ -2957,29 +3068,37 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/logit_bias`.
             public var logit_bias: Components.Schemas.CreateChatCompletionRequest.logit_biasPayload?
-            /// The maximum number of [tokens](/tokenizer) to generate in the chat completion.
+            /// Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/logprobs`.
+            public var logprobs: Swift.Bool?
+            /// An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/top_logprobs`.
+            public var top_logprobs: Swift.Int?
+            /// The maximum number of [tokens](/tokenizer) that can be generated in the chat completion.
             ///
             /// The total length of input tokens and generated tokens is limited by the model's context length. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/max_tokens`.
             public var max_tokens: Swift.Int?
-            /// How many chat completion choices to generate for each input message.
+            /// How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/n`.
             public var n: Swift.Int?
             /// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
             ///
-            /// [See more information about frequency and presence penalties.](/docs/guides/gpt/parameter-details)
+            /// [See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/presence_penalty`.
             public var presence_penalty: Swift.Double?
-            /// An object specifying the format that the model must output.
+            /// An object specifying the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models newer than `gpt-3.5-turbo-1106`.
             ///
             /// Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the message the model generates is valid JSON.
             ///
-            /// **Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in increased latency and appearance of a "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
+            /// **Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/response_format`.
@@ -3006,11 +3125,11 @@ public enum Components {
                     case _type = "type"
                 }
             }
-            /// An object specifying the format that the model must output.
+            /// An object specifying the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models newer than `gpt-3.5-turbo-1106`.
             ///
             /// Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the message the model generates is valid JSON.
             ///
-            /// **Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in increased latency and appearance of a "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
+            /// **Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/response_format`.
@@ -3084,7 +3203,7 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/top_p`.
             public var top_p: Swift.Double?
-            /// A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for.
+            /// A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/tools`.
@@ -3103,7 +3222,7 @@ public enum Components {
             /// `auto` means the model can pick between generating a message or calling a function.
             /// Specifying a particular function via `{"name": "my_function"}` forces the model to call that function.
             ///
-            /// `none` is the default when no functions are present. `auto`` is the default if functions are present.
+            /// `none` is the default when no functions are present. `auto` is the default if functions are present.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/function_call`.
@@ -3159,7 +3278,7 @@ public enum Components {
             /// `auto` means the model can pick between generating a message or calling a function.
             /// Specifying a particular function via `{"name": "my_function"}` forces the model to call that function.
             ///
-            /// `none` is the default when no functions are present. `auto`` is the default if functions are present.
+            /// `none` is the default when no functions are present. `auto` is the default if functions are present.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateChatCompletionRequest/function_call`.
@@ -3180,16 +3299,18 @@ public enum Components {
             ///   - model: ID of the model to use. See the [model endpoint compatibility](/docs/models/model-endpoint-compatibility) table for details on which models work with the Chat API.
             ///   - frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
             ///   - logit_bias: Modify the likelihood of specified tokens appearing in the completion.
-            ///   - max_tokens: The maximum number of [tokens](/tokenizer) to generate in the chat completion.
-            ///   - n: How many chat completion choices to generate for each input message.
+            ///   - logprobs: Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`.
+            ///   - top_logprobs: An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.
+            ///   - max_tokens: The maximum number of [tokens](/tokenizer) that can be generated in the chat completion.
+            ///   - n: How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs.
             ///   - presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-            ///   - response_format: An object specifying the format that the model must output.
+            ///   - response_format: An object specifying the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models newer than `gpt-3.5-turbo-1106`.
             ///   - seed: This feature is in Beta.
             ///   - stop: Up to 4 sequences where the API will stop generating further tokens.
             ///   - stream: If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://cookbook.openai.com/examples/how_to_stream_completions).
             ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
             ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-            ///   - tools: A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for.
+            ///   - tools: A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.
             ///   - tool_choice:
             ///   - user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
             ///   - function_call: Deprecated in favor of `tool_choice`.
@@ -3199,6 +3320,8 @@ public enum Components {
                 model: Components.Schemas.CreateChatCompletionRequest.modelPayload,
                 frequency_penalty: Swift.Double? = nil,
                 logit_bias: Components.Schemas.CreateChatCompletionRequest.logit_biasPayload? = nil,
+                logprobs: Swift.Bool? = nil,
+                top_logprobs: Swift.Int? = nil,
                 max_tokens: Swift.Int? = nil,
                 n: Swift.Int? = nil,
                 presence_penalty: Swift.Double? = nil,
@@ -3218,6 +3341,8 @@ public enum Components {
                 self.model = model
                 self.frequency_penalty = frequency_penalty
                 self.logit_bias = logit_bias
+                self.logprobs = logprobs
+                self.top_logprobs = top_logprobs
                 self.max_tokens = max_tokens
                 self.n = n
                 self.presence_penalty = presence_penalty
@@ -3238,6 +3363,8 @@ public enum Components {
                 case model
                 case frequency_penalty
                 case logit_bias
+                case logprobs
+                case top_logprobs
                 case max_tokens
                 case n
                 case presence_penalty
@@ -3285,32 +3412,59 @@ public enum Components {
                 ///
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionResponse/choicesPayload/finish_reason`.
-                public var finish_reason: Components.Schemas.CreateChatCompletionResponse.choicesPayloadPayload.finish_reasonPayload?
+                public var finish_reason: Components.Schemas.CreateChatCompletionResponse.choicesPayloadPayload.finish_reasonPayload
                 /// The index of the choice in the list of choices.
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionResponse/choicesPayload/index`.
                 public var index: Swift.Int
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionResponse/choicesPayload/message`.
                 public var message: Components.Schemas.ChatCompletionResponseMessage
+                /// Log probability information for the choice.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateChatCompletionResponse/choicesPayload/logprobs`.
+                public struct logprobsPayload: Codable, Hashable, Sendable {
+                    /// A list of message content tokens with log probability information.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateChatCompletionResponse/choicesPayload/logprobs/content`.
+                    public var content: [Components.Schemas.ChatCompletionTokenLogprob]?
+                    /// Creates a new `logprobsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - content: A list of message content tokens with log probability information.
+                    public init(content: [Components.Schemas.ChatCompletionTokenLogprob]? = nil) {
+                        self.content = content
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case content
+                    }
+                }
+                /// Log probability information for the choice.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateChatCompletionResponse/choicesPayload/logprobs`.
+                public var logprobs: Components.Schemas.CreateChatCompletionResponse.choicesPayloadPayload.logprobsPayload?
                 /// Creates a new `choicesPayloadPayload`.
                 ///
                 /// - Parameters:
                 ///   - finish_reason: The reason the model stopped generating tokens. This will be `stop` if the model hit a natural stop point or a provided stop sequence,
                 ///   - index: The index of the choice in the list of choices.
                 ///   - message:
+                ///   - logprobs: Log probability information for the choice.
                 public init(
-                    finish_reason: Components.Schemas.CreateChatCompletionResponse.choicesPayloadPayload.finish_reasonPayload? = nil,
+                    finish_reason: Components.Schemas.CreateChatCompletionResponse.choicesPayloadPayload.finish_reasonPayload,
                     index: Swift.Int,
-                    message: Components.Schemas.ChatCompletionResponseMessage
+                    message: Components.Schemas.ChatCompletionResponseMessage,
+                    logprobs: Components.Schemas.CreateChatCompletionResponse.choicesPayloadPayload.logprobsPayload? = nil
                 ) {
                     self.finish_reason = finish_reason
                     self.index = index
                     self.message = message
+                    self.logprobs = logprobs
                 }
                 public enum CodingKeys: String, CodingKey {
                     case finish_reason
                     case index
                     case message
+                    case logprobs
                 }
             }
             /// A list of chat completion choices. Can be more than one if `n` is greater than 1.
@@ -3409,7 +3563,7 @@ public enum Components {
                 ///
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionFunctionResponse/choicesPayload/finish_reason`.
-                public var finish_reason: Components.Schemas.CreateChatCompletionFunctionResponse.choicesPayloadPayload.finish_reasonPayload?
+                public var finish_reason: Components.Schemas.CreateChatCompletionFunctionResponse.choicesPayloadPayload.finish_reasonPayload
                 /// The index of the choice in the list of choices.
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionFunctionResponse/choicesPayload/index`.
@@ -3423,7 +3577,7 @@ public enum Components {
                 ///   - index: The index of the choice in the list of choices.
                 ///   - message:
                 public init(
-                    finish_reason: Components.Schemas.CreateChatCompletionFunctionResponse.choicesPayloadPayload.finish_reasonPayload? = nil,
+                    finish_reason: Components.Schemas.CreateChatCompletionFunctionResponse.choicesPayloadPayload.finish_reasonPayload,
                     index: Swift.Int,
                     message: Components.Schemas.ChatCompletionResponseMessage
                 ) {
@@ -3509,6 +3663,88 @@ public enum Components {
                 case usage
             }
         }
+        /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob`.
+        public struct ChatCompletionTokenLogprob: Codable, Hashable, Sendable {
+            /// The token.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/token`.
+            public var token: Swift.String
+            /// The log probability of this token, if it is within the top 20 most likely tokens. Otherwise, the value `-9999.0` is used to signify that the token is very unlikely.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/logprob`.
+            public var logprob: Swift.Double
+            /// A list of integers representing the UTF-8 bytes representation of the token. Useful in instances where characters are represented by multiple tokens and their byte representations must be combined to generate the correct text representation. Can be `null` if there is no bytes representation for the token.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/bytes`.
+            public var bytes: [Swift.Int]?
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/top_logprobsPayload`.
+            public struct top_logprobsPayloadPayload: Codable, Hashable, Sendable {
+                /// The token.
+                ///
+                /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/top_logprobsPayload/token`.
+                public var token: Swift.String
+                /// The log probability of this token, if it is within the top 20 most likely tokens. Otherwise, the value `-9999.0` is used to signify that the token is very unlikely.
+                ///
+                /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/top_logprobsPayload/logprob`.
+                public var logprob: Swift.Double
+                /// A list of integers representing the UTF-8 bytes representation of the token. Useful in instances where characters are represented by multiple tokens and their byte representations must be combined to generate the correct text representation. Can be `null` if there is no bytes representation for the token.
+                ///
+                /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/top_logprobsPayload/bytes`.
+                public var bytes: [Swift.Int]?
+                /// Creates a new `top_logprobsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - token: The token.
+                ///   - logprob: The log probability of this token, if it is within the top 20 most likely tokens. Otherwise, the value `-9999.0` is used to signify that the token is very unlikely.
+                ///   - bytes: A list of integers representing the UTF-8 bytes representation of the token. Useful in instances where characters are represented by multiple tokens and their byte representations must be combined to generate the correct text representation. Can be `null` if there is no bytes representation for the token.
+                public init(
+                    token: Swift.String,
+                    logprob: Swift.Double,
+                    bytes: [Swift.Int]? = nil
+                ) {
+                    self.token = token
+                    self.logprob = logprob
+                    self.bytes = bytes
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case token
+                    case logprob
+                    case bytes
+                }
+            }
+            /// List of the most likely tokens and their log probability, at this token position. In rare cases, there may be fewer than the number of requested `top_logprobs` returned.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/top_logprobs`.
+            public typealias top_logprobsPayload = [Components.Schemas.ChatCompletionTokenLogprob.top_logprobsPayloadPayload]
+            /// List of the most likely tokens and their log probability, at this token position. In rare cases, there may be fewer than the number of requested `top_logprobs` returned.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ChatCompletionTokenLogprob/top_logprobs`.
+            public var top_logprobs: Components.Schemas.ChatCompletionTokenLogprob.top_logprobsPayload
+            /// Creates a new `ChatCompletionTokenLogprob`.
+            ///
+            /// - Parameters:
+            ///   - token: The token.
+            ///   - logprob: The log probability of this token, if it is within the top 20 most likely tokens. Otherwise, the value `-9999.0` is used to signify that the token is very unlikely.
+            ///   - bytes: A list of integers representing the UTF-8 bytes representation of the token. Useful in instances where characters are represented by multiple tokens and their byte representations must be combined to generate the correct text representation. Can be `null` if there is no bytes representation for the token.
+            ///   - top_logprobs: List of the most likely tokens and their log probability, at this token position. In rare cases, there may be fewer than the number of requested `top_logprobs` returned.
+            public init(
+                token: Swift.String,
+                logprob: Swift.Double,
+                bytes: [Swift.Int]? = nil,
+                top_logprobs: Components.Schemas.ChatCompletionTokenLogprob.top_logprobsPayload
+            ) {
+                self.token = token
+                self.logprob = logprob
+                self.bytes = bytes
+                self.top_logprobs = top_logprobs
+            }
+            public enum CodingKeys: String, CodingKey {
+                case token
+                case logprob
+                case bytes
+                case top_logprobs
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/ListPaginatedFineTuningJobsResponse`.
         public struct ListPaginatedFineTuningJobsResponse: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/ListPaginatedFineTuningJobsResponse/data`.
@@ -3554,6 +3790,29 @@ public enum Components {
             public struct choicesPayloadPayload: Codable, Hashable, Sendable {
                 /// - Remark: Generated from `#/components/schemas/CreateChatCompletionStreamResponse/choicesPayload/delta`.
                 public var delta: Components.Schemas.ChatCompletionStreamResponseDelta
+                /// Log probability information for the choice.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateChatCompletionStreamResponse/choicesPayload/logprobs`.
+                public struct logprobsPayload: Codable, Hashable, Sendable {
+                    /// A list of message content tokens with log probability information.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateChatCompletionStreamResponse/choicesPayload/logprobs/content`.
+                    public var content: [Components.Schemas.ChatCompletionTokenLogprob]?
+                    /// Creates a new `logprobsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - content: A list of message content tokens with log probability information.
+                    public init(content: [Components.Schemas.ChatCompletionTokenLogprob]? = nil) {
+                        self.content = content
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case content
+                    }
+                }
+                /// Log probability information for the choice.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateChatCompletionStreamResponse/choicesPayload/logprobs`.
+                public var logprobs: Components.Schemas.CreateChatCompletionStreamResponse.choicesPayloadPayload.logprobsPayload?
                 /// The reason the model stopped generating tokens. This will be `stop` if the model hit a natural stop point or a provided stop sequence,
                 /// `length` if the maximum number of tokens specified in the request was reached,
                 /// `content_filter` if content was omitted due to a flag from our content filters,
@@ -3584,19 +3843,23 @@ public enum Components {
                 ///
                 /// - Parameters:
                 ///   - delta:
+                ///   - logprobs: Log probability information for the choice.
                 ///   - finish_reason: The reason the model stopped generating tokens. This will be `stop` if the model hit a natural stop point or a provided stop sequence,
                 ///   - index: The index of the choice in the list of choices.
                 public init(
                     delta: Components.Schemas.ChatCompletionStreamResponseDelta,
+                    logprobs: Components.Schemas.CreateChatCompletionStreamResponse.choicesPayloadPayload.logprobsPayload? = nil,
                     finish_reason: Components.Schemas.CreateChatCompletionStreamResponse.choicesPayloadPayload.finish_reasonPayload? = nil,
                     index: Swift.Int
                 ) {
                     self.delta = delta
+                    self.logprobs = logprobs
                     self.finish_reason = finish_reason
                     self.index = index
                 }
                 public enum CodingKeys: String, CodingKey {
                     case delta
+                    case logprobs
                     case finish_reason
                     case index
                 }
@@ -3670,225 +3933,6 @@ public enum Components {
         ///
         /// - Remark: Generated from `#/components/schemas/CreateChatCompletionImageResponse`.
         public typealias CreateChatCompletionImageResponse = OpenAPIRuntime.OpenAPIObjectContainer
-        /// - Remark: Generated from `#/components/schemas/CreateEditRequest`.
-        public struct CreateEditRequest: Codable, Hashable, Sendable {
-            /// The instruction that tells the model how to edit the prompt.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/instruction`.
-            public var instruction: Swift.String
-            /// ID of the model to use. You can use the `text-davinci-edit-001` or `code-davinci-edit-001` model with this endpoint.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/model`.
-            public struct modelPayload: Codable, Hashable, Sendable {
-                /// - Remark: Generated from `#/components/schemas/CreateEditRequest/model/value1`.
-                public var value1: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/CreateEditRequest/model/value2`.
-                @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
-                    case text_hyphen_davinci_hyphen_edit_hyphen_001 = "text-davinci-edit-001"
-                    case code_hyphen_davinci_hyphen_edit_hyphen_001 = "code-davinci-edit-001"
-                }
-                /// - Remark: Generated from `#/components/schemas/CreateEditRequest/model/value2`.
-                public var value2: Components.Schemas.CreateEditRequest.modelPayload.Value2Payload?
-                /// Creates a new `modelPayload`.
-                ///
-                /// - Parameters:
-                ///   - value1:
-                ///   - value2:
-                public init(
-                    value1: Swift.String? = nil,
-                    value2: Components.Schemas.CreateEditRequest.modelPayload.Value2Payload? = nil
-                ) {
-                    self.value1 = value1
-                    self.value2 = value2
-                }
-                public init(from decoder: any Decoder) throws {
-                    var errors: [any Error] = []
-                    do {
-                        value1 = try decoder.decodeFromSingleValueContainer()
-                    } catch {
-                        errors.append(error)
-                    }
-                    do {
-                        value2 = try decoder.decodeFromSingleValueContainer()
-                    } catch {
-                        errors.append(error)
-                    }
-                    try Swift.DecodingError.verifyAtLeastOneSchemaIsNotNil(
-                        [
-                            value1,
-                            value2
-                        ],
-                        type: Self.self,
-                        codingPath: decoder.codingPath,
-                        errors: errors
-                    )
-                }
-                public func encode(to encoder: any Encoder) throws {
-                    try encoder.encodeFirstNonNilValueToSingleValueContainer([
-                        value1,
-                        value2
-                    ])
-                }
-            }
-            /// ID of the model to use. You can use the `text-davinci-edit-001` or `code-davinci-edit-001` model with this endpoint.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/model`.
-            public var model: Components.Schemas.CreateEditRequest.modelPayload
-            /// The input text to use as a starting point for the edit.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/input`.
-            public var input: Swift.String?
-            /// How many edits to generate for the input and instruction.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/n`.
-            public var n: Swift.Int?
-            /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-            ///
-            /// We generally recommend altering this or `top_p` but not both.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/temperature`.
-            public var temperature: Swift.Double?
-            /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-            ///
-            /// We generally recommend altering this or `temperature` but not both.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditRequest/top_p`.
-            public var top_p: Swift.Double?
-            /// Creates a new `CreateEditRequest`.
-            ///
-            /// - Parameters:
-            ///   - instruction: The instruction that tells the model how to edit the prompt.
-            ///   - model: ID of the model to use. You can use the `text-davinci-edit-001` or `code-davinci-edit-001` model with this endpoint.
-            ///   - input: The input text to use as a starting point for the edit.
-            ///   - n: How many edits to generate for the input and instruction.
-            ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-            ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-            public init(
-                instruction: Swift.String,
-                model: Components.Schemas.CreateEditRequest.modelPayload,
-                input: Swift.String? = nil,
-                n: Swift.Int? = nil,
-                temperature: Swift.Double? = nil,
-                top_p: Swift.Double? = nil
-            ) {
-                self.instruction = instruction
-                self.model = model
-                self.input = input
-                self.n = n
-                self.temperature = temperature
-                self.top_p = top_p
-            }
-            public enum CodingKeys: String, CodingKey {
-                case instruction
-                case model
-                case input
-                case n
-                case temperature
-                case top_p
-            }
-        }
-        /// - Remark: Generated from `#/components/schemas/CreateEditResponse`.
-        @available(*, deprecated)
-        public struct CreateEditResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choicesPayload`.
-            public struct choicesPayloadPayload: Codable, Hashable, Sendable {
-                /// The reason the model stopped generating tokens. This will be `stop` if the model hit a natural stop point or a provided stop sequence,
-                /// `length` if the maximum number of tokens specified in the request was reached,
-                /// or `content_filter` if content was omitted due to a flag from our content filters.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choicesPayload/finish_reason`.
-                @frozen public enum finish_reasonPayload: String, Codable, Hashable, Sendable {
-                    case stop = "stop"
-                    case length = "length"
-                }
-                /// The reason the model stopped generating tokens. This will be `stop` if the model hit a natural stop point or a provided stop sequence,
-                /// `length` if the maximum number of tokens specified in the request was reached,
-                /// or `content_filter` if content was omitted due to a flag from our content filters.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choicesPayload/finish_reason`.
-                public var finish_reason: Components.Schemas.CreateEditResponse.choicesPayloadPayload.finish_reasonPayload?
-                /// The index of the choice in the list of choices.
-                ///
-                /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choicesPayload/index`.
-                public var index: Swift.Int
-                /// The edited result.
-                ///
-                /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choicesPayload/text`.
-                public var text: Swift.String
-                /// Creates a new `choicesPayloadPayload`.
-                ///
-                /// - Parameters:
-                ///   - finish_reason: The reason the model stopped generating tokens. This will be `stop` if the model hit a natural stop point or a provided stop sequence,
-                ///   - index: The index of the choice in the list of choices.
-                ///   - text: The edited result.
-                public init(
-                    finish_reason: Components.Schemas.CreateEditResponse.choicesPayloadPayload.finish_reasonPayload? = nil,
-                    index: Swift.Int,
-                    text: Swift.String
-                ) {
-                    self.finish_reason = finish_reason
-                    self.index = index
-                    self.text = text
-                }
-                public enum CodingKeys: String, CodingKey {
-                    case finish_reason
-                    case index
-                    case text
-                }
-            }
-            /// A list of edit choices. Can be more than one if `n` is greater than 1.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choices`.
-            public typealias choicesPayload = [Components.Schemas.CreateEditResponse.choicesPayloadPayload]
-            /// A list of edit choices. Can be more than one if `n` is greater than 1.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/choices`.
-            public var choices: Components.Schemas.CreateEditResponse.choicesPayload
-            /// The object type, which is always `edit`.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/object`.
-            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case edit = "edit"
-            }
-            /// The object type, which is always `edit`.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/object`.
-            public var object: Components.Schemas.CreateEditResponse.objectPayload
-            /// The Unix timestamp (in seconds) of when the edit was created.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/created`.
-            public var created: Swift.Int
-            /// - Remark: Generated from `#/components/schemas/CreateEditResponse/usage`.
-            public var usage: Components.Schemas.CompletionUsage
-            /// Creates a new `CreateEditResponse`.
-            ///
-            /// - Parameters:
-            ///   - choices: A list of edit choices. Can be more than one if `n` is greater than 1.
-            ///   - object: The object type, which is always `edit`.
-            ///   - created: The Unix timestamp (in seconds) of when the edit was created.
-            ///   - usage:
-            public init(
-                choices: Components.Schemas.CreateEditResponse.choicesPayload,
-                object: Components.Schemas.CreateEditResponse.objectPayload,
-                created: Swift.Int,
-                usage: Components.Schemas.CompletionUsage
-            ) {
-                self.choices = choices
-                self.object = object
-                self.created = created
-                self.usage = usage
-            }
-            public enum CodingKeys: String, CodingKey {
-                case choices
-                case object
-                case created
-                case usage
-            }
-        }
         /// - Remark: Generated from `#/components/schemas/CreateImageRequest`.
         public struct CreateImageRequest: Codable, Hashable, Sendable {
             /// A text description of the desired image(s). The maximum length is 1000 characters for `dall-e-2` and 4000 characters for `dall-e-3`.
@@ -3968,14 +4012,14 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateImageRequest/quality`.
             public var quality: Components.Schemas.CreateImageRequest.qualityPayload?
-            /// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
+            /// The format in which the generated images are returned. Must be one of `url` or `b64_json`. URLs are only valid for 60 minutes after the image has been generated.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateImageRequest/response_format`.
             @frozen public enum response_formatPayload: String, Codable, Hashable, Sendable {
                 case url = "url"
                 case b64_json = "b64_json"
             }
-            /// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
+            /// The format in which the generated images are returned. Must be one of `url` or `b64_json`. URLs are only valid for 60 minutes after the image has been generated.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateImageRequest/response_format`.
             public var response_format: Components.Schemas.CreateImageRequest.response_formatPayload?
@@ -4016,7 +4060,7 @@ public enum Components {
             ///   - model: The model to use for image generation.
             ///   - n: The number of images to generate. Must be between 1 and 10. For `dall-e-3`, only `n=1` is supported.
             ///   - quality: The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image. This param is only supported for `dall-e-3`.
-            ///   - response_format: The format in which the generated images are returned. Must be one of `url` or `b64_json`.
+            ///   - response_format: The format in which the generated images are returned. Must be one of `url` or `b64_json`. URLs are only valid for 60 minutes after the image has been generated.
             ///   - size: The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`. Must be one of `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3` models.
             ///   - style: The style of the generated images. Must be one of `vivid` or `natural`. Vivid causes the model to lean towards generating hyper-real and dramatic images. Natural causes the model to produce more natural, less hyper-real looking images. This param is only supported for `dall-e-3`.
             ///   - user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
@@ -4410,7 +4454,7 @@ public enum Components {
                 case model
             }
         }
-        /// Represents policy compliance report by OpenAI's content moderation model against a given input.
+        /// Represents if a given text input is potentially harmful.
         ///
         /// - Remark: Generated from `#/components/schemas/CreateModerationResponse`.
         public struct CreateModerationResponse: Codable, Hashable, Sendable {
@@ -4424,7 +4468,7 @@ public enum Components {
             public var model: Swift.String
             /// - Remark: Generated from `#/components/schemas/CreateModerationResponse/resultsPayload`.
             public struct resultsPayloadPayload: Codable, Hashable, Sendable {
-                /// Whether the content violates [OpenAI's usage policies](/policies/usage-policies).
+                /// Whether any of the below categories are flagged.
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateModerationResponse/resultsPayload/flagged`.
                 public var flagged: Swift.Bool
@@ -4432,7 +4476,7 @@ public enum Components {
                 ///
                 /// - Remark: Generated from `#/components/schemas/CreateModerationResponse/resultsPayload/categories`.
                 public struct categoriesPayload: Codable, Hashable, Sendable {
-                    /// Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste. Hateful content aimed at non-protected groups (e.g., chess players) is harrassment.
+                    /// Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste. Hateful content aimed at non-protected groups (e.g., chess players) is harassment.
                     ///
                     /// - Remark: Generated from `#/components/schemas/CreateModerationResponse/resultsPayload/categories/hate`.
                     public var hate: Swift.Bool
@@ -4479,7 +4523,7 @@ public enum Components {
                     /// Creates a new `categoriesPayload`.
                     ///
                     /// - Parameters:
-                    ///   - hate: Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste. Hateful content aimed at non-protected groups (e.g., chess players) is harrassment.
+                    ///   - hate: Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste. Hateful content aimed at non-protected groups (e.g., chess players) is harassment.
                     ///   - hate_sol_threatening: Hateful content that also includes violence or serious harm towards the targeted group based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste.
                     ///   - harassment: Content that expresses, incites, or promotes harassing language towards any target.
                     ///   - harassment_sol_threatening: Harassment content that also includes violence or serious harm towards any target.
@@ -4641,7 +4685,7 @@ public enum Components {
                 /// Creates a new `resultsPayloadPayload`.
                 ///
                 /// - Parameters:
-                ///   - flagged: Whether the content violates [OpenAI's usage policies](/policies/usage-policies).
+                ///   - flagged: Whether any of the below categories are flagged.
                 ///   - categories: A list of the categories, and whether they are flagged or not.
                 ///   - category_scores: A list of the categories along with their scores as predicted by model.
                 public init(
@@ -4842,7 +4886,7 @@ public enum Components {
             public var model: Components.Schemas.CreateFineTuningJobRequest.modelPayload
             /// The ID of an uploaded file that contains training data.
             ///
-            /// See [upload file](/docs/api-reference/files/upload) for how to upload a file.
+            /// See [upload file](/docs/api-reference/files/create) for how to upload a file.
             ///
             /// Your dataset must be formatted as a JSONL file. Additionally, you must upload your file with the purpose `fine-tune`.
             ///
@@ -5048,6 +5092,137 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/validation_file`.
             public var validation_file: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload`.
+            public struct integrationsPayloadPayload: Codable, Hashable, Sendable {
+                /// The type of integration to enable. Currently, only "wandb" (Weights and Biases) is supported.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/type`.
+                @frozen public enum _typePayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/type/case1`.
+                    @frozen public enum Case1Payload: String, Codable, Hashable, Sendable {
+                        case wandb = "wandb"
+                    }
+                    /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/type/case1`.
+                    case case1(Components.Schemas.CreateFineTuningJobRequest.integrationsPayloadPayload._typePayload.Case1Payload)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .case1(try decoder.decodeFromSingleValueContainer())
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .case1(value):
+                            try encoder.encodeToSingleValueContainer(value)
+                        }
+                    }
+                }
+                /// The type of integration to enable. Currently, only "wandb" (Weights and Biases) is supported.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/type`.
+                public var _type: Components.Schemas.CreateFineTuningJobRequest.integrationsPayloadPayload._typePayload
+                /// The settings for your integration with Weights and Biases. This payload specifies the project that
+                /// metrics will be sent to. Optionally, you can set an explicit display name for your run, add tags
+                /// to your run, and set a default entity (team, username, etc) to be associated with your run.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/wandb`.
+                public struct wandbPayload: Codable, Hashable, Sendable {
+                    /// The name of the project that the new run will be created under.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/wandb/project`.
+                    public var project: Swift.String
+                    /// A display name to set for the run. If not set, we will use the Job ID as the name.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/wandb/name`.
+                    public var name: Swift.String?
+                    /// The entity to use for the run. This allows you to set the team or username of the WandB user that you would
+                    /// like associated with the run. If not set, the default entity for the registered WandB API key is used.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/wandb/entity`.
+                    public var entity: Swift.String?
+                    /// A list of tags to be attached to the newly created run. These tags are passed through directly to WandB. Some
+                    /// default tags are generated by OpenAI: "openai/finetune", "openai/{base-model}", "openai/{ftjob-abcdef}".
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/wandb/tags`.
+                    public var tags: [Swift.String]?
+                    /// Creates a new `wandbPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - project: The name of the project that the new run will be created under.
+                    ///   - name: A display name to set for the run. If not set, we will use the Job ID as the name.
+                    ///   - entity: The entity to use for the run. This allows you to set the team or username of the WandB user that you would
+                    ///   - tags: A list of tags to be attached to the newly created run. These tags are passed through directly to WandB. Some
+                    public init(
+                        project: Swift.String,
+                        name: Swift.String? = nil,
+                        entity: Swift.String? = nil,
+                        tags: [Swift.String]? = nil
+                    ) {
+                        self.project = project
+                        self.name = name
+                        self.entity = entity
+                        self.tags = tags
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case project
+                        case name
+                        case entity
+                        case tags
+                    }
+                }
+                /// The settings for your integration with Weights and Biases. This payload specifies the project that
+                /// metrics will be sent to. Optionally, you can set an explicit display name for your run, add tags
+                /// to your run, and set a default entity (team, username, etc) to be associated with your run.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrationsPayload/wandb`.
+                public var wandb: Components.Schemas.CreateFineTuningJobRequest.integrationsPayloadPayload.wandbPayload
+                /// Creates a new `integrationsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - _type: The type of integration to enable. Currently, only "wandb" (Weights and Biases) is supported.
+                ///   - wandb: The settings for your integration with Weights and Biases. This payload specifies the project that
+                public init(
+                    _type: Components.Schemas.CreateFineTuningJobRequest.integrationsPayloadPayload._typePayload,
+                    wandb: Components.Schemas.CreateFineTuningJobRequest.integrationsPayloadPayload.wandbPayload
+                ) {
+                    self._type = _type
+                    self.wandb = wandb
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case _type = "type"
+                    case wandb
+                }
+            }
+            /// A list of integrations to enable for your fine-tuning job.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrations`.
+            public typealias integrationsPayload = [Components.Schemas.CreateFineTuningJobRequest.integrationsPayloadPayload]
+            /// A list of integrations to enable for your fine-tuning job.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/integrations`.
+            public var integrations: Components.Schemas.CreateFineTuningJobRequest.integrationsPayload?
+            /// The seed controls the reproducibility of the job. Passing in the same seed and job parameters should produce the same results, but may differ in rare cases.
+            /// If a seed is not specified, one will be generated for you.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateFineTuningJobRequest/seed`.
+            public var seed: Swift.Int?
             /// Creates a new `CreateFineTuningJobRequest`.
             ///
             /// - Parameters:
@@ -5056,18 +5231,24 @@ public enum Components {
             ///   - hyperparameters: The hyperparameters used for the fine-tuning job.
             ///   - suffix: A string of up to 18 characters that will be added to your fine-tuned model name.
             ///   - validation_file: The ID of an uploaded file that contains validation data.
+            ///   - integrations: A list of integrations to enable for your fine-tuning job.
+            ///   - seed: The seed controls the reproducibility of the job. Passing in the same seed and job parameters should produce the same results, but may differ in rare cases.
             public init(
                 model: Components.Schemas.CreateFineTuningJobRequest.modelPayload,
                 training_file: Swift.String,
                 hyperparameters: Components.Schemas.CreateFineTuningJobRequest.hyperparametersPayload? = nil,
                 suffix: Swift.String? = nil,
-                validation_file: Swift.String? = nil
+                validation_file: Swift.String? = nil,
+                integrations: Components.Schemas.CreateFineTuningJobRequest.integrationsPayload? = nil,
+                seed: Swift.Int? = nil
             ) {
                 self.model = model
                 self.training_file = training_file
                 self.hyperparameters = hyperparameters
                 self.suffix = suffix
                 self.validation_file = validation_file
+                self.integrations = integrations
+                self.seed = seed
             }
             public enum CodingKeys: String, CodingKey {
                 case model
@@ -5075,6 +5256,8 @@ public enum Components {
                 case hyperparameters
                 case suffix
                 case validation_file
+                case integrations
+                case seed
             }
         }
         /// - Remark: Generated from `#/components/schemas/ListFineTuningJobEventsResponse`.
@@ -5104,379 +5287,72 @@ public enum Components {
                 case object
             }
         }
-        /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest`.
-        public struct CreateFineTuneRequest: Codable, Hashable, Sendable {
-            /// The ID of an uploaded file that contains training data.
-            ///
-            /// See [upload file](/docs/api-reference/files/upload) for how to upload a file.
-            ///
-            /// Your dataset must be formatted as a JSONL file, where each training
-            /// example is a JSON object with the keys "prompt" and "completion".
-            /// Additionally, you must upload your file with the purpose `fine-tune`.
-            ///
-            /// See the [fine-tuning guide](/docs/guides/legacy-fine-tuning/creating-training-data) for more details.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/training_file`.
-            public var training_file: Swift.String
-            /// The batch size to use for training. The batch size is the number of
-            /// training examples used to train a single forward and backward pass.
-            ///
-            /// By default, the batch size will be dynamically configured to be
-            /// ~0.2% of the number of examples in the training set, capped at 256 -
-            /// in general, we've found that larger batch sizes tend to work better
-            /// for larger datasets.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/batch_size`.
-            public var batch_size: Swift.Int?
-            /// If this is provided, we calculate F-beta scores at the specified
-            /// beta values. The F-beta score is a generalization of F-1 score.
-            /// This is only used for binary classification.
-            ///
-            /// With a beta of 1 (i.e. the F-1 score), precision and recall are
-            /// given the same weight. A larger beta score puts more weight on
-            /// recall and less on precision. A smaller beta score puts more weight
-            /// on precision and less on recall.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/classification_betas`.
-            public var classification_betas: [Swift.Double]?
-            /// The number of classes in a classification task.
-            ///
-            /// This parameter is required for multiclass classification.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/classification_n_classes`.
-            public var classification_n_classes: Swift.Int?
-            /// The positive class in binary classification.
-            ///
-            /// This parameter is needed to generate precision, recall, and F1
-            /// metrics when doing binary classification.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/classification_positive_class`.
-            public var classification_positive_class: Swift.String?
-            /// If set, we calculate classification-specific metrics such as accuracy
-            /// and F-1 score using the validation set at the end of every epoch.
-            /// These metrics can be viewed in the [results file](/docs/guides/legacy-fine-tuning/analyzing-your-fine-tuned-model).
-            ///
-            /// In order to compute classification metrics, you must provide a
-            /// `validation_file`. Additionally, you must
-            /// specify `classification_n_classes` for multiclass classification or
-            /// `classification_positive_class` for binary classification.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/compute_classification_metrics`.
-            public var compute_classification_metrics: Swift.Bool?
-            /// The hyperparameters used for the fine-tuning job.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters`.
-            public struct hyperparametersPayload: Codable, Hashable, Sendable {
-                /// The number of epochs to train the model for. An epoch refers to one
-                /// full cycle through the training dataset.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters/n_epochs`.
-                @frozen public enum n_epochsPayload: Codable, Hashable, Sendable {
-                    /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters/n_epochs/case1`.
-                    @frozen public enum Case1Payload: String, Codable, Hashable, Sendable {
-                        case auto = "auto"
-                    }
-                    /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters/n_epochs/case1`.
-                    case case1(Components.Schemas.CreateFineTuneRequest.hyperparametersPayload.n_epochsPayload.Case1Payload)
-                    /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters/n_epochs/case2`.
-                    case case2(Swift.Int)
-                    public init(from decoder: any Decoder) throws {
-                        var errors: [any Error] = []
-                        do {
-                            self = .case1(try decoder.decodeFromSingleValueContainer())
-                            return
-                        } catch {
-                            errors.append(error)
-                        }
-                        do {
-                            self = .case2(try decoder.decodeFromSingleValueContainer())
-                            return
-                        } catch {
-                            errors.append(error)
-                        }
-                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
-                            type: Self.self,
-                            codingPath: decoder.codingPath,
-                            errors: errors
-                        )
-                    }
-                    public func encode(to encoder: any Encoder) throws {
-                        switch self {
-                        case let .case1(value):
-                            try encoder.encodeToSingleValueContainer(value)
-                        case let .case2(value):
-                            try encoder.encodeToSingleValueContainer(value)
-                        }
-                    }
-                }
-                /// The number of epochs to train the model for. An epoch refers to one
-                /// full cycle through the training dataset.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters/n_epochs`.
-                public var n_epochs: Components.Schemas.CreateFineTuneRequest.hyperparametersPayload.n_epochsPayload?
-                /// Creates a new `hyperparametersPayload`.
-                ///
-                /// - Parameters:
-                ///   - n_epochs: The number of epochs to train the model for. An epoch refers to one
-                public init(n_epochs: Components.Schemas.CreateFineTuneRequest.hyperparametersPayload.n_epochsPayload? = nil) {
-                    self.n_epochs = n_epochs
-                }
-                public enum CodingKeys: String, CodingKey {
-                    case n_epochs
-                }
-            }
-            /// The hyperparameters used for the fine-tuning job.
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/hyperparameters`.
-            public var hyperparameters: Components.Schemas.CreateFineTuneRequest.hyperparametersPayload?
-            /// The learning rate multiplier to use for training.
-            /// The fine-tuning learning rate is the original learning rate used for
-            /// pretraining multiplied by this value.
-            ///
-            /// By default, the learning rate multiplier is the 0.05, 0.1, or 0.2
-            /// depending on final `batch_size` (larger learning rates tend to
-            /// perform better with larger batch sizes). We recommend experimenting
-            /// with values in the range 0.02 to 0.2 to see what produces the best
-            /// results.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/learning_rate_multiplier`.
-            public var learning_rate_multiplier: Swift.Double?
-            /// The name of the base model to fine-tune. You can select one of "ada",
-            /// "babbage", "curie", "davinci", or a fine-tuned model created after 2022-04-21 and before 2023-08-22.
-            /// To learn more about these models, see the
-            /// [Models](/docs/models) documentation.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/model`.
-            public struct modelPayload: Codable, Hashable, Sendable {
-                /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/model/value1`.
-                public var value1: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/model/value2`.
-                @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
-                    case ada = "ada"
-                    case babbage = "babbage"
-                    case curie = "curie"
-                    case davinci = "davinci"
-                }
-                /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/model/value2`.
-                public var value2: Components.Schemas.CreateFineTuneRequest.modelPayload.Value2Payload?
-                /// Creates a new `modelPayload`.
-                ///
-                /// - Parameters:
-                ///   - value1:
-                ///   - value2:
-                public init(
-                    value1: Swift.String? = nil,
-                    value2: Components.Schemas.CreateFineTuneRequest.modelPayload.Value2Payload? = nil
-                ) {
-                    self.value1 = value1
-                    self.value2 = value2
-                }
-                public init(from decoder: any Decoder) throws {
-                    var errors: [any Error] = []
-                    do {
-                        value1 = try decoder.decodeFromSingleValueContainer()
-                    } catch {
-                        errors.append(error)
-                    }
-                    do {
-                        value2 = try decoder.decodeFromSingleValueContainer()
-                    } catch {
-                        errors.append(error)
-                    }
-                    try Swift.DecodingError.verifyAtLeastOneSchemaIsNotNil(
-                        [
-                            value1,
-                            value2
-                        ],
-                        type: Self.self,
-                        codingPath: decoder.codingPath,
-                        errors: errors
-                    )
-                }
-                public func encode(to encoder: any Encoder) throws {
-                    try encoder.encodeFirstNonNilValueToSingleValueContainer([
-                        value1,
-                        value2
-                    ])
-                }
-            }
-            /// The name of the base model to fine-tune. You can select one of "ada",
-            /// "babbage", "curie", "davinci", or a fine-tuned model created after 2022-04-21 and before 2023-08-22.
-            /// To learn more about these models, see the
-            /// [Models](/docs/models) documentation.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/model`.
-            public var model: Components.Schemas.CreateFineTuneRequest.modelPayload?
-            /// The weight to use for loss on the prompt tokens. This controls how
-            /// much the model tries to learn to generate the prompt (as compared
-            /// to the completion which always has a weight of 1.0), and can add
-            /// a stabilizing effect to training when completions are short.
-            ///
-            /// If prompts are extremely long (relative to completions), it may make
-            /// sense to reduce this weight so as to avoid over-prioritizing
-            /// learning the prompt.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/prompt_loss_weight`.
-            public var prompt_loss_weight: Swift.Double?
-            /// A string of up to 40 characters that will be added to your fine-tuned model name.
-            ///
-            /// For example, a `suffix` of "custom-model-name" would produce a model name like `ada:ft-your-org:custom-model-name-2022-02-15-04-21-04`.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/suffix`.
-            public var suffix: Swift.String?
-            /// The ID of an uploaded file that contains validation data.
-            ///
-            /// If you provide this file, the data is used to generate validation
-            /// metrics periodically during fine-tuning. These metrics can be viewed in
-            /// the [fine-tuning results file](/docs/guides/legacy-fine-tuning/analyzing-your-fine-tuned-model).
-            /// Your train and validation data should be mutually exclusive.
-            ///
-            /// Your dataset must be formatted as a JSONL file, where each validation
-            /// example is a JSON object with the keys "prompt" and "completion".
-            /// Additionally, you must upload your file with the purpose `fine-tune`.
-            ///
-            /// See the [fine-tuning guide](/docs/guides/legacy-fine-tuning/creating-training-data) for more details.
-            ///
-            ///
-            /// - Remark: Generated from `#/components/schemas/CreateFineTuneRequest/validation_file`.
-            public var validation_file: Swift.String?
-            /// Creates a new `CreateFineTuneRequest`.
-            ///
-            /// - Parameters:
-            ///   - training_file: The ID of an uploaded file that contains training data.
-            ///   - batch_size: The batch size to use for training. The batch size is the number of
-            ///   - classification_betas: If this is provided, we calculate F-beta scores at the specified
-            ///   - classification_n_classes: The number of classes in a classification task.
-            ///   - classification_positive_class: The positive class in binary classification.
-            ///   - compute_classification_metrics: If set, we calculate classification-specific metrics such as accuracy
-            ///   - hyperparameters: The hyperparameters used for the fine-tuning job.
-            ///   - learning_rate_multiplier: The learning rate multiplier to use for training.
-            ///   - model: The name of the base model to fine-tune. You can select one of "ada",
-            ///   - prompt_loss_weight: The weight to use for loss on the prompt tokens. This controls how
-            ///   - suffix: A string of up to 40 characters that will be added to your fine-tuned model name.
-            ///   - validation_file: The ID of an uploaded file that contains validation data.
-            public init(
-                training_file: Swift.String,
-                batch_size: Swift.Int? = nil,
-                classification_betas: [Swift.Double]? = nil,
-                classification_n_classes: Swift.Int? = nil,
-                classification_positive_class: Swift.String? = nil,
-                compute_classification_metrics: Swift.Bool? = nil,
-                hyperparameters: Components.Schemas.CreateFineTuneRequest.hyperparametersPayload? = nil,
-                learning_rate_multiplier: Swift.Double? = nil,
-                model: Components.Schemas.CreateFineTuneRequest.modelPayload? = nil,
-                prompt_loss_weight: Swift.Double? = nil,
-                suffix: Swift.String? = nil,
-                validation_file: Swift.String? = nil
-            ) {
-                self.training_file = training_file
-                self.batch_size = batch_size
-                self.classification_betas = classification_betas
-                self.classification_n_classes = classification_n_classes
-                self.classification_positive_class = classification_positive_class
-                self.compute_classification_metrics = compute_classification_metrics
-                self.hyperparameters = hyperparameters
-                self.learning_rate_multiplier = learning_rate_multiplier
-                self.model = model
-                self.prompt_loss_weight = prompt_loss_weight
-                self.suffix = suffix
-                self.validation_file = validation_file
-            }
-            public enum CodingKeys: String, CodingKey {
-                case training_file
-                case batch_size
-                case classification_betas
-                case classification_n_classes
-                case classification_positive_class
-                case compute_classification_metrics
-                case hyperparameters
-                case learning_rate_multiplier
-                case model
-                case prompt_loss_weight
-                case suffix
-                case validation_file
-            }
-        }
-        /// - Remark: Generated from `#/components/schemas/ListFineTunesResponse`.
-        public struct ListFineTunesResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/ListFineTunesResponse/data`.
-            public var data: [Components.Schemas.FineTune]
-            /// - Remark: Generated from `#/components/schemas/ListFineTunesResponse/object`.
+        /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse`.
+        public struct ListFineTuningJobCheckpointsResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse/data`.
+            public var data: [Components.Schemas.FineTuningJobCheckpoint]
+            /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse/object`.
             @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
                 case list = "list"
             }
-            /// - Remark: Generated from `#/components/schemas/ListFineTunesResponse/object`.
-            public var object: Components.Schemas.ListFineTunesResponse.objectPayload
-            /// Creates a new `ListFineTunesResponse`.
+            /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse/object`.
+            public var object: Components.Schemas.ListFineTuningJobCheckpointsResponse.objectPayload
+            /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse/first_id`.
+            public var first_id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse/last_id`.
+            public var last_id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ListFineTuningJobCheckpointsResponse/has_more`.
+            public var has_more: Swift.Bool
+            /// Creates a new `ListFineTuningJobCheckpointsResponse`.
             ///
             /// - Parameters:
             ///   - data:
             ///   - object:
+            ///   - first_id:
+            ///   - last_id:
+            ///   - has_more:
             public init(
-                data: [Components.Schemas.FineTune],
-                object: Components.Schemas.ListFineTunesResponse.objectPayload
+                data: [Components.Schemas.FineTuningJobCheckpoint],
+                object: Components.Schemas.ListFineTuningJobCheckpointsResponse.objectPayload,
+                first_id: Swift.String? = nil,
+                last_id: Swift.String? = nil,
+                has_more: Swift.Bool
             ) {
                 self.data = data
                 self.object = object
+                self.first_id = first_id
+                self.last_id = last_id
+                self.has_more = has_more
             }
             public enum CodingKeys: String, CodingKey {
                 case data
                 case object
-            }
-        }
-        /// - Remark: Generated from `#/components/schemas/ListFineTuneEventsResponse`.
-        public struct ListFineTuneEventsResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/ListFineTuneEventsResponse/data`.
-            public var data: [Components.Schemas.FineTuneEvent]
-            /// - Remark: Generated from `#/components/schemas/ListFineTuneEventsResponse/object`.
-            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case list = "list"
-            }
-            /// - Remark: Generated from `#/components/schemas/ListFineTuneEventsResponse/object`.
-            public var object: Components.Schemas.ListFineTuneEventsResponse.objectPayload
-            /// Creates a new `ListFineTuneEventsResponse`.
-            ///
-            /// - Parameters:
-            ///   - data:
-            ///   - object:
-            public init(
-                data: [Components.Schemas.FineTuneEvent],
-                object: Components.Schemas.ListFineTuneEventsResponse.objectPayload
-            ) {
-                self.data = data
-                self.object = object
-            }
-            public enum CodingKeys: String, CodingKey {
-                case data
-                case object
+                case first_id
+                case last_id
+                case has_more
             }
         }
         /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest`.
         public struct CreateEmbeddingRequest: Codable, Hashable, Sendable {
-            /// Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`) and cannot be an empty string. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
+            /// Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`), cannot be an empty string, and any array must be 2048 dimensions or less. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/input`.
             @frozen public enum inputPayload: Codable, Hashable, Sendable {
+                /// The string that will be turned into an embedding.
+                ///
                 /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/input/case1`.
                 case case1(Swift.String)
+                /// The array of strings that will be turned into an embedding.
+                ///
                 /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/input/case2`.
                 case case2([Swift.String])
+                /// The array of integers that will be turned into an embedding.
+                ///
                 /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/input/case3`.
                 case case3([Swift.Int])
+                /// The array of arrays containing integers that will be turned into an embedding.
+                ///
                 /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/input/case4`.
                 case case4([[Swift.Int]])
                 public init(from decoder: any Decoder) throws {
@@ -5524,7 +5400,7 @@ public enum Components {
                     }
                 }
             }
-            /// Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`) and cannot be an empty string. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
+            /// Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`), cannot be an empty string, and any array must be 2048 dimensions or less. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/input`.
@@ -5539,6 +5415,8 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/model/value2`.
                 @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
                     case text_hyphen_embedding_hyphen_ada_hyphen_002 = "text-embedding-ada-002"
+                    case text_hyphen_embedding_hyphen_3_hyphen_small = "text-embedding-3-small"
+                    case text_hyphen_embedding_hyphen_3_hyphen_large = "text-embedding-3-large"
                 }
                 /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/model/value2`.
                 public var value2: Components.Schemas.CreateEmbeddingRequest.modelPayload.Value2Payload?
@@ -5599,6 +5477,11 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/encoding_format`.
             public var encoding_format: Components.Schemas.CreateEmbeddingRequest.encoding_formatPayload?
+            /// The number of dimensions the resulting output embeddings should have. Only supported in `text-embedding-3` and later models.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateEmbeddingRequest/dimensions`.
+            public var dimensions: Swift.Int?
             /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
             ///
             ///
@@ -5607,25 +5490,29 @@ public enum Components {
             /// Creates a new `CreateEmbeddingRequest`.
             ///
             /// - Parameters:
-            ///   - input: Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`) and cannot be an empty string. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
+            ///   - input: Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`), cannot be an empty string, and any array must be 2048 dimensions or less. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
             ///   - model: ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
             ///   - encoding_format: The format to return the embeddings in. Can be either `float` or [`base64`](https://pypi.org/project/pybase64/).
+            ///   - dimensions: The number of dimensions the resulting output embeddings should have. Only supported in `text-embedding-3` and later models.
             ///   - user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
             public init(
                 input: Components.Schemas.CreateEmbeddingRequest.inputPayload,
                 model: Components.Schemas.CreateEmbeddingRequest.modelPayload,
                 encoding_format: Components.Schemas.CreateEmbeddingRequest.encoding_formatPayload? = nil,
+                dimensions: Swift.Int? = nil,
                 user: Swift.String? = nil
             ) {
                 self.input = input
                 self.model = model
                 self.encoding_format = encoding_format
+                self.dimensions = dimensions
                 self.user = user
             }
             public enum CodingKeys: String, CodingKey {
                 case input
                 case model
                 case encoding_format
+                case dimensions
                 case user
             }
             public init(from decoder: any Decoder) throws {
@@ -5642,6 +5529,10 @@ public enum Components {
                     Components.Schemas.CreateEmbeddingRequest.encoding_formatPayload.self,
                     forKey: .encoding_format
                 )
+                dimensions = try container.decodeIfPresent(
+                    Swift.Int.self,
+                    forKey: .dimensions
+                )
                 user = try container.decodeIfPresent(
                     Swift.String.self,
                     forKey: .user
@@ -5650,6 +5541,7 @@ public enum Components {
                     "input",
                     "model",
                     "encoding_format",
+                    "dimensions",
                     "user"
                 ])
             }
@@ -5806,20 +5698,215 @@ public enum Components {
                 }
             }
             case temperature(OpenAPIRuntime.MultipartPart<Components.Schemas.CreateTranscriptionRequest.temperaturePayload>)
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionRequest/timestamp_granularities[]`.
+            public struct timestamp_granularities_lbrack__rbrack_Payload: Sendable, Hashable {
+                public var body: OpenAPIRuntime.HTTPBody
+                /// Creates a new `timestamp_granularities_lbrack__rbrack_Payload`.
+                ///
+                /// - Parameters:
+                ///   - body:
+                public init(body: OpenAPIRuntime.HTTPBody) {
+                    self.body = body
+                }
+            }
+            case timestamp_granularities_lbrack__rbrack_(OpenAPIRuntime.MultipartPart<Components.Schemas.CreateTranscriptionRequest.timestamp_granularities_lbrack__rbrack_Payload>)
         }
-        /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponse`.
-        public struct CreateTranscriptionResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponse/text`.
+        /// Represents a transcription response returned by model, based on the provided input.
+        ///
+        /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseJson`.
+        public struct CreateTranscriptionResponseJson: Codable, Hashable, Sendable {
+            /// The transcribed text.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseJson/text`.
             public var text: Swift.String
-            /// Creates a new `CreateTranscriptionResponse`.
+            /// Creates a new `CreateTranscriptionResponseJson`.
             ///
             /// - Parameters:
-            ///   - text:
+            ///   - text: The transcribed text.
             public init(text: Swift.String) {
                 self.text = text
             }
             public enum CodingKeys: String, CodingKey {
                 case text
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/TranscriptionSegment`.
+        public struct TranscriptionSegment: Codable, Hashable, Sendable {
+            /// Unique identifier of the segment.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/id`.
+            public var id: Swift.Int
+            /// Seek offset of the segment.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/seek`.
+            public var seek: Swift.Int
+            /// Start time of the segment in seconds.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/start`.
+            public var start: Swift.Float
+            /// End time of the segment in seconds.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/end`.
+            public var end: Swift.Float
+            /// Text content of the segment.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/text`.
+            public var text: Swift.String
+            /// Array of token IDs for the text content.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/tokens`.
+            public var tokens: [Swift.Int]
+            /// Temperature parameter used for generating the segment.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/temperature`.
+            public var temperature: Swift.Float
+            /// Average logprob of the segment. If the value is lower than -1, consider the logprobs failed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/avg_logprob`.
+            public var avg_logprob: Swift.Float
+            /// Compression ratio of the segment. If the value is greater than 2.4, consider the compression failed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/compression_ratio`.
+            public var compression_ratio: Swift.Float
+            /// Probability of no speech in the segment. If the value is higher than 1.0 and the `avg_logprob` is below -1, consider this segment silent.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionSegment/no_speech_prob`.
+            public var no_speech_prob: Swift.Float
+            /// Creates a new `TranscriptionSegment`.
+            ///
+            /// - Parameters:
+            ///   - id: Unique identifier of the segment.
+            ///   - seek: Seek offset of the segment.
+            ///   - start: Start time of the segment in seconds.
+            ///   - end: End time of the segment in seconds.
+            ///   - text: Text content of the segment.
+            ///   - tokens: Array of token IDs for the text content.
+            ///   - temperature: Temperature parameter used for generating the segment.
+            ///   - avg_logprob: Average logprob of the segment. If the value is lower than -1, consider the logprobs failed.
+            ///   - compression_ratio: Compression ratio of the segment. If the value is greater than 2.4, consider the compression failed.
+            ///   - no_speech_prob: Probability of no speech in the segment. If the value is higher than 1.0 and the `avg_logprob` is below -1, consider this segment silent.
+            public init(
+                id: Swift.Int,
+                seek: Swift.Int,
+                start: Swift.Float,
+                end: Swift.Float,
+                text: Swift.String,
+                tokens: [Swift.Int],
+                temperature: Swift.Float,
+                avg_logprob: Swift.Float,
+                compression_ratio: Swift.Float,
+                no_speech_prob: Swift.Float
+            ) {
+                self.id = id
+                self.seek = seek
+                self.start = start
+                self.end = end
+                self.text = text
+                self.tokens = tokens
+                self.temperature = temperature
+                self.avg_logprob = avg_logprob
+                self.compression_ratio = compression_ratio
+                self.no_speech_prob = no_speech_prob
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case seek
+                case start
+                case end
+                case text
+                case tokens
+                case temperature
+                case avg_logprob
+                case compression_ratio
+                case no_speech_prob
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/TranscriptionWord`.
+        public struct TranscriptionWord: Codable, Hashable, Sendable {
+            /// The text content of the word.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionWord/word`.
+            public var word: Swift.String
+            /// Start time of the word in seconds.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionWord/start`.
+            public var start: Swift.Float
+            /// End time of the word in seconds.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TranscriptionWord/end`.
+            public var end: Swift.Float
+            /// Creates a new `TranscriptionWord`.
+            ///
+            /// - Parameters:
+            ///   - word: The text content of the word.
+            ///   - start: Start time of the word in seconds.
+            ///   - end: End time of the word in seconds.
+            public init(
+                word: Swift.String,
+                start: Swift.Float,
+                end: Swift.Float
+            ) {
+                self.word = word
+                self.start = start
+                self.end = end
+            }
+            public enum CodingKeys: String, CodingKey {
+                case word
+                case start
+                case end
+            }
+        }
+        /// Represents a verbose json transcription response returned by model, based on the provided input.
+        ///
+        /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson`.
+        public struct CreateTranscriptionResponseVerboseJson: Codable, Hashable, Sendable {
+            /// The language of the input audio.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/language`.
+            public var language: Swift.String
+            /// The duration of the input audio.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/duration`.
+            public var duration: Swift.String
+            /// The transcribed text.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/text`.
+            public var text: Swift.String
+            /// Extracted words and their corresponding timestamps.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/words`.
+            public var words: [Components.Schemas.TranscriptionWord]?
+            /// Segments of the transcribed text and their corresponding details.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/segments`.
+            public var segments: [Components.Schemas.TranscriptionSegment]?
+            /// Creates a new `CreateTranscriptionResponseVerboseJson`.
+            ///
+            /// - Parameters:
+            ///   - language: The language of the input audio.
+            ///   - duration: The duration of the input audio.
+            ///   - text: The transcribed text.
+            ///   - words: Extracted words and their corresponding timestamps.
+            ///   - segments: Segments of the transcribed text and their corresponding details.
+            public init(
+                language: Swift.String,
+                duration: Swift.String,
+                text: Swift.String,
+                words: [Components.Schemas.TranscriptionWord]? = nil,
+                segments: [Components.Schemas.TranscriptionSegment]? = nil
+            ) {
+                self.language = language
+                self.duration = duration
+                self.text = text
+                self.words = words
+                self.segments = segments
+            }
+            public enum CodingKeys: String, CodingKey {
+                case language
+                case duration
+                case text
+                case words
+                case segments
             }
         }
         /// - Remark: Generated from `#/components/schemas/CreateTranslationRequest`.
@@ -5885,11 +5972,11 @@ public enum Components {
             }
             case temperature(OpenAPIRuntime.MultipartPart<Components.Schemas.CreateTranslationRequest.temperaturePayload>)
         }
-        /// - Remark: Generated from `#/components/schemas/CreateTranslationResponse`.
-        public struct CreateTranslationResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/CreateTranslationResponse/text`.
+        /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseJson`.
+        public struct CreateTranslationResponseJson: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseJson/text`.
             public var text: Swift.String
-            /// Creates a new `CreateTranslationResponse`.
+            /// Creates a new `CreateTranslationResponseJson`.
             ///
             /// - Parameters:
             ///   - text:
@@ -5898,6 +5985,49 @@ public enum Components {
             }
             public enum CodingKeys: String, CodingKey {
                 case text
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseVerboseJson`.
+        public struct CreateTranslationResponseVerboseJson: Codable, Hashable, Sendable {
+            /// The language of the output translation (always `english`).
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseVerboseJson/language`.
+            public var language: Swift.String
+            /// The duration of the input audio.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseVerboseJson/duration`.
+            public var duration: Swift.String
+            /// The translated text.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseVerboseJson/text`.
+            public var text: Swift.String
+            /// Segments of the translated text and their corresponding details.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateTranslationResponseVerboseJson/segments`.
+            public var segments: [Components.Schemas.TranscriptionSegment]?
+            /// Creates a new `CreateTranslationResponseVerboseJson`.
+            ///
+            /// - Parameters:
+            ///   - language: The language of the output translation (always `english`).
+            ///   - duration: The duration of the input audio.
+            ///   - text: The translated text.
+            ///   - segments: Segments of the translated text and their corresponding details.
+            public init(
+                language: Swift.String,
+                duration: Swift.String,
+                text: Swift.String,
+                segments: [Components.Schemas.TranscriptionSegment]? = nil
+            ) {
+                self.language = language
+                self.duration = duration
+                self.text = text
+                self.segments = segments
+            }
+            public enum CodingKeys: String, CodingKey {
+                case language
+                case duration
+                case text
+                case segments
             }
         }
         /// - Remark: Generated from `#/components/schemas/CreateSpeechRequest`.
@@ -5966,7 +6096,7 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateSpeechRequest/input`.
             public var input: Swift.String
-            /// The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`.
+            /// The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`. Previews of the voices are available in the [Text to speech guide](/docs/guides/text-to-speech/voice-options).
             ///
             /// - Remark: Generated from `#/components/schemas/CreateSpeechRequest/voice`.
             @frozen public enum voicePayload: String, Codable, Hashable, Sendable {
@@ -5977,11 +6107,11 @@ public enum Components {
                 case nova = "nova"
                 case shimmer = "shimmer"
             }
-            /// The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`.
+            /// The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`. Previews of the voices are available in the [Text to speech guide](/docs/guides/text-to-speech/voice-options).
             ///
             /// - Remark: Generated from `#/components/schemas/CreateSpeechRequest/voice`.
             public var voice: Components.Schemas.CreateSpeechRequest.voicePayload
-            /// The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`.
+            /// The format to audio in. Supported formats are `mp3`, `opus`, `aac`, `flac`, `wav`, and `pcm`.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateSpeechRequest/response_format`.
             @frozen public enum response_formatPayload: String, Codable, Hashable, Sendable {
@@ -5989,8 +6119,10 @@ public enum Components {
                 case opus = "opus"
                 case aac = "aac"
                 case flac = "flac"
+                case wav = "wav"
+                case pcm = "pcm"
             }
-            /// The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`.
+            /// The format to audio in. Supported formats are `mp3`, `opus`, `aac`, `flac`, `wav`, and `pcm`.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateSpeechRequest/response_format`.
             public var response_format: Components.Schemas.CreateSpeechRequest.response_formatPayload?
@@ -6003,8 +6135,8 @@ public enum Components {
             /// - Parameters:
             ///   - model: One of the available [TTS models](/docs/models/tts): `tts-1` or `tts-1-hd`
             ///   - input: The text to generate audio for. The maximum length is 4096 characters.
-            ///   - voice: The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`.
-            ///   - response_format: The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`.
+            ///   - voice: The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`. Previews of the voices are available in the [Text to speech guide](/docs/guides/text-to-speech/voice-options).
+            ///   - response_format: The format to audio in. Supported formats are `mp3`, `opus`, `aac`, `flac`, `wav`, and `pcm`.
             ///   - speed: The speed of the generated audio. Select a value from `0.25` to `4.0`. `1.0` is the default.
             public init(
                 model: Components.Schemas.CreateSpeechRequest.modelPayload,
@@ -6432,6 +6564,43 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/FineTuningJob/validation_file`.
             public var validation_file: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/FineTuningJob/integrationsPayload`.
+            @frozen public enum integrationsPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/FineTuningJob/integrationsPayload/case1`.
+                case FineTuningIntegration(Components.Schemas.FineTuningIntegration)
+                public init(from decoder: any Decoder) throws {
+                    var errors: [any Error] = []
+                    do {
+                        self = .FineTuningIntegration(try .init(from: decoder))
+                        return
+                    } catch {
+                        errors.append(error)
+                    }
+                    throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                        type: Self.self,
+                        codingPath: decoder.codingPath,
+                        errors: errors
+                    )
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    switch self {
+                    case let .FineTuningIntegration(value):
+                        try value.encode(to: encoder)
+                    }
+                }
+            }
+            /// A list of integrations to enable for this fine-tuning job.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningJob/integrations`.
+            public typealias integrationsPayload = [Components.Schemas.FineTuningJob.integrationsPayloadPayload]
+            /// A list of integrations to enable for this fine-tuning job.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningJob/integrations`.
+            public var integrations: Components.Schemas.FineTuningJob.integrationsPayload?
+            /// The seed used for the fine-tuning job.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningJob/seed`.
+            public var seed: Swift.Int
             /// Creates a new `FineTuningJob`.
             ///
             /// - Parameters:
@@ -6449,6 +6618,8 @@ public enum Components {
             ///   - trained_tokens: The total number of billable tokens processed by this fine-tuning job. The value will be null if the fine-tuning job is still running.
             ///   - training_file: The file ID used for training. You can retrieve the training data with the [Files API](/docs/api-reference/files/retrieve-contents).
             ///   - validation_file: The file ID used for validation. You can retrieve the validation results with the [Files API](/docs/api-reference/files/retrieve-contents).
+            ///   - integrations: A list of integrations to enable for this fine-tuning job.
+            ///   - seed: The seed used for the fine-tuning job.
             public init(
                 id: Swift.String,
                 created_at: Swift.Int,
@@ -6463,7 +6634,9 @@ public enum Components {
                 status: Components.Schemas.FineTuningJob.statusPayload,
                 trained_tokens: Swift.Int? = nil,
                 training_file: Swift.String,
-                validation_file: Swift.String? = nil
+                validation_file: Swift.String? = nil,
+                integrations: Components.Schemas.FineTuningJob.integrationsPayload? = nil,
+                seed: Swift.Int
             ) {
                 self.id = id
                 self.created_at = created_at
@@ -6479,6 +6652,8 @@ public enum Components {
                 self.trained_tokens = trained_tokens
                 self.training_file = training_file
                 self.validation_file = validation_file
+                self.integrations = integrations
+                self.seed = seed
             }
             public enum CodingKeys: String, CodingKey {
                 case id
@@ -6495,6 +6670,98 @@ public enum Components {
                 case trained_tokens
                 case training_file
                 case validation_file
+                case integrations
+                case seed
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/FineTuningIntegration`.
+        public struct FineTuningIntegration: Codable, Hashable, Sendable {
+            /// The type of the integration being enabled for the fine-tuning job
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case wandb = "wandb"
+            }
+            /// The type of the integration being enabled for the fine-tuning job
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/type`.
+            public var _type: Components.Schemas.FineTuningIntegration._typePayload
+            /// The settings for your integration with Weights and Biases. This payload specifies the project that
+            /// metrics will be sent to. Optionally, you can set an explicit display name for your run, add tags
+            /// to your run, and set a default entity (team, username, etc) to be associated with your run.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/wandb`.
+            public struct wandbPayload: Codable, Hashable, Sendable {
+                /// The name of the project that the new run will be created under.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/wandb/project`.
+                public var project: Swift.String
+                /// A display name to set for the run. If not set, we will use the Job ID as the name.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/wandb/name`.
+                public var name: Swift.String?
+                /// The entity to use for the run. This allows you to set the team or username of the WandB user that you would
+                /// like associated with the run. If not set, the default entity for the registered WandB API key is used.
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/wandb/entity`.
+                public var entity: Swift.String?
+                /// A list of tags to be attached to the newly created run. These tags are passed through directly to WandB. Some
+                /// default tags are generated by OpenAI: "openai/finetune", "openai/{base-model}", "openai/{ftjob-abcdef}".
+                ///
+                ///
+                /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/wandb/tags`.
+                public var tags: [Swift.String]?
+                /// Creates a new `wandbPayload`.
+                ///
+                /// - Parameters:
+                ///   - project: The name of the project that the new run will be created under.
+                ///   - name: A display name to set for the run. If not set, we will use the Job ID as the name.
+                ///   - entity: The entity to use for the run. This allows you to set the team or username of the WandB user that you would
+                ///   - tags: A list of tags to be attached to the newly created run. These tags are passed through directly to WandB. Some
+                public init(
+                    project: Swift.String,
+                    name: Swift.String? = nil,
+                    entity: Swift.String? = nil,
+                    tags: [Swift.String]? = nil
+                ) {
+                    self.project = project
+                    self.name = name
+                    self.entity = entity
+                    self.tags = tags
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case project
+                    case name
+                    case entity
+                    case tags
+                }
+            }
+            /// The settings for your integration with Weights and Biases. This payload specifies the project that
+            /// metrics will be sent to. Optionally, you can set an explicit display name for your run, add tags
+            /// to your run, and set a default entity (team, username, etc) to be associated with your run.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/FineTuningIntegration/wandb`.
+            public var wandb: Components.Schemas.FineTuningIntegration.wandbPayload
+            /// Creates a new `FineTuningIntegration`.
+            ///
+            /// - Parameters:
+            ///   - _type: The type of the integration being enabled for the fine-tuning job
+            ///   - wandb: The settings for your integration with Weights and Biases. This payload specifies the project that
+            public init(
+                _type: Components.Schemas.FineTuningIntegration._typePayload,
+                wandb: Components.Schemas.FineTuningIntegration.wandbPayload
+            ) {
+                self._type = _type
+                self.wandb = wandb
+            }
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case wandb
             }
         }
         /// Fine-tuning job event object
@@ -6550,248 +6817,134 @@ public enum Components {
                 case object
             }
         }
-        /// The `FineTune` object represents a legacy fine-tune job that has been created through the API.
+        /// The `fine_tuning.job.checkpoint` object represents a model checkpoint for a fine-tuning job that is ready to use.
         ///
         ///
-        /// - Remark: Generated from `#/components/schemas/FineTune`.
-        @available(*, deprecated)
-        public struct FineTune: Codable, Hashable, Sendable {
-            /// The object identifier, which can be referenced in the API endpoints.
+        /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint`.
+        public struct FineTuningJobCheckpoint: Codable, Hashable, Sendable {
+            /// The checkpoint identifier, which can be referenced in the API endpoints.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/id`.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/id`.
             public var id: Swift.String
-            /// The Unix timestamp (in seconds) for when the fine-tuning job was created.
+            /// The Unix timestamp (in seconds) for when the checkpoint was created.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/created_at`.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/created_at`.
             public var created_at: Swift.Int
-            /// The list of events that have been observed in the lifecycle of the FineTune job.
+            /// The name of the fine-tuned checkpoint model that is created.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/events`.
-            public var events: [Components.Schemas.FineTuneEvent]?
-            /// The name of the fine-tuned model that is being created.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/fine_tuned_model_checkpoint`.
+            public var fine_tuned_model_checkpoint: Swift.String
+            /// The step number that the checkpoint was created at.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/fine_tuned_model`.
-            public var fine_tuned_model: Swift.String?
-            /// The hyperparameters used for the fine-tuning job. See the [fine-tuning guide](/docs/guides/legacy-fine-tuning/hyperparameters) for more details.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/step_number`.
+            public var step_number: Swift.Int
+            /// Metrics at the step number during the fine-tuning job.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams`.
-            public struct hyperparamsPayload: Codable, Hashable, Sendable {
-                /// The batch size to use for training. The batch size is the number of
-                /// training examples used to train a single forward and backward pass.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/batch_size`.
-                public var batch_size: Swift.Int
-                /// The number of classes to use for computing classification metrics.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/classification_n_classes`.
-                public var classification_n_classes: Swift.Int?
-                /// The positive class to use for computing classification metrics.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/classification_positive_class`.
-                public var classification_positive_class: Swift.String?
-                /// The classification metrics to compute using the validation dataset at the end of every epoch.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/compute_classification_metrics`.
-                public var compute_classification_metrics: Swift.Bool?
-                /// The learning rate multiplier to use for training.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/learning_rate_multiplier`.
-                public var learning_rate_multiplier: Swift.Double
-                /// The number of epochs to train the model for. An epoch refers to one
-                /// full cycle through the training dataset.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/n_epochs`.
-                public var n_epochs: Swift.Int
-                /// The weight to use for loss on the prompt tokens.
-                ///
-                ///
-                /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams/prompt_loss_weight`.
-                public var prompt_loss_weight: Swift.Double
-                /// Creates a new `hyperparamsPayload`.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics`.
+            public struct metricsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/step`.
+                public var step: Swift.Double?
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/train_loss`.
+                public var train_loss: Swift.Double?
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/train_mean_token_accuracy`.
+                public var train_mean_token_accuracy: Swift.Double?
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/valid_loss`.
+                public var valid_loss: Swift.Double?
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/valid_mean_token_accuracy`.
+                public var valid_mean_token_accuracy: Swift.Double?
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/full_valid_loss`.
+                public var full_valid_loss: Swift.Double?
+                /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics/full_valid_mean_token_accuracy`.
+                public var full_valid_mean_token_accuracy: Swift.Double?
+                /// Creates a new `metricsPayload`.
                 ///
                 /// - Parameters:
-                ///   - batch_size: The batch size to use for training. The batch size is the number of
-                ///   - classification_n_classes: The number of classes to use for computing classification metrics.
-                ///   - classification_positive_class: The positive class to use for computing classification metrics.
-                ///   - compute_classification_metrics: The classification metrics to compute using the validation dataset at the end of every epoch.
-                ///   - learning_rate_multiplier: The learning rate multiplier to use for training.
-                ///   - n_epochs: The number of epochs to train the model for. An epoch refers to one
-                ///   - prompt_loss_weight: The weight to use for loss on the prompt tokens.
+                ///   - step:
+                ///   - train_loss:
+                ///   - train_mean_token_accuracy:
+                ///   - valid_loss:
+                ///   - valid_mean_token_accuracy:
+                ///   - full_valid_loss:
+                ///   - full_valid_mean_token_accuracy:
                 public init(
-                    batch_size: Swift.Int,
-                    classification_n_classes: Swift.Int? = nil,
-                    classification_positive_class: Swift.String? = nil,
-                    compute_classification_metrics: Swift.Bool? = nil,
-                    learning_rate_multiplier: Swift.Double,
-                    n_epochs: Swift.Int,
-                    prompt_loss_weight: Swift.Double
+                    step: Swift.Double? = nil,
+                    train_loss: Swift.Double? = nil,
+                    train_mean_token_accuracy: Swift.Double? = nil,
+                    valid_loss: Swift.Double? = nil,
+                    valid_mean_token_accuracy: Swift.Double? = nil,
+                    full_valid_loss: Swift.Double? = nil,
+                    full_valid_mean_token_accuracy: Swift.Double? = nil
                 ) {
-                    self.batch_size = batch_size
-                    self.classification_n_classes = classification_n_classes
-                    self.classification_positive_class = classification_positive_class
-                    self.compute_classification_metrics = compute_classification_metrics
-                    self.learning_rate_multiplier = learning_rate_multiplier
-                    self.n_epochs = n_epochs
-                    self.prompt_loss_weight = prompt_loss_weight
+                    self.step = step
+                    self.train_loss = train_loss
+                    self.train_mean_token_accuracy = train_mean_token_accuracy
+                    self.valid_loss = valid_loss
+                    self.valid_mean_token_accuracy = valid_mean_token_accuracy
+                    self.full_valid_loss = full_valid_loss
+                    self.full_valid_mean_token_accuracy = full_valid_mean_token_accuracy
                 }
                 public enum CodingKeys: String, CodingKey {
-                    case batch_size
-                    case classification_n_classes
-                    case classification_positive_class
-                    case compute_classification_metrics
-                    case learning_rate_multiplier
-                    case n_epochs
-                    case prompt_loss_weight
+                    case step
+                    case train_loss
+                    case train_mean_token_accuracy
+                    case valid_loss
+                    case valid_mean_token_accuracy
+                    case full_valid_loss
+                    case full_valid_mean_token_accuracy
                 }
             }
-            /// The hyperparameters used for the fine-tuning job. See the [fine-tuning guide](/docs/guides/legacy-fine-tuning/hyperparameters) for more details.
+            /// Metrics at the step number during the fine-tuning job.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/hyperparams`.
-            public var hyperparams: Components.Schemas.FineTune.hyperparamsPayload
-            /// The base model that is being fine-tuned.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/metrics`.
+            public var metrics: Components.Schemas.FineTuningJobCheckpoint.metricsPayload
+            /// The name of the fine-tuning job that this checkpoint was created from.
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/model`.
-            public var model: Swift.String
-            /// The object type, which is always "fine-tune".
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/fine_tuning_job_id`.
+            public var fine_tuning_job_id: Swift.String
+            /// The object type, which is always "fine_tuning.job.checkpoint".
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/object`.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/object`.
             @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case fine_hyphen_tune = "fine-tune"
+                case fine_tuning_period_job_period_checkpoint = "fine_tuning.job.checkpoint"
             }
-            /// The object type, which is always "fine-tune".
+            /// The object type, which is always "fine_tuning.job.checkpoint".
             ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/object`.
-            public var object: Components.Schemas.FineTune.objectPayload
-            /// The organization that owns the fine-tuning job.
-            ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/organization_id`.
-            public var organization_id: Swift.String
-            /// The compiled results files for the fine-tuning job.
-            ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/result_files`.
-            public var result_files: [Components.Schemas.OpenAIFile]
-            /// The current status of the fine-tuning job, which can be either `created`, `running`, `succeeded`, `failed`, or `cancelled`.
-            ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/status`.
-            public var status: Swift.String
-            /// The list of files used for training.
-            ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/training_files`.
-            public var training_files: [Components.Schemas.OpenAIFile]
-            /// The Unix timestamp (in seconds) for when the fine-tuning job was last updated.
-            ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/updated_at`.
-            public var updated_at: Swift.Int
-            /// The list of files used for validation.
-            ///
-            /// - Remark: Generated from `#/components/schemas/FineTune/validation_files`.
-            public var validation_files: [Components.Schemas.OpenAIFile]
-            /// Creates a new `FineTune`.
+            /// - Remark: Generated from `#/components/schemas/FineTuningJobCheckpoint/object`.
+            public var object: Components.Schemas.FineTuningJobCheckpoint.objectPayload
+            /// Creates a new `FineTuningJobCheckpoint`.
             ///
             /// - Parameters:
-            ///   - id: The object identifier, which can be referenced in the API endpoints.
-            ///   - created_at: The Unix timestamp (in seconds) for when the fine-tuning job was created.
-            ///   - events: The list of events that have been observed in the lifecycle of the FineTune job.
-            ///   - fine_tuned_model: The name of the fine-tuned model that is being created.
-            ///   - hyperparams: The hyperparameters used for the fine-tuning job. See the [fine-tuning guide](/docs/guides/legacy-fine-tuning/hyperparameters) for more details.
-            ///   - model: The base model that is being fine-tuned.
-            ///   - object: The object type, which is always "fine-tune".
-            ///   - organization_id: The organization that owns the fine-tuning job.
-            ///   - result_files: The compiled results files for the fine-tuning job.
-            ///   - status: The current status of the fine-tuning job, which can be either `created`, `running`, `succeeded`, `failed`, or `cancelled`.
-            ///   - training_files: The list of files used for training.
-            ///   - updated_at: The Unix timestamp (in seconds) for when the fine-tuning job was last updated.
-            ///   - validation_files: The list of files used for validation.
+            ///   - id: The checkpoint identifier, which can be referenced in the API endpoints.
+            ///   - created_at: The Unix timestamp (in seconds) for when the checkpoint was created.
+            ///   - fine_tuned_model_checkpoint: The name of the fine-tuned checkpoint model that is created.
+            ///   - step_number: The step number that the checkpoint was created at.
+            ///   - metrics: Metrics at the step number during the fine-tuning job.
+            ///   - fine_tuning_job_id: The name of the fine-tuning job that this checkpoint was created from.
+            ///   - object: The object type, which is always "fine_tuning.job.checkpoint".
             public init(
                 id: Swift.String,
                 created_at: Swift.Int,
-                events: [Components.Schemas.FineTuneEvent]? = nil,
-                fine_tuned_model: Swift.String? = nil,
-                hyperparams: Components.Schemas.FineTune.hyperparamsPayload,
-                model: Swift.String,
-                object: Components.Schemas.FineTune.objectPayload,
-                organization_id: Swift.String,
-                result_files: [Components.Schemas.OpenAIFile],
-                status: Swift.String,
-                training_files: [Components.Schemas.OpenAIFile],
-                updated_at: Swift.Int,
-                validation_files: [Components.Schemas.OpenAIFile]
+                fine_tuned_model_checkpoint: Swift.String,
+                step_number: Swift.Int,
+                metrics: Components.Schemas.FineTuningJobCheckpoint.metricsPayload,
+                fine_tuning_job_id: Swift.String,
+                object: Components.Schemas.FineTuningJobCheckpoint.objectPayload
             ) {
                 self.id = id
                 self.created_at = created_at
-                self.events = events
-                self.fine_tuned_model = fine_tuned_model
-                self.hyperparams = hyperparams
-                self.model = model
+                self.fine_tuned_model_checkpoint = fine_tuned_model_checkpoint
+                self.step_number = step_number
+                self.metrics = metrics
+                self.fine_tuning_job_id = fine_tuning_job_id
                 self.object = object
-                self.organization_id = organization_id
-                self.result_files = result_files
-                self.status = status
-                self.training_files = training_files
-                self.updated_at = updated_at
-                self.validation_files = validation_files
             }
             public enum CodingKeys: String, CodingKey {
                 case id
                 case created_at
-                case events
-                case fine_tuned_model
-                case hyperparams
-                case model
-                case object
-                case organization_id
-                case result_files
-                case status
-                case training_files
-                case updated_at
-                case validation_files
-            }
-        }
-        /// Fine-tune event object
-        ///
-        /// - Remark: Generated from `#/components/schemas/FineTuneEvent`.
-        @available(*, deprecated)
-        public struct FineTuneEvent: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/FineTuneEvent/created_at`.
-            public var created_at: Swift.Int
-            /// - Remark: Generated from `#/components/schemas/FineTuneEvent/level`.
-            public var level: Swift.String
-            /// - Remark: Generated from `#/components/schemas/FineTuneEvent/message`.
-            public var message: Swift.String
-            /// - Remark: Generated from `#/components/schemas/FineTuneEvent/object`.
-            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case fine_hyphen_tune_hyphen_event = "fine-tune-event"
-            }
-            /// - Remark: Generated from `#/components/schemas/FineTuneEvent/object`.
-            public var object: Components.Schemas.FineTuneEvent.objectPayload
-            /// Creates a new `FineTuneEvent`.
-            ///
-            /// - Parameters:
-            ///   - created_at:
-            ///   - level:
-            ///   - message:
-            ///   - object:
-            public init(
-                created_at: Swift.Int,
-                level: Swift.String,
-                message: Swift.String,
-                object: Components.Schemas.FineTuneEvent.objectPayload
-            ) {
-                self.created_at = created_at
-                self.level = level
-                self.message = message
-                self.object = object
-            }
-            public enum CodingKeys: String, CodingKey {
-                case created_at
-                case level
-                case message
+                case fine_tuned_model_checkpoint
+                case step_number
+                case metrics
+                case fine_tuning_job_id
                 case object
             }
         }
@@ -6832,6 +6985,160 @@ public enum Components {
                 case total_tokens
             }
         }
+        /// Usage statistics related to the run. This value will be `null` if the run is not in a terminal state (i.e. `in_progress`, `queued`, etc.).
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunCompletionUsage`.
+        public struct RunCompletionUsage: Codable, Hashable, Sendable {
+            /// Number of completion tokens used over the course of the run.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunCompletionUsage/completion_tokens`.
+            public var completion_tokens: Swift.Int
+            /// Number of prompt tokens used over the course of the run.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunCompletionUsage/prompt_tokens`.
+            public var prompt_tokens: Swift.Int
+            /// Total number of tokens used (prompt + completion).
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunCompletionUsage/total_tokens`.
+            public var total_tokens: Swift.Int
+            /// Creates a new `RunCompletionUsage`.
+            ///
+            /// - Parameters:
+            ///   - completion_tokens: Number of completion tokens used over the course of the run.
+            ///   - prompt_tokens: Number of prompt tokens used over the course of the run.
+            ///   - total_tokens: Total number of tokens used (prompt + completion).
+            public init(
+                completion_tokens: Swift.Int,
+                prompt_tokens: Swift.Int,
+                total_tokens: Swift.Int
+            ) {
+                self.completion_tokens = completion_tokens
+                self.prompt_tokens = prompt_tokens
+                self.total_tokens = total_tokens
+            }
+            public enum CodingKeys: String, CodingKey {
+                case completion_tokens
+                case prompt_tokens
+                case total_tokens
+            }
+        }
+        /// Usage statistics related to the run step. This value will be `null` while the run step's status is `in_progress`.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunStepCompletionUsage`.
+        public struct RunStepCompletionUsage: Codable, Hashable, Sendable {
+            /// Number of completion tokens used over the course of the run step.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepCompletionUsage/completion_tokens`.
+            public var completion_tokens: Swift.Int
+            /// Number of prompt tokens used over the course of the run step.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepCompletionUsage/prompt_tokens`.
+            public var prompt_tokens: Swift.Int
+            /// Total number of tokens used (prompt + completion).
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepCompletionUsage/total_tokens`.
+            public var total_tokens: Swift.Int
+            /// Creates a new `RunStepCompletionUsage`.
+            ///
+            /// - Parameters:
+            ///   - completion_tokens: Number of completion tokens used over the course of the run step.
+            ///   - prompt_tokens: Number of prompt tokens used over the course of the run step.
+            ///   - total_tokens: Total number of tokens used (prompt + completion).
+            public init(
+                completion_tokens: Swift.Int,
+                prompt_tokens: Swift.Int,
+                total_tokens: Swift.Int
+            ) {
+                self.completion_tokens = completion_tokens
+                self.prompt_tokens = prompt_tokens
+                self.total_tokens = total_tokens
+            }
+            public enum CodingKeys: String, CodingKey {
+                case completion_tokens
+                case prompt_tokens
+                case total_tokens
+            }
+        }
+        /// Specifies the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+        ///
+        /// Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the message the model generates is valid JSON.
+        ///
+        /// **Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if `finish_reason="length"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.
+        ///
+        ///
+        /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormatOption`.
+        @frozen public enum AssistantsApiResponseFormatOption: Codable, Hashable, Sendable {
+            /// `auto` is the default value
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormatOption/case1`.
+            @frozen public enum Case1Payload: String, Codable, Hashable, Sendable {
+                case none = "none"
+                case auto = "auto"
+            }
+            /// `auto` is the default value
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormatOption/case1`.
+            case case1(Components.Schemas.AssistantsApiResponseFormatOption.Case1Payload)
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormatOption/case2`.
+            case AssistantsApiResponseFormat(Components.Schemas.AssistantsApiResponseFormat)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .case1(try decoder.decodeFromSingleValueContainer())
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .AssistantsApiResponseFormat(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .case1(value):
+                    try encoder.encodeToSingleValueContainer(value)
+                case let .AssistantsApiResponseFormat(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// An object describing the expected output of the model. If `json_object` only `function` type `tools` are allowed to be passed to the Run. If `text` the model can return text or any value needed.
+        ///
+        ///
+        /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormat`.
+        public struct AssistantsApiResponseFormat: Codable, Hashable, Sendable {
+            /// Must be one of `text` or `json_object`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormat/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case text = "text"
+                case json_object = "json_object"
+            }
+            /// Must be one of `text` or `json_object`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiResponseFormat/type`.
+            public var _type: Components.Schemas.AssistantsApiResponseFormat._typePayload?
+            /// Creates a new `AssistantsApiResponseFormat`.
+            ///
+            /// - Parameters:
+            ///   - _type: Must be one of `text` or `json_object`.
+            public init(_type: Components.Schemas.AssistantsApiResponseFormat._typePayload? = nil) {
+                self._type = _type
+            }
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+            }
+        }
         /// Represents an `assistant` that can call the model and use tools.
         ///
         /// - Remark: Generated from `#/components/schemas/AssistantObject`.
@@ -6869,7 +7176,7 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/AssistantObject/model`.
             public var model: Swift.String
-            /// The system instructions that the assistant uses. The maximum length is 32768 characters.
+            /// The system instructions that the assistant uses. The maximum length is 256,000 characters.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/AssistantObject/instructions`.
@@ -6879,7 +7186,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/AssistantObject/toolsPayload/case1`.
                 case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
                 /// - Remark: Generated from `#/components/schemas/AssistantObject/toolsPayload/case2`.
-                case AssistantToolsRetrieval(Components.Schemas.AssistantToolsRetrieval)
+                case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
                 /// - Remark: Generated from `#/components/schemas/AssistantObject/toolsPayload/case3`.
                 case AssistantToolsFunction(Components.Schemas.AssistantToolsFunction)
                 public init(from decoder: any Decoder) throws {
@@ -6891,7 +7198,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .AssistantToolsRetrieval(try .init(from: decoder))
+                        self = .AssistantToolsFileSearch(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -6912,33 +7219,109 @@ public enum Components {
                     switch self {
                     case let .AssistantToolsCode(value):
                         try value.encode(to: encoder)
-                    case let .AssistantToolsRetrieval(value):
+                    case let .AssistantToolsFileSearch(value):
                         try value.encode(to: encoder)
                     case let .AssistantToolsFunction(value):
                         try value.encode(to: encoder)
                     }
                 }
             }
-            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
+            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/AssistantObject/tools`.
             public typealias toolsPayload = [Components.Schemas.AssistantObject.toolsPayloadPayload]
-            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
+            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/AssistantObject/tools`.
             public var tools: Components.Schemas.AssistantObject.toolsPayload
-            /// A list of [file](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantObject/file_ids`.
-            public var file_ids: [Swift.String]
+            /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter`` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter`` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.AssistantObject.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources/file_search`.
+                public struct file_searchPayload: Codable, Hashable, Sendable {
+                    /// The ID of the [vector store](/docs/api-reference/vector-stores/object) attached to this assistant. There can be a maximum of 1 vector store attached to the assistant.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources/file_search/vector_store_ids`.
+                    public var vector_store_ids: [Swift.String]?
+                    /// Creates a new `file_searchPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - vector_store_ids: The ID of the [vector store](/docs/api-reference/vector-stores/object) attached to this assistant. There can be a maximum of 1 vector store attached to the assistant.
+                    public init(vector_store_ids: [Swift.String]? = nil) {
+                        self.vector_store_ids = vector_store_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case vector_store_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources/file_search`.
+                public var file_search: Components.Schemas.AssistantObject.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.AssistantObject.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.AssistantObject.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantObject/tool_resources`.
+            public var tool_resources: Components.Schemas.AssistantObject.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/AssistantObject/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantObject/temperature`.
+            public var temperature: Swift.Double?
+            /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///
+            /// We generally recommend altering this or temperature but not both.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantObject/top_p`.
+            public var top_p: Swift.Double?
+            /// - Remark: Generated from `#/components/schemas/AssistantObject/response_format`.
+            public var response_format: Components.Schemas.AssistantsApiResponseFormatOption?
             /// Creates a new `AssistantObject`.
             ///
             /// - Parameters:
@@ -6948,10 +7331,13 @@ public enum Components {
             ///   - name: The name of the assistant. The maximum length is 256 characters.
             ///   - description: The description of the assistant. The maximum length is 512 characters.
             ///   - model: ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
-            ///   - instructions: The system instructions that the assistant uses. The maximum length is 32768 characters.
-            ///   - tools: A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
-            ///   - file_ids: A list of [file](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.
+            ///   - instructions: The system instructions that the assistant uses. The maximum length is 256,000 characters.
+            ///   - tools: A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
+            ///   - tool_resources: A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///   - response_format:
             public init(
                 id: Swift.String,
                 object: Components.Schemas.AssistantObject.objectPayload,
@@ -6961,8 +7347,11 @@ public enum Components {
                 model: Swift.String,
                 instructions: Swift.String? = nil,
                 tools: Components.Schemas.AssistantObject.toolsPayload,
-                file_ids: [Swift.String],
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                tool_resources: Components.Schemas.AssistantObject.tool_resourcesPayload? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                temperature: Swift.Double? = nil,
+                top_p: Swift.Double? = nil,
+                response_format: Components.Schemas.AssistantsApiResponseFormatOption? = nil
             ) {
                 self.id = id
                 self.object = object
@@ -6972,8 +7361,11 @@ public enum Components {
                 self.model = model
                 self.instructions = instructions
                 self.tools = tools
-                self.file_ids = file_ids
+                self.tool_resources = tool_resources
                 self.metadata = metadata
+                self.temperature = temperature
+                self.top_p = top_p
+                self.response_format = response_format
             }
             public enum CodingKeys: String, CodingKey {
                 case id
@@ -6984,8 +7376,11 @@ public enum Components {
                 case model
                 case instructions
                 case tools
-                case file_ids
+                case tool_resources
                 case metadata
+                case temperature
+                case top_p
+                case response_format
             }
         }
         /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest`.
@@ -6997,12 +7392,40 @@ public enum Components {
             public struct modelPayload: Codable, Hashable, Sendable {
                 /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/model/value1`.
                 public var value1: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/model/value2`.
+                @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
+                    case gpt_hyphen_4_hyphen_turbo = "gpt-4-turbo"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_2024_hyphen_04_hyphen_09 = "gpt-4-turbo-2024-04-09"
+                    case gpt_hyphen_4_hyphen_0125_hyphen_preview = "gpt-4-0125-preview"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_preview = "gpt-4-turbo-preview"
+                    case gpt_hyphen_4_hyphen_1106_hyphen_preview = "gpt-4-1106-preview"
+                    case gpt_hyphen_4_hyphen_vision_hyphen_preview = "gpt-4-vision-preview"
+                    case gpt_hyphen_4 = "gpt-4"
+                    case gpt_hyphen_4_hyphen_0314 = "gpt-4-0314"
+                    case gpt_hyphen_4_hyphen_0613 = "gpt-4-0613"
+                    case gpt_hyphen_4_hyphen_32k = "gpt-4-32k"
+                    case gpt_hyphen_4_hyphen_32k_hyphen_0314 = "gpt-4-32k-0314"
+                    case gpt_hyphen_4_hyphen_32k_hyphen_0613 = "gpt-4-32k-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo = "gpt-3.5-turbo"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k = "gpt-3.5-turbo-16k"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0613 = "gpt-3.5-turbo-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106 = "gpt-3.5-turbo-1106"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0125 = "gpt-3.5-turbo-0125"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k_hyphen_0613 = "gpt-3.5-turbo-16k-0613"
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/model/value2`.
+                public var value2: Components.Schemas.CreateAssistantRequest.modelPayload.Value2Payload?
                 /// Creates a new `modelPayload`.
                 ///
                 /// - Parameters:
                 ///   - value1:
-                public init(value1: Swift.String? = nil) {
+                ///   - value2:
+                public init(
+                    value1: Swift.String? = nil,
+                    value2: Components.Schemas.CreateAssistantRequest.modelPayload.Value2Payload? = nil
+                ) {
                     self.value1 = value1
+                    self.value2 = value2
                 }
                 public init(from decoder: any Decoder) throws {
                     var errors: [any Error] = []
@@ -7011,9 +7434,15 @@ public enum Components {
                     } catch {
                         errors.append(error)
                     }
+                    do {
+                        value2 = try decoder.decodeFromSingleValueContainer()
+                    } catch {
+                        errors.append(error)
+                    }
                     try Swift.DecodingError.verifyAtLeastOneSchemaIsNotNil(
                         [
-                            value1
+                            value1,
+                            value2
                         ],
                         type: Self.self,
                         codingPath: decoder.codingPath,
@@ -7022,7 +7451,8 @@ public enum Components {
                 }
                 public func encode(to encoder: any Encoder) throws {
                     try encoder.encodeFirstNonNilValueToSingleValueContainer([
-                        value1
+                        value1,
+                        value2
                     ])
                 }
             }
@@ -7041,7 +7471,7 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/description`.
             public var description: Swift.String?
-            /// The system instructions that the assistant uses. The maximum length is 32768 characters.
+            /// The system instructions that the assistant uses. The maximum length is 256,000 characters.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/instructions`.
@@ -7051,7 +7481,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/toolsPayload/case1`.
                 case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
                 /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/toolsPayload/case2`.
-                case AssistantToolsRetrieval(Components.Schemas.AssistantToolsRetrieval)
+                case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
                 /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/toolsPayload/case3`.
                 case AssistantToolsFunction(Components.Schemas.AssistantToolsFunction)
                 public init(from decoder: any Decoder) throws {
@@ -7063,7 +7493,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .AssistantToolsRetrieval(try .init(from: decoder))
+                        self = .AssistantToolsFileSearch(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -7084,59 +7514,171 @@ public enum Components {
                     switch self {
                     case let .AssistantToolsCode(value):
                         try value.encode(to: encoder)
-                    case let .AssistantToolsRetrieval(value):
+                    case let .AssistantToolsFileSearch(value):
                         try value.encode(to: encoder)
                     case let .AssistantToolsFunction(value):
                         try value.encode(to: encoder)
                     }
                 }
             }
-            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
+            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tools`.
             public typealias toolsPayload = [Components.Schemas.CreateAssistantRequest.toolsPayloadPayload]
-            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
+            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tools`.
             public var tools: Components.Schemas.CreateAssistantRequest.toolsPayload?
-            /// A list of [file](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///
             ///
-            /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/file_ids`.
-            public var file_ids: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/file_search`.
+                @frozen public enum file_searchPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/file_search/case1`.
+                    public struct Case1Payload: Codable, Hashable, Sendable {
+                        /// Creates a new `Case1Payload`.
+                        public init() {}
+                    }
+                    /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/file_search/case1`.
+                    case case1(Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.file_searchPayload.Case1Payload)
+                    /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/file_search/case2`.
+                    public struct Case2Payload: Codable, Hashable, Sendable {
+                        /// Creates a new `Case2Payload`.
+                        public init() {}
+                    }
+                    /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/file_search/case2`.
+                    case case2(Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.file_searchPayload.Case2Payload)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .case1(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .case2(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .case1(value):
+                            try value.encode(to: encoder)
+                        case let .case2(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources/file_search`.
+                public var file_search: Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/tool_resources`.
+            public var tool_resources: Components.Schemas.CreateAssistantRequest.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/temperature`.
+            public var temperature: Swift.Double?
+            /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///
+            /// We generally recommend altering this or temperature but not both.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/top_p`.
+            public var top_p: Swift.Double?
+            /// - Remark: Generated from `#/components/schemas/CreateAssistantRequest/response_format`.
+            public var response_format: Components.Schemas.AssistantsApiResponseFormatOption?
             /// Creates a new `CreateAssistantRequest`.
             ///
             /// - Parameters:
             ///   - model: ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
             ///   - name: The name of the assistant. The maximum length is 256 characters.
             ///   - description: The description of the assistant. The maximum length is 512 characters.
-            ///   - instructions: The system instructions that the assistant uses. The maximum length is 32768 characters.
-            ///   - tools: A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
-            ///   - file_ids: A list of [file](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.
+            ///   - instructions: The system instructions that the assistant uses. The maximum length is 256,000 characters.
+            ///   - tools: A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
+            ///   - tool_resources: A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///   - response_format:
             public init(
                 model: Components.Schemas.CreateAssistantRequest.modelPayload,
                 name: Swift.String? = nil,
                 description: Swift.String? = nil,
                 instructions: Swift.String? = nil,
                 tools: Components.Schemas.CreateAssistantRequest.toolsPayload? = nil,
-                file_ids: [Swift.String]? = nil,
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                tool_resources: Components.Schemas.CreateAssistantRequest.tool_resourcesPayload? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                temperature: Swift.Double? = nil,
+                top_p: Swift.Double? = nil,
+                response_format: Components.Schemas.AssistantsApiResponseFormatOption? = nil
             ) {
                 self.model = model
                 self.name = name
                 self.description = description
                 self.instructions = instructions
                 self.tools = tools
-                self.file_ids = file_ids
+                self.tool_resources = tool_resources
                 self.metadata = metadata
+                self.temperature = temperature
+                self.top_p = top_p
+                self.response_format = response_format
             }
             public enum CodingKeys: String, CodingKey {
                 case model
@@ -7144,8 +7686,11 @@ public enum Components {
                 case description
                 case instructions
                 case tools
-                case file_ids
+                case tool_resources
                 case metadata
+                case temperature
+                case top_p
+                case response_format
             }
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -7169,13 +7714,25 @@ public enum Components {
                     Components.Schemas.CreateAssistantRequest.toolsPayload.self,
                     forKey: .tools
                 )
-                file_ids = try container.decodeIfPresent(
-                    [Swift.String].self,
-                    forKey: .file_ids
+                tool_resources = try container.decodeIfPresent(
+                    Components.Schemas.CreateAssistantRequest.tool_resourcesPayload.self,
+                    forKey: .tool_resources
                 )
                 metadata = try container.decodeIfPresent(
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
                     forKey: .metadata
+                )
+                temperature = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .temperature
+                )
+                top_p = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .top_p
+                )
+                response_format = try container.decodeIfPresent(
+                    Components.Schemas.AssistantsApiResponseFormatOption.self,
+                    forKey: .response_format
                 )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "model",
@@ -7183,8 +7740,11 @@ public enum Components {
                     "description",
                     "instructions",
                     "tools",
-                    "file_ids",
-                    "metadata"
+                    "tool_resources",
+                    "metadata",
+                    "temperature",
+                    "top_p",
+                    "response_format"
                 ])
             }
         }
@@ -7241,7 +7801,7 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/description`.
             public var description: Swift.String?
-            /// The system instructions that the assistant uses. The maximum length is 32768 characters.
+            /// The system instructions that the assistant uses. The maximum length is 256,000 characters.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/instructions`.
@@ -7251,7 +7811,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/toolsPayload/case1`.
                 case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
                 /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/toolsPayload/case2`.
-                case AssistantToolsRetrieval(Components.Schemas.AssistantToolsRetrieval)
+                case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
                 /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/toolsPayload/case3`.
                 case AssistantToolsFunction(Components.Schemas.AssistantToolsFunction)
                 public init(from decoder: any Decoder) throws {
@@ -7263,7 +7823,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .AssistantToolsRetrieval(try .init(from: decoder))
+                        self = .AssistantToolsFileSearch(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -7284,59 +7844,144 @@ public enum Components {
                     switch self {
                     case let .AssistantToolsCode(value):
                         try value.encode(to: encoder)
-                    case let .AssistantToolsRetrieval(value):
+                    case let .AssistantToolsFileSearch(value):
                         try value.encode(to: encoder)
                     case let .AssistantToolsFunction(value):
                         try value.encode(to: encoder)
                     }
                 }
             }
-            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
+            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tools`.
             public typealias toolsPayload = [Components.Schemas.ModifyAssistantRequest.toolsPayloadPayload]
-            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
+            /// A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tools`.
             public var tools: Components.Schemas.ModifyAssistantRequest.toolsPayload?
-            /// A list of [File](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order. If a file was previosuly attached to the list but does not show up in the list, it will be deleted from the assistant.
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///
             ///
-            /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/file_ids`.
-            public var file_ids: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// Overrides the list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: Overrides the list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources/file_search`.
+                public struct file_searchPayload: Codable, Hashable, Sendable {
+                    /// Overrides the [vector store](/docs/api-reference/vector-stores/object) attached to this assistant. There can be a maximum of 1 vector store attached to the assistant.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources/file_search/vector_store_ids`.
+                    public var vector_store_ids: [Swift.String]?
+                    /// Creates a new `file_searchPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - vector_store_ids: Overrides the [vector store](/docs/api-reference/vector-stores/object) attached to this assistant. There can be a maximum of 1 vector store attached to the assistant.
+                    public init(vector_store_ids: [Swift.String]? = nil) {
+                        self.vector_store_ids = vector_store_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case vector_store_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources/file_search`.
+                public var file_search: Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/tool_resources`.
+            public var tool_resources: Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/temperature`.
+            public var temperature: Swift.Double?
+            /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///
+            /// We generally recommend altering this or temperature but not both.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/top_p`.
+            public var top_p: Swift.Double?
+            /// - Remark: Generated from `#/components/schemas/ModifyAssistantRequest/response_format`.
+            public var response_format: Components.Schemas.AssistantsApiResponseFormatOption?
             /// Creates a new `ModifyAssistantRequest`.
             ///
             /// - Parameters:
             ///   - model: ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
             ///   - name: The name of the assistant. The maximum length is 256 characters.
             ///   - description: The description of the assistant. The maximum length is 512 characters.
-            ///   - instructions: The system instructions that the assistant uses. The maximum length is 32768 characters.
-            ///   - tools: A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `retrieval`, or `function`.
-            ///   - file_ids: A list of [File](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order. If a file was previosuly attached to the list but does not show up in the list, it will be deleted from the assistant.
+            ///   - instructions: The system instructions that the assistant uses. The maximum length is 256,000 characters.
+            ///   - tools: A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.
+            ///   - tool_resources: A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///   - response_format:
             public init(
                 model: Components.Schemas.ModifyAssistantRequest.modelPayload? = nil,
                 name: Swift.String? = nil,
                 description: Swift.String? = nil,
                 instructions: Swift.String? = nil,
                 tools: Components.Schemas.ModifyAssistantRequest.toolsPayload? = nil,
-                file_ids: [Swift.String]? = nil,
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                tool_resources: Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                temperature: Swift.Double? = nil,
+                top_p: Swift.Double? = nil,
+                response_format: Components.Schemas.AssistantsApiResponseFormatOption? = nil
             ) {
                 self.model = model
                 self.name = name
                 self.description = description
                 self.instructions = instructions
                 self.tools = tools
-                self.file_ids = file_ids
+                self.tool_resources = tool_resources
                 self.metadata = metadata
+                self.temperature = temperature
+                self.top_p = top_p
+                self.response_format = response_format
             }
             public enum CodingKeys: String, CodingKey {
                 case model
@@ -7344,8 +7989,11 @@ public enum Components {
                 case description
                 case instructions
                 case tools
-                case file_ids
+                case tool_resources
                 case metadata
+                case temperature
+                case top_p
+                case response_format
             }
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -7369,13 +8017,25 @@ public enum Components {
                     Components.Schemas.ModifyAssistantRequest.toolsPayload.self,
                     forKey: .tools
                 )
-                file_ids = try container.decodeIfPresent(
-                    [Swift.String].self,
-                    forKey: .file_ids
+                tool_resources = try container.decodeIfPresent(
+                    Components.Schemas.ModifyAssistantRequest.tool_resourcesPayload.self,
+                    forKey: .tool_resources
                 )
                 metadata = try container.decodeIfPresent(
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
                     forKey: .metadata
+                )
+                temperature = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .temperature
+                )
+                top_p = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .top_p
+                )
+                response_format = try container.decodeIfPresent(
+                    Components.Schemas.AssistantsApiResponseFormatOption.self,
+                    forKey: .response_format
                 )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "model",
@@ -7383,8 +8043,11 @@ public enum Components {
                     "description",
                     "instructions",
                     "tools",
-                    "file_ids",
-                    "metadata"
+                    "tool_resources",
+                    "metadata",
+                    "temperature",
+                    "top_p",
+                    "response_format"
                 ])
             }
         }
@@ -7485,23 +8148,23 @@ public enum Components {
                 case _type = "type"
             }
         }
-        /// - Remark: Generated from `#/components/schemas/AssistantToolsRetrieval`.
-        public struct AssistantToolsRetrieval: Codable, Hashable, Sendable {
-            /// The type of tool being defined: `retrieval`
+        /// - Remark: Generated from `#/components/schemas/AssistantToolsFileSearch`.
+        public struct AssistantToolsFileSearch: Codable, Hashable, Sendable {
+            /// The type of tool being defined: `file_search`
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantToolsRetrieval/type`.
+            /// - Remark: Generated from `#/components/schemas/AssistantToolsFileSearch/type`.
             @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
-                case retrieval = "retrieval"
+                case file_search = "file_search"
             }
-            /// The type of tool being defined: `retrieval`
+            /// The type of tool being defined: `file_search`
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantToolsRetrieval/type`.
-            public var _type: Components.Schemas.AssistantToolsRetrieval._typePayload
-            /// Creates a new `AssistantToolsRetrieval`.
+            /// - Remark: Generated from `#/components/schemas/AssistantToolsFileSearch/type`.
+            public var _type: Components.Schemas.AssistantToolsFileSearch._typePayload
+            /// Creates a new `AssistantToolsFileSearch`.
             ///
             /// - Parameters:
-            ///   - _type: The type of tool being defined: `retrieval`
-            public init(_type: Components.Schemas.AssistantToolsRetrieval._typePayload) {
+            ///   - _type: The type of tool being defined: `file_search`
+            public init(_type: Components.Schemas.AssistantToolsFileSearch._typePayload) {
                 self._type = _type
             }
             public enum CodingKeys: String, CodingKey {
@@ -7530,6 +8193,146 @@ public enum Components {
             public init(
                 _type: Components.Schemas.AssistantToolsFunction._typePayload,
                 function: Components.Schemas.FunctionObject
+            ) {
+                self._type = _type
+                self.function = function
+            }
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case function
+            }
+        }
+        /// Controls for how a thread will be truncated prior to the run. Use this to control the intial context window of the run.
+        ///
+        /// - Remark: Generated from `#/components/schemas/TruncationObject`.
+        public struct TruncationObject: Codable, Hashable, Sendable {
+            /// The truncation strategy to use for the thread. The default is `auto`. If set to `last_messages`, the thread will be truncated to the n most recent messages in the thread. When set to `auto`, messages in the middle of the thread will be dropped to fit the context length of the model, `max_prompt_tokens`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TruncationObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case auto = "auto"
+                case last_messages = "last_messages"
+            }
+            /// The truncation strategy to use for the thread. The default is `auto`. If set to `last_messages`, the thread will be truncated to the n most recent messages in the thread. When set to `auto`, messages in the middle of the thread will be dropped to fit the context length of the model, `max_prompt_tokens`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TruncationObject/type`.
+            public var _type: Components.Schemas.TruncationObject._typePayload
+            /// The number of most recent messages from the thread when constructing the context for the run.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TruncationObject/last_messages`.
+            public var last_messages: Swift.Int?
+            /// Creates a new `TruncationObject`.
+            ///
+            /// - Parameters:
+            ///   - _type: The truncation strategy to use for the thread. The default is `auto`. If set to `last_messages`, the thread will be truncated to the n most recent messages in the thread. When set to `auto`, messages in the middle of the thread will be dropped to fit the context length of the model, `max_prompt_tokens`.
+            ///   - last_messages: The number of most recent messages from the thread when constructing the context for the run.
+            public init(
+                _type: Components.Schemas.TruncationObject._typePayload,
+                last_messages: Swift.Int? = nil
+            ) {
+                self._type = _type
+                self.last_messages = last_messages
+            }
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case last_messages
+            }
+        }
+        /// Controls which (if any) tool is called by the model.
+        /// `none` means the model will not call any tools and instead generates a message.
+        /// `auto` is the default value and means the model can pick between generating a message or calling a tool.
+        /// Specifying a particular tool like `{"type": "file_search"}` or `{"type": "function", "function": {"name": "my_function"}}` forces the model to call that tool.
+        ///
+        ///
+        /// - Remark: Generated from `#/components/schemas/AssistantsApiToolChoiceOption`.
+        @frozen public enum AssistantsApiToolChoiceOption: Codable, Hashable, Sendable {
+            /// `none` means the model will not call a function and instead generates a message. `auto` means the model can pick between generating a message or calling a function.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiToolChoiceOption/case1`.
+            @frozen public enum Case1Payload: String, Codable, Hashable, Sendable {
+                case none = "none"
+                case auto = "auto"
+            }
+            /// `none` means the model will not call a function and instead generates a message. `auto` means the model can pick between generating a message or calling a function.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiToolChoiceOption/case1`.
+            case case1(Components.Schemas.AssistantsApiToolChoiceOption.Case1Payload)
+            /// - Remark: Generated from `#/components/schemas/AssistantsApiToolChoiceOption/case2`.
+            case AssistantsNamedToolChoice(Components.Schemas.AssistantsNamedToolChoice)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .case1(try decoder.decodeFromSingleValueContainer())
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .AssistantsNamedToolChoice(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .case1(value):
+                    try encoder.encodeToSingleValueContainer(value)
+                case let .AssistantsNamedToolChoice(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// Specifies a tool the model should use. Use to force the model to call a specific tool.
+        ///
+        /// - Remark: Generated from `#/components/schemas/AssistantsNamedToolChoice`.
+        public struct AssistantsNamedToolChoice: Codable, Hashable, Sendable {
+            /// The type of the tool. If type is `function`, the function name must be set
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsNamedToolChoice/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case function = "function"
+                case code_interpreter = "code_interpreter"
+                case file_search = "file_search"
+            }
+            /// The type of the tool. If type is `function`, the function name must be set
+            ///
+            /// - Remark: Generated from `#/components/schemas/AssistantsNamedToolChoice/type`.
+            public var _type: Components.Schemas.AssistantsNamedToolChoice._typePayload
+            /// - Remark: Generated from `#/components/schemas/AssistantsNamedToolChoice/function`.
+            public struct functionPayload: Codable, Hashable, Sendable {
+                /// The name of the function to call.
+                ///
+                /// - Remark: Generated from `#/components/schemas/AssistantsNamedToolChoice/function/name`.
+                public var name: Swift.String
+                /// Creates a new `functionPayload`.
+                ///
+                /// - Parameters:
+                ///   - name: The name of the function to call.
+                public init(name: Swift.String) {
+                    self.name = name
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case name
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/AssistantsNamedToolChoice/function`.
+            public var function: Components.Schemas.AssistantsNamedToolChoice.functionPayload?
+            /// Creates a new `AssistantsNamedToolChoice`.
+            ///
+            /// - Parameters:
+            ///   - _type: The type of the tool. If type is `function`, the function name must be set
+            ///   - function:
+            public init(
+                _type: Components.Schemas.AssistantsNamedToolChoice._typePayload,
+                function: Components.Schemas.AssistantsNamedToolChoice.functionPayload? = nil
             ) {
                 self._type = _type
                 self.function = function
@@ -7648,14 +8451,15 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/last_error`.
             public struct last_errorPayload: Codable, Hashable, Sendable {
-                /// One of `server_error` or `rate_limit_exceeded`.
+                /// One of `server_error`, `rate_limit_exceeded`, or `invalid_prompt`.
                 ///
                 /// - Remark: Generated from `#/components/schemas/RunObject/last_error/code`.
                 @frozen public enum codePayload: String, Codable, Hashable, Sendable {
                     case server_error = "server_error"
                     case rate_limit_exceeded = "rate_limit_exceeded"
+                    case invalid_prompt = "invalid_prompt"
                 }
-                /// One of `server_error` or `rate_limit_exceeded`.
+                /// One of `server_error`, `rate_limit_exceeded`, or `invalid_prompt`.
                 ///
                 /// - Remark: Generated from `#/components/schemas/RunObject/last_error/code`.
                 public var code: Components.Schemas.RunObject.last_errorPayload.codePayload
@@ -7666,7 +8470,7 @@ public enum Components {
                 /// Creates a new `last_errorPayload`.
                 ///
                 /// - Parameters:
-                ///   - code: One of `server_error` or `rate_limit_exceeded`.
+                ///   - code: One of `server_error`, `rate_limit_exceeded`, or `invalid_prompt`.
                 ///   - message: A human-readable description of the error.
                 public init(
                     code: Components.Schemas.RunObject.last_errorPayload.codePayload,
@@ -7687,7 +8491,7 @@ public enum Components {
             /// The Unix timestamp (in seconds) for when the run will expire.
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/expires_at`.
-            public var expires_at: Swift.Int
+            public var expires_at: Swift.Int?
             /// The Unix timestamp (in seconds) for when the run was started.
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/started_at`.
@@ -7704,6 +8508,36 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/completed_at`.
             public var completed_at: Swift.Int?
+            /// Details on why the run is incomplete. Will be `null` if the run is not incomplete.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunObject/incomplete_details`.
+            public struct incomplete_detailsPayload: Codable, Hashable, Sendable {
+                /// The reason why the run is incomplete. This will point to which specific token limit was reached over the course of the run.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunObject/incomplete_details/reason`.
+                @frozen public enum reasonPayload: String, Codable, Hashable, Sendable {
+                    case max_completion_tokens = "max_completion_tokens"
+                    case max_prompt_tokens = "max_prompt_tokens"
+                }
+                /// The reason why the run is incomplete. This will point to which specific token limit was reached over the course of the run.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunObject/incomplete_details/reason`.
+                public var reason: Components.Schemas.RunObject.incomplete_detailsPayload.reasonPayload?
+                /// Creates a new `incomplete_detailsPayload`.
+                ///
+                /// - Parameters:
+                ///   - reason: The reason why the run is incomplete. This will point to which specific token limit was reached over the course of the run.
+                public init(reason: Components.Schemas.RunObject.incomplete_detailsPayload.reasonPayload? = nil) {
+                    self.reason = reason
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case reason
+                }
+            }
+            /// Details on why the run is incomplete. Will be `null` if the run is not incomplete.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunObject/incomplete_details`.
+            public var incomplete_details: Components.Schemas.RunObject.incomplete_detailsPayload?
             /// The model that the [assistant](/docs/api-reference/assistants) used for this run.
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/model`.
@@ -7717,7 +8551,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/RunObject/toolsPayload/case1`.
                 case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
                 /// - Remark: Generated from `#/components/schemas/RunObject/toolsPayload/case2`.
-                case AssistantToolsRetrieval(Components.Schemas.AssistantToolsRetrieval)
+                case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
                 /// - Remark: Generated from `#/components/schemas/RunObject/toolsPayload/case3`.
                 case AssistantToolsFunction(Components.Schemas.AssistantToolsFunction)
                 public init(from decoder: any Decoder) throws {
@@ -7729,7 +8563,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .AssistantToolsRetrieval(try .init(from: decoder))
+                        self = .AssistantToolsFileSearch(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -7750,7 +8584,7 @@ public enum Components {
                     switch self {
                     case let .AssistantToolsCode(value):
                         try value.encode(to: encoder)
-                    case let .AssistantToolsRetrieval(value):
+                    case let .AssistantToolsFileSearch(value):
                         try value.encode(to: encoder)
                     case let .AssistantToolsFunction(value):
                         try value.encode(to: encoder)
@@ -7765,15 +8599,37 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/tools`.
             public var tools: Components.Schemas.RunObject.toolsPayload
-            /// The list of [File](/docs/api-reference/files) IDs the [assistant](/docs/api-reference/assistants) used for this run.
-            ///
-            /// - Remark: Generated from `#/components/schemas/RunObject/file_ids`.
-            public var file_ids: [Swift.String]
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/RunObject/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// - Remark: Generated from `#/components/schemas/RunObject/usage`.
+            public var usage: Components.Schemas.RunCompletionUsage?
+            /// The sampling temperature used for this run. If not set, defaults to 1.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunObject/temperature`.
+            public var temperature: Swift.Double?
+            /// The nucleus sampling value used for this run. If not set, defaults to 1.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunObject/top_p`.
+            public var top_p: Swift.Double?
+            /// The maximum number of prompt tokens specified to have been used over the course of the run.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunObject/max_prompt_tokens`.
+            public var max_prompt_tokens: Swift.Int?
+            /// The maximum number of completion tokens specified to have been used over the course of the run.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunObject/max_completion_tokens`.
+            public var max_completion_tokens: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/RunObject/truncation_strategy`.
+            public var truncation_strategy: Components.Schemas.TruncationObject
+            /// - Remark: Generated from `#/components/schemas/RunObject/tool_choice`.
+            public var tool_choice: Components.Schemas.AssistantsApiToolChoiceOption
+            /// - Remark: Generated from `#/components/schemas/RunObject/response_format`.
+            public var response_format: Components.Schemas.AssistantsApiResponseFormatOption
             /// Creates a new `RunObject`.
             ///
             /// - Parameters:
@@ -7790,11 +8646,19 @@ public enum Components {
             ///   - cancelled_at: The Unix timestamp (in seconds) for when the run was cancelled.
             ///   - failed_at: The Unix timestamp (in seconds) for when the run failed.
             ///   - completed_at: The Unix timestamp (in seconds) for when the run was completed.
+            ///   - incomplete_details: Details on why the run is incomplete. Will be `null` if the run is not incomplete.
             ///   - model: The model that the [assistant](/docs/api-reference/assistants) used for this run.
             ///   - instructions: The instructions that the [assistant](/docs/api-reference/assistants) used for this run.
             ///   - tools: The list of tools that the [assistant](/docs/api-reference/assistants) used for this run.
-            ///   - file_ids: The list of [File](/docs/api-reference/files) IDs the [assistant](/docs/api-reference/assistants) used for this run.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - usage:
+            ///   - temperature: The sampling temperature used for this run. If not set, defaults to 1.
+            ///   - top_p: The nucleus sampling value used for this run. If not set, defaults to 1.
+            ///   - max_prompt_tokens: The maximum number of prompt tokens specified to have been used over the course of the run.
+            ///   - max_completion_tokens: The maximum number of completion tokens specified to have been used over the course of the run.
+            ///   - truncation_strategy:
+            ///   - tool_choice:
+            ///   - response_format:
             public init(
                 id: Swift.String,
                 object: Components.Schemas.RunObject.objectPayload,
@@ -7804,16 +8668,24 @@ public enum Components {
                 status: Components.Schemas.RunObject.statusPayload,
                 required_action: Components.Schemas.RunObject.required_actionPayload? = nil,
                 last_error: Components.Schemas.RunObject.last_errorPayload? = nil,
-                expires_at: Swift.Int,
+                expires_at: Swift.Int? = nil,
                 started_at: Swift.Int? = nil,
                 cancelled_at: Swift.Int? = nil,
                 failed_at: Swift.Int? = nil,
                 completed_at: Swift.Int? = nil,
+                incomplete_details: Components.Schemas.RunObject.incomplete_detailsPayload? = nil,
                 model: Swift.String,
                 instructions: Swift.String,
                 tools: Components.Schemas.RunObject.toolsPayload,
-                file_ids: [Swift.String],
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                usage: Components.Schemas.RunCompletionUsage? = nil,
+                temperature: Swift.Double? = nil,
+                top_p: Swift.Double? = nil,
+                max_prompt_tokens: Swift.Int? = nil,
+                max_completion_tokens: Swift.Int? = nil,
+                truncation_strategy: Components.Schemas.TruncationObject,
+                tool_choice: Components.Schemas.AssistantsApiToolChoiceOption,
+                response_format: Components.Schemas.AssistantsApiResponseFormatOption
             ) {
                 self.id = id
                 self.object = object
@@ -7828,11 +8700,19 @@ public enum Components {
                 self.cancelled_at = cancelled_at
                 self.failed_at = failed_at
                 self.completed_at = completed_at
+                self.incomplete_details = incomplete_details
                 self.model = model
                 self.instructions = instructions
                 self.tools = tools
-                self.file_ids = file_ids
                 self.metadata = metadata
+                self.usage = usage
+                self.temperature = temperature
+                self.top_p = top_p
+                self.max_prompt_tokens = max_prompt_tokens
+                self.max_completion_tokens = max_completion_tokens
+                self.truncation_strategy = truncation_strategy
+                self.tool_choice = tool_choice
+                self.response_format = response_format
             }
             public enum CodingKeys: String, CodingKey {
                 case id
@@ -7848,11 +8728,19 @@ public enum Components {
                 case cancelled_at
                 case failed_at
                 case completed_at
+                case incomplete_details
                 case model
                 case instructions
                 case tools
-                case file_ids
                 case metadata
+                case usage
+                case temperature
+                case top_p
+                case max_prompt_tokens
+                case max_completion_tokens
+                case truncation_strategy
+                case tool_choice
+                case response_format
             }
         }
         /// - Remark: Generated from `#/components/schemas/CreateRunRequest`.
@@ -7864,17 +8752,95 @@ public enum Components {
             /// The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateRunRequest/model`.
-            public var model: Swift.String?
-            /// Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis.
+            public struct modelPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreateRunRequest/model/value1`.
+                public var value1: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/CreateRunRequest/model/value2`.
+                @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
+                    case gpt_hyphen_4_hyphen_turbo = "gpt-4-turbo"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_2024_hyphen_04_hyphen_09 = "gpt-4-turbo-2024-04-09"
+                    case gpt_hyphen_4_hyphen_0125_hyphen_preview = "gpt-4-0125-preview"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_preview = "gpt-4-turbo-preview"
+                    case gpt_hyphen_4_hyphen_1106_hyphen_preview = "gpt-4-1106-preview"
+                    case gpt_hyphen_4_hyphen_vision_hyphen_preview = "gpt-4-vision-preview"
+                    case gpt_hyphen_4 = "gpt-4"
+                    case gpt_hyphen_4_hyphen_0314 = "gpt-4-0314"
+                    case gpt_hyphen_4_hyphen_0613 = "gpt-4-0613"
+                    case gpt_hyphen_4_hyphen_32k = "gpt-4-32k"
+                    case gpt_hyphen_4_hyphen_32k_hyphen_0314 = "gpt-4-32k-0314"
+                    case gpt_hyphen_4_hyphen_32k_hyphen_0613 = "gpt-4-32k-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo = "gpt-3.5-turbo"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k = "gpt-3.5-turbo-16k"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0613 = "gpt-3.5-turbo-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106 = "gpt-3.5-turbo-1106"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0125 = "gpt-3.5-turbo-0125"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k_hyphen_0613 = "gpt-3.5-turbo-16k-0613"
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateRunRequest/model/value2`.
+                public var value2: Components.Schemas.CreateRunRequest.modelPayload.Value2Payload?
+                /// Creates a new `modelPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                ///   - value2:
+                public init(
+                    value1: Swift.String? = nil,
+                    value2: Components.Schemas.CreateRunRequest.modelPayload.Value2Payload? = nil
+                ) {
+                    self.value1 = value1
+                    self.value2 = value2
+                }
+                public init(from decoder: any Decoder) throws {
+                    var errors: [any Error] = []
+                    do {
+                        value1 = try decoder.decodeFromSingleValueContainer()
+                    } catch {
+                        errors.append(error)
+                    }
+                    do {
+                        value2 = try decoder.decodeFromSingleValueContainer()
+                    } catch {
+                        errors.append(error)
+                    }
+                    try Swift.DecodingError.verifyAtLeastOneSchemaIsNotNil(
+                        [
+                            value1,
+                            value2
+                        ],
+                        type: Self.self,
+                        codingPath: decoder.codingPath,
+                        errors: errors
+                    )
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeFirstNonNilValueToSingleValueContainer([
+                        value1,
+                        value2
+                    ])
+                }
+            }
+            /// The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/model`.
+            public var model: Components.Schemas.CreateRunRequest.modelPayload?
+            /// Overrides the [instructions](/docs/api-reference/assistants/createAssistant) of the assistant. This is useful for modifying the behavior on a per-run basis.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateRunRequest/instructions`.
             public var instructions: Swift.String?
+            /// Appends additional instructions at the end of the instructions for the run. This is useful for modifying the behavior on a per-run basis without overriding other instructions.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/additional_instructions`.
+            public var additional_instructions: Swift.String?
+            /// Adds additional messages to the thread before creating the run.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/additional_messages`.
+            public var additional_messages: [Components.Schemas.CreateMessageRequest]?
             /// - Remark: Generated from `#/components/schemas/CreateRunRequest/toolsPayload`.
             @frozen public enum toolsPayloadPayload: Codable, Hashable, Sendable {
                 /// - Remark: Generated from `#/components/schemas/CreateRunRequest/toolsPayload/case1`.
                 case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
                 /// - Remark: Generated from `#/components/schemas/CreateRunRequest/toolsPayload/case2`.
-                case AssistantToolsRetrieval(Components.Schemas.AssistantToolsRetrieval)
+                case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
                 /// - Remark: Generated from `#/components/schemas/CreateRunRequest/toolsPayload/case3`.
                 case AssistantToolsFunction(Components.Schemas.AssistantToolsFunction)
                 public init(from decoder: any Decoder) throws {
@@ -7886,7 +8852,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .AssistantToolsRetrieval(try .init(from: decoder))
+                        self = .AssistantToolsFileSearch(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -7907,7 +8873,7 @@ public enum Components {
                     switch self {
                     case let .AssistantToolsCode(value):
                         try value.encode(to: encoder)
-                    case let .AssistantToolsRetrieval(value):
+                    case let .AssistantToolsFileSearch(value):
                         try value.encode(to: encoder)
                     case let .AssistantToolsFunction(value):
                         try value.encode(to: encoder)
@@ -7927,33 +8893,106 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateRunRequest/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/temperature`.
+            public var temperature: Swift.Double?
+            /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///
+            /// We generally recommend altering this or temperature but not both.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/top_p`.
+            public var top_p: Swift.Double?
+            /// If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/stream`.
+            public var stream: Swift.Bool?
+            /// The maximum number of prompt tokens that may be used over the course of the run. The run will make a best effort to use only the number of prompt tokens specified, across multiple turns of the run. If the run exceeds the number of prompt tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/max_prompt_tokens`.
+            public var max_prompt_tokens: Swift.Int?
+            /// The maximum number of completion tokens that may be used over the course of the run. The run will make a best effort to use only the number of completion tokens specified, across multiple turns of the run. If the run exceeds the number of completion tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/max_completion_tokens`.
+            public var max_completion_tokens: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/truncation_strategy`.
+            public var truncation_strategy: Components.Schemas.TruncationObject?
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/tool_choice`.
+            public var tool_choice: Components.Schemas.AssistantsApiToolChoiceOption?
+            /// - Remark: Generated from `#/components/schemas/CreateRunRequest/response_format`.
+            public var response_format: Components.Schemas.AssistantsApiResponseFormatOption?
             /// Creates a new `CreateRunRequest`.
             ///
             /// - Parameters:
             ///   - assistant_id: The ID of the [assistant](/docs/api-reference/assistants) to use to execute this run.
             ///   - model: The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.
-            ///   - instructions: Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis.
+            ///   - instructions: Overrides the [instructions](/docs/api-reference/assistants/createAssistant) of the assistant. This is useful for modifying the behavior on a per-run basis.
+            ///   - additional_instructions: Appends additional instructions at the end of the instructions for the run. This is useful for modifying the behavior on a per-run basis without overriding other instructions.
+            ///   - additional_messages: Adds additional messages to the thread before creating the run.
             ///   - tools: Override the tools the assistant can use for this run. This is useful for modifying the behavior on a per-run basis.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///   - stream: If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.
+            ///   - max_prompt_tokens: The maximum number of prompt tokens that may be used over the course of the run. The run will make a best effort to use only the number of prompt tokens specified, across multiple turns of the run. If the run exceeds the number of prompt tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///   - max_completion_tokens: The maximum number of completion tokens that may be used over the course of the run. The run will make a best effort to use only the number of completion tokens specified, across multiple turns of the run. If the run exceeds the number of completion tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///   - truncation_strategy:
+            ///   - tool_choice:
+            ///   - response_format:
             public init(
                 assistant_id: Swift.String,
-                model: Swift.String? = nil,
+                model: Components.Schemas.CreateRunRequest.modelPayload? = nil,
                 instructions: Swift.String? = nil,
+                additional_instructions: Swift.String? = nil,
+                additional_messages: [Components.Schemas.CreateMessageRequest]? = nil,
                 tools: Components.Schemas.CreateRunRequest.toolsPayload? = nil,
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                temperature: Swift.Double? = nil,
+                top_p: Swift.Double? = nil,
+                stream: Swift.Bool? = nil,
+                max_prompt_tokens: Swift.Int? = nil,
+                max_completion_tokens: Swift.Int? = nil,
+                truncation_strategy: Components.Schemas.TruncationObject? = nil,
+                tool_choice: Components.Schemas.AssistantsApiToolChoiceOption? = nil,
+                response_format: Components.Schemas.AssistantsApiResponseFormatOption? = nil
             ) {
                 self.assistant_id = assistant_id
                 self.model = model
                 self.instructions = instructions
+                self.additional_instructions = additional_instructions
+                self.additional_messages = additional_messages
                 self.tools = tools
                 self.metadata = metadata
+                self.temperature = temperature
+                self.top_p = top_p
+                self.stream = stream
+                self.max_prompt_tokens = max_prompt_tokens
+                self.max_completion_tokens = max_completion_tokens
+                self.truncation_strategy = truncation_strategy
+                self.tool_choice = tool_choice
+                self.response_format = response_format
             }
             public enum CodingKeys: String, CodingKey {
                 case assistant_id
                 case model
                 case instructions
+                case additional_instructions
+                case additional_messages
                 case tools
                 case metadata
+                case temperature
+                case top_p
+                case stream
+                case max_prompt_tokens
+                case max_completion_tokens
+                case truncation_strategy
+                case tool_choice
+                case response_format
             }
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -7962,12 +9001,20 @@ public enum Components {
                     forKey: .assistant_id
                 )
                 model = try container.decodeIfPresent(
-                    Swift.String.self,
+                    Components.Schemas.CreateRunRequest.modelPayload.self,
                     forKey: .model
                 )
                 instructions = try container.decodeIfPresent(
                     Swift.String.self,
                     forKey: .instructions
+                )
+                additional_instructions = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .additional_instructions
+                )
+                additional_messages = try container.decodeIfPresent(
+                    [Components.Schemas.CreateMessageRequest].self,
+                    forKey: .additional_messages
                 )
                 tools = try container.decodeIfPresent(
                     Components.Schemas.CreateRunRequest.toolsPayload.self,
@@ -7977,12 +9024,54 @@ public enum Components {
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
                     forKey: .metadata
                 )
+                temperature = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .temperature
+                )
+                top_p = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .top_p
+                )
+                stream = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .stream
+                )
+                max_prompt_tokens = try container.decodeIfPresent(
+                    Swift.Int.self,
+                    forKey: .max_prompt_tokens
+                )
+                max_completion_tokens = try container.decodeIfPresent(
+                    Swift.Int.self,
+                    forKey: .max_completion_tokens
+                )
+                truncation_strategy = try container.decodeIfPresent(
+                    Components.Schemas.TruncationObject.self,
+                    forKey: .truncation_strategy
+                )
+                tool_choice = try container.decodeIfPresent(
+                    Components.Schemas.AssistantsApiToolChoiceOption.self,
+                    forKey: .tool_choice
+                )
+                response_format = try container.decodeIfPresent(
+                    Components.Schemas.AssistantsApiResponseFormatOption.self,
+                    forKey: .response_format
+                )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "assistant_id",
                     "model",
                     "instructions",
+                    "additional_instructions",
+                    "additional_messages",
                     "tools",
-                    "metadata"
+                    "metadata",
+                    "temperature",
+                    "top_p",
+                    "stream",
+                    "max_prompt_tokens",
+                    "max_completion_tokens",
+                    "truncation_strategy",
+                    "tool_choice",
+                    "response_format"
                 ])
             }
         }
@@ -8092,15 +9181,26 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/SubmitToolOutputsRunRequest/tool_outputs`.
             public var tool_outputs: Components.Schemas.SubmitToolOutputsRunRequest.tool_outputsPayload
+            /// If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/SubmitToolOutputsRunRequest/stream`.
+            public var stream: Swift.Bool?
             /// Creates a new `SubmitToolOutputsRunRequest`.
             ///
             /// - Parameters:
             ///   - tool_outputs: A list of tools for which the outputs are being submitted.
-            public init(tool_outputs: Components.Schemas.SubmitToolOutputsRunRequest.tool_outputsPayload) {
+            ///   - stream: If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.
+            public init(
+                tool_outputs: Components.Schemas.SubmitToolOutputsRunRequest.tool_outputsPayload,
+                stream: Swift.Bool? = nil
+            ) {
                 self.tool_outputs = tool_outputs
+                self.stream = stream
             }
             public enum CodingKeys: String, CodingKey {
                 case tool_outputs
+                case stream
             }
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -8108,8 +9208,13 @@ public enum Components {
                     Components.Schemas.SubmitToolOutputsRunRequest.tool_outputsPayload.self,
                     forKey: .tool_outputs
                 )
+                stream = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .stream
+                )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
-                    "tool_outputs"
+                    "tool_outputs",
+                    "stream"
                 ])
             }
         }
@@ -8196,7 +9301,77 @@ public enum Components {
             /// The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/model`.
-            public var model: Swift.String?
+            public struct modelPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/model/value1`.
+                public var value1: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/model/value2`.
+                @frozen public enum Value2Payload: String, Codable, Hashable, Sendable {
+                    case gpt_hyphen_4_hyphen_turbo = "gpt-4-turbo"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_2024_hyphen_04_hyphen_09 = "gpt-4-turbo-2024-04-09"
+                    case gpt_hyphen_4_hyphen_0125_hyphen_preview = "gpt-4-0125-preview"
+                    case gpt_hyphen_4_hyphen_turbo_hyphen_preview = "gpt-4-turbo-preview"
+                    case gpt_hyphen_4_hyphen_1106_hyphen_preview = "gpt-4-1106-preview"
+                    case gpt_hyphen_4_hyphen_vision_hyphen_preview = "gpt-4-vision-preview"
+                    case gpt_hyphen_4 = "gpt-4"
+                    case gpt_hyphen_4_hyphen_0314 = "gpt-4-0314"
+                    case gpt_hyphen_4_hyphen_0613 = "gpt-4-0613"
+                    case gpt_hyphen_4_hyphen_32k = "gpt-4-32k"
+                    case gpt_hyphen_4_hyphen_32k_hyphen_0314 = "gpt-4-32k-0314"
+                    case gpt_hyphen_4_hyphen_32k_hyphen_0613 = "gpt-4-32k-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo = "gpt-3.5-turbo"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k = "gpt-3.5-turbo-16k"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0613 = "gpt-3.5-turbo-0613"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106 = "gpt-3.5-turbo-1106"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_0125 = "gpt-3.5-turbo-0125"
+                    case gpt_hyphen_3_period_5_hyphen_turbo_hyphen_16k_hyphen_0613 = "gpt-3.5-turbo-16k-0613"
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/model/value2`.
+                public var value2: Components.Schemas.CreateThreadAndRunRequest.modelPayload.Value2Payload?
+                /// Creates a new `modelPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                ///   - value2:
+                public init(
+                    value1: Swift.String? = nil,
+                    value2: Components.Schemas.CreateThreadAndRunRequest.modelPayload.Value2Payload? = nil
+                ) {
+                    self.value1 = value1
+                    self.value2 = value2
+                }
+                public init(from decoder: any Decoder) throws {
+                    var errors: [any Error] = []
+                    do {
+                        value1 = try decoder.decodeFromSingleValueContainer()
+                    } catch {
+                        errors.append(error)
+                    }
+                    do {
+                        value2 = try decoder.decodeFromSingleValueContainer()
+                    } catch {
+                        errors.append(error)
+                    }
+                    try Swift.DecodingError.verifyAtLeastOneSchemaIsNotNil(
+                        [
+                            value1,
+                            value2
+                        ],
+                        type: Self.self,
+                        codingPath: decoder.codingPath,
+                        errors: errors
+                    )
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeFirstNonNilValueToSingleValueContainer([
+                        value1,
+                        value2
+                    ])
+                }
+            }
+            /// The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/model`.
+            public var model: Components.Schemas.CreateThreadAndRunRequest.modelPayload?
             /// Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/instructions`.
@@ -8206,7 +9381,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/toolsPayload/case1`.
                 case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
                 /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/toolsPayload/case2`.
-                case AssistantToolsRetrieval(Components.Schemas.AssistantToolsRetrieval)
+                case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
                 /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/toolsPayload/case3`.
                 case AssistantToolsFunction(Components.Schemas.AssistantToolsFunction)
                 public init(from decoder: any Decoder) throws {
@@ -8218,7 +9393,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .AssistantToolsRetrieval(try .init(from: decoder))
+                        self = .AssistantToolsFileSearch(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -8239,7 +9414,7 @@ public enum Components {
                     switch self {
                     case let .AssistantToolsCode(value):
                         try value.encode(to: encoder)
-                    case let .AssistantToolsRetrieval(value):
+                    case let .AssistantToolsFileSearch(value):
                         try value.encode(to: encoder)
                     case let .AssistantToolsFunction(value):
                         try value.encode(to: encoder)
@@ -8254,11 +9429,111 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tools`.
             public var tools: Components.Schemas.CreateThreadAndRunRequest.toolsPayload?
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources/file_search`.
+                public struct file_searchPayload: Codable, Hashable, Sendable {
+                    /// The ID of the [vector store](/docs/api-reference/vector-stores/object) attached to this assistant. There can be a maximum of 1 vector store attached to the assistant.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources/file_search/vector_store_ids`.
+                    public var vector_store_ids: [Swift.String]?
+                    /// Creates a new `file_searchPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - vector_store_ids: The ID of the [vector store](/docs/api-reference/vector-stores/object) attached to this assistant. There can be a maximum of 1 vector store attached to the assistant.
+                    public init(vector_store_ids: [Swift.String]? = nil) {
+                        self.vector_store_ids = vector_store_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case vector_store_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources/file_search`.
+                public var file_search: Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_resources`.
+            public var tool_resources: Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/temperature`.
+            public var temperature: Swift.Double?
+            /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///
+            /// We generally recommend altering this or temperature but not both.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/top_p`.
+            public var top_p: Swift.Double?
+            /// If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/stream`.
+            public var stream: Swift.Bool?
+            /// The maximum number of prompt tokens that may be used over the course of the run. The run will make a best effort to use only the number of prompt tokens specified, across multiple turns of the run. If the run exceeds the number of prompt tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/max_prompt_tokens`.
+            public var max_prompt_tokens: Swift.Int?
+            /// The maximum number of completion tokens that may be used over the course of the run. The run will make a best effort to use only the number of completion tokens specified, across multiple turns of the run. If the run exceeds the number of completion tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/max_completion_tokens`.
+            public var max_completion_tokens: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/truncation_strategy`.
+            public var truncation_strategy: Components.Schemas.TruncationObject?
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/tool_choice`.
+            public var tool_choice: Components.Schemas.AssistantsApiToolChoiceOption?
+            /// - Remark: Generated from `#/components/schemas/CreateThreadAndRunRequest/response_format`.
+            public var response_format: Components.Schemas.AssistantsApiResponseFormatOption?
             /// Creates a new `CreateThreadAndRunRequest`.
             ///
             /// - Parameters:
@@ -8267,21 +9542,48 @@ public enum Components {
             ///   - model: The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.
             ///   - instructions: Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis.
             ///   - tools: Override the tools the assistant can use for this run. This is useful for modifying the behavior on a per-run basis.
+            ///   - tool_resources: A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+            ///   - top_p: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+            ///   - stream: If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.
+            ///   - max_prompt_tokens: The maximum number of prompt tokens that may be used over the course of the run. The run will make a best effort to use only the number of prompt tokens specified, across multiple turns of the run. If the run exceeds the number of prompt tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///   - max_completion_tokens: The maximum number of completion tokens that may be used over the course of the run. The run will make a best effort to use only the number of completion tokens specified, across multiple turns of the run. If the run exceeds the number of completion tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.
+            ///   - truncation_strategy:
+            ///   - tool_choice:
+            ///   - response_format:
             public init(
                 assistant_id: Swift.String,
                 thread: Components.Schemas.CreateThreadRequest? = nil,
-                model: Swift.String? = nil,
+                model: Components.Schemas.CreateThreadAndRunRequest.modelPayload? = nil,
                 instructions: Swift.String? = nil,
                 tools: Components.Schemas.CreateThreadAndRunRequest.toolsPayload? = nil,
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                tool_resources: Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                temperature: Swift.Double? = nil,
+                top_p: Swift.Double? = nil,
+                stream: Swift.Bool? = nil,
+                max_prompt_tokens: Swift.Int? = nil,
+                max_completion_tokens: Swift.Int? = nil,
+                truncation_strategy: Components.Schemas.TruncationObject? = nil,
+                tool_choice: Components.Schemas.AssistantsApiToolChoiceOption? = nil,
+                response_format: Components.Schemas.AssistantsApiResponseFormatOption? = nil
             ) {
                 self.assistant_id = assistant_id
                 self.thread = thread
                 self.model = model
                 self.instructions = instructions
                 self.tools = tools
+                self.tool_resources = tool_resources
                 self.metadata = metadata
+                self.temperature = temperature
+                self.top_p = top_p
+                self.stream = stream
+                self.max_prompt_tokens = max_prompt_tokens
+                self.max_completion_tokens = max_completion_tokens
+                self.truncation_strategy = truncation_strategy
+                self.tool_choice = tool_choice
+                self.response_format = response_format
             }
             public enum CodingKeys: String, CodingKey {
                 case assistant_id
@@ -8289,7 +9591,16 @@ public enum Components {
                 case model
                 case instructions
                 case tools
+                case tool_resources
                 case metadata
+                case temperature
+                case top_p
+                case stream
+                case max_prompt_tokens
+                case max_completion_tokens
+                case truncation_strategy
+                case tool_choice
+                case response_format
             }
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -8302,7 +9613,7 @@ public enum Components {
                     forKey: .thread
                 )
                 model = try container.decodeIfPresent(
-                    Swift.String.self,
+                    Components.Schemas.CreateThreadAndRunRequest.modelPayload.self,
                     forKey: .model
                 )
                 instructions = try container.decodeIfPresent(
@@ -8313,9 +9624,45 @@ public enum Components {
                     Components.Schemas.CreateThreadAndRunRequest.toolsPayload.self,
                     forKey: .tools
                 )
+                tool_resources = try container.decodeIfPresent(
+                    Components.Schemas.CreateThreadAndRunRequest.tool_resourcesPayload.self,
+                    forKey: .tool_resources
+                )
                 metadata = try container.decodeIfPresent(
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
                     forKey: .metadata
+                )
+                temperature = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .temperature
+                )
+                top_p = try container.decodeIfPresent(
+                    Swift.Double.self,
+                    forKey: .top_p
+                )
+                stream = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .stream
+                )
+                max_prompt_tokens = try container.decodeIfPresent(
+                    Swift.Int.self,
+                    forKey: .max_prompt_tokens
+                )
+                max_completion_tokens = try container.decodeIfPresent(
+                    Swift.Int.self,
+                    forKey: .max_completion_tokens
+                )
+                truncation_strategy = try container.decodeIfPresent(
+                    Components.Schemas.TruncationObject.self,
+                    forKey: .truncation_strategy
+                )
+                tool_choice = try container.decodeIfPresent(
+                    Components.Schemas.AssistantsApiToolChoiceOption.self,
+                    forKey: .tool_choice
+                )
+                response_format = try container.decodeIfPresent(
+                    Components.Schemas.AssistantsApiResponseFormatOption.self,
+                    forKey: .response_format
                 )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "assistant_id",
@@ -8323,7 +9670,16 @@ public enum Components {
                     "model",
                     "instructions",
                     "tools",
-                    "metadata"
+                    "tool_resources",
+                    "metadata",
+                    "temperature",
+                    "top_p",
+                    "stream",
+                    "max_prompt_tokens",
+                    "max_completion_tokens",
+                    "truncation_strategy",
+                    "tool_choice",
+                    "response_format"
                 ])
             }
         }
@@ -8349,6 +9705,73 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/ThreadObject/created_at`.
             public var created_at: Swift.Int
+            /// A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.ThreadObject.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources/file_search`.
+                public struct file_searchPayload: Codable, Hashable, Sendable {
+                    /// The [vector store](/docs/api-reference/vector-stores/object) attached to this thread. There can be a maximum of 1 vector store attached to the thread.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources/file_search/vector_store_ids`.
+                    public var vector_store_ids: [Swift.String]?
+                    /// Creates a new `file_searchPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - vector_store_ids: The [vector store](/docs/api-reference/vector-stores/object) attached to this thread. There can be a maximum of 1 vector store attached to the thread.
+                    public init(vector_store_ids: [Swift.String]? = nil) {
+                        self.vector_store_ids = vector_store_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case vector_store_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources/file_search`.
+                public var file_search: Components.Schemas.ThreadObject.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.ThreadObject.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.ThreadObject.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ThreadObject/tool_resources`.
+            public var tool_resources: Components.Schemas.ThreadObject.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
@@ -8360,22 +9783,26 @@ public enum Components {
             ///   - id: The identifier, which can be referenced in API endpoints.
             ///   - object: The object type, which is always `thread`.
             ///   - created_at: The Unix timestamp (in seconds) for when the thread was created.
+            ///   - tool_resources: A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             public init(
                 id: Swift.String,
                 object: Components.Schemas.ThreadObject.objectPayload,
                 created_at: Swift.Int,
+                tool_resources: Components.Schemas.ThreadObject.tool_resourcesPayload? = nil,
                 metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
             ) {
                 self.id = id
                 self.object = object
                 self.created_at = created_at
+                self.tool_resources = tool_resources
                 self.metadata = metadata
             }
             public enum CodingKeys: String, CodingKey {
                 case id
                 case object
                 case created_at
+                case tool_resources
                 case metadata
             }
         }
@@ -8385,6 +9812,100 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/messages`.
             public var messages: [Components.Schemas.CreateMessageRequest]?
+            /// A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.CreateThreadRequest.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/file_search`.
+                @frozen public enum file_searchPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/file_search/case1`.
+                    public struct Case1Payload: Codable, Hashable, Sendable {
+                        /// Creates a new `Case1Payload`.
+                        public init() {}
+                    }
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/file_search/case1`.
+                    case case1(Components.Schemas.CreateThreadRequest.tool_resourcesPayload.file_searchPayload.Case1Payload)
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/file_search/case2`.
+                    public struct Case2Payload: Codable, Hashable, Sendable {
+                        /// Creates a new `Case2Payload`.
+                        public init() {}
+                    }
+                    /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/file_search/case2`.
+                    case case2(Components.Schemas.CreateThreadRequest.tool_resourcesPayload.file_searchPayload.Case2Payload)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .case1(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .case2(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .case1(value):
+                            try value.encode(to: encoder)
+                        case let .case2(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources/file_search`.
+                public var file_search: Components.Schemas.CreateThreadRequest.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.CreateThreadRequest.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.CreateThreadRequest.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateThreadRequest/tool_resources`.
+            public var tool_resources: Components.Schemas.CreateThreadRequest.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
@@ -8394,16 +9915,20 @@ public enum Components {
             ///
             /// - Parameters:
             ///   - messages: A list of [messages](/docs/api-reference/messages) to start the thread with.
+            ///   - tool_resources: A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             public init(
                 messages: [Components.Schemas.CreateMessageRequest]? = nil,
+                tool_resources: Components.Schemas.CreateThreadRequest.tool_resourcesPayload? = nil,
                 metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
             ) {
                 self.messages = messages
+                self.tool_resources = tool_resources
                 self.metadata = metadata
             }
             public enum CodingKeys: String, CodingKey {
                 case messages
+                case tool_resources
                 case metadata
             }
             public init(from decoder: any Decoder) throws {
@@ -8412,18 +9937,90 @@ public enum Components {
                     [Components.Schemas.CreateMessageRequest].self,
                     forKey: .messages
                 )
+                tool_resources = try container.decodeIfPresent(
+                    Components.Schemas.CreateThreadRequest.tool_resourcesPayload.self,
+                    forKey: .tool_resources
+                )
                 metadata = try container.decodeIfPresent(
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
                     forKey: .metadata
                 )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "messages",
+                    "tool_resources",
                     "metadata"
                 ])
             }
         }
         /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest`.
         public struct ModifyThreadRequest: Codable, Hashable, Sendable {
+            /// A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources`.
+            public struct tool_resourcesPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources/code_interpreter`.
+                public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                    /// A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources/code_interpreter/file_ids`.
+                    public var file_ids: [Swift.String]?
+                    /// Creates a new `code_interpreterPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - file_ids: A list of [file](/docs/api-reference/files) IDs made available to the `code_interpreter` tool. There can be a maximum of 20 files associated with the tool.
+                    public init(file_ids: [Swift.String]? = nil) {
+                        self.file_ids = file_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case file_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources/code_interpreter`.
+                public var code_interpreter: Components.Schemas.ModifyThreadRequest.tool_resourcesPayload.code_interpreterPayload?
+                /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources/file_search`.
+                public struct file_searchPayload: Codable, Hashable, Sendable {
+                    /// The [vector store](/docs/api-reference/vector-stores/object) attached to this thread. There can be a maximum of 1 vector store attached to the thread.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources/file_search/vector_store_ids`.
+                    public var vector_store_ids: [Swift.String]?
+                    /// Creates a new `file_searchPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - vector_store_ids: The [vector store](/docs/api-reference/vector-stores/object) attached to this thread. There can be a maximum of 1 vector store attached to the thread.
+                    public init(vector_store_ids: [Swift.String]? = nil) {
+                        self.vector_store_ids = vector_store_ids
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case vector_store_ids
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources/file_search`.
+                public var file_search: Components.Schemas.ModifyThreadRequest.tool_resourcesPayload.file_searchPayload?
+                /// Creates a new `tool_resourcesPayload`.
+                ///
+                /// - Parameters:
+                ///   - code_interpreter:
+                ///   - file_search:
+                public init(
+                    code_interpreter: Components.Schemas.ModifyThreadRequest.tool_resourcesPayload.code_interpreterPayload? = nil,
+                    file_search: Components.Schemas.ModifyThreadRequest.tool_resourcesPayload.file_searchPayload? = nil
+                ) {
+                    self.code_interpreter = code_interpreter
+                    self.file_search = file_search
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code_interpreter
+                    case file_search
+                }
+            }
+            /// A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/ModifyThreadRequest/tool_resources`.
+            public var tool_resources: Components.Schemas.ModifyThreadRequest.tool_resourcesPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
@@ -8432,20 +10029,31 @@ public enum Components {
             /// Creates a new `ModifyThreadRequest`.
             ///
             /// - Parameters:
+            ///   - tool_resources: A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
-            public init(metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil) {
+            public init(
+                tool_resources: Components.Schemas.ModifyThreadRequest.tool_resourcesPayload? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+            ) {
+                self.tool_resources = tool_resources
                 self.metadata = metadata
             }
             public enum CodingKeys: String, CodingKey {
+                case tool_resources
                 case metadata
             }
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
+                tool_resources = try container.decodeIfPresent(
+                    Components.Schemas.ModifyThreadRequest.tool_resourcesPayload.self,
+                    forKey: .tool_resources
+                )
                 metadata = try container.decodeIfPresent(
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
                     forKey: .metadata
                 )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "tool_resources",
                     "metadata"
                 ])
             }
@@ -8550,6 +10158,59 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/MessageObject/thread_id`.
             public var thread_id: Swift.String
+            /// The status of the message, which can be either `in_progress`, `incomplete`, or `completed`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable {
+                case in_progress = "in_progress"
+                case incomplete = "incomplete"
+                case completed = "completed"
+            }
+            /// The status of the message, which can be either `in_progress`, `incomplete`, or `completed`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/status`.
+            public var status: Components.Schemas.MessageObject.statusPayload
+            /// On an incomplete message, details about why the message is incomplete.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/incomplete_details`.
+            public struct incomplete_detailsPayload: Codable, Hashable, Sendable {
+                /// The reason the message is incomplete.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageObject/incomplete_details/reason`.
+                @frozen public enum reasonPayload: String, Codable, Hashable, Sendable {
+                    case content_filter = "content_filter"
+                    case max_tokens = "max_tokens"
+                    case run_cancelled = "run_cancelled"
+                    case run_expired = "run_expired"
+                    case run_failed = "run_failed"
+                }
+                /// The reason the message is incomplete.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageObject/incomplete_details/reason`.
+                public var reason: Components.Schemas.MessageObject.incomplete_detailsPayload.reasonPayload
+                /// Creates a new `incomplete_detailsPayload`.
+                ///
+                /// - Parameters:
+                ///   - reason: The reason the message is incomplete.
+                public init(reason: Components.Schemas.MessageObject.incomplete_detailsPayload.reasonPayload) {
+                    self.reason = reason
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case reason
+                }
+            }
+            /// On an incomplete message, details about why the message is incomplete.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/incomplete_details`.
+            public var incomplete_details: Components.Schemas.MessageObject.incomplete_detailsPayload?
+            /// The Unix timestamp (in seconds) for when the message was completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/completed_at`.
+            public var completed_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the message was marked as incomplete.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/incomplete_at`.
+            public var incomplete_at: Swift.Int?
             /// The entity that produced the message. One of `user` or `assistant`.
             ///
             /// - Remark: Generated from `#/components/schemas/MessageObject/role`.
@@ -8608,14 +10269,84 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/MessageObject/assistant_id`.
             public var assistant_id: Swift.String?
-            /// If applicable, the ID of the [run](/docs/api-reference/runs) associated with the authoring of this message.
+            /// The ID of the [run](/docs/api-reference/runs) associated with the creation of this message. Value is `null` when messages are created manually using the create message or create thread endpoints.
             ///
             /// - Remark: Generated from `#/components/schemas/MessageObject/run_id`.
             public var run_id: Swift.String?
-            /// A list of [file](/docs/api-reference/files) IDs that the assistant should use. Useful for tools like retrieval and code_interpreter that can access files. A maximum of 10 files can be attached to a message.
+            /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload`.
+            public struct attachmentsPayloadPayload: Codable, Hashable, Sendable {
+                /// The ID of the file to attach to the message.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload/file_id`.
+                public var file_id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload/toolsPayload`.
+                @frozen public enum toolsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload/toolsPayload/case1`.
+                    case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
+                    /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload/toolsPayload/case2`.
+                    case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .AssistantToolsCode(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .AssistantToolsFileSearch(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .AssistantToolsCode(value):
+                            try value.encode(to: encoder)
+                        case let .AssistantToolsFileSearch(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// The tools to add this file to.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload/tools`.
+                public typealias toolsPayload = [Components.Schemas.MessageObject.attachmentsPayloadPayload.toolsPayloadPayload]
+                /// The tools to add this file to.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageObject/attachmentsPayload/tools`.
+                public var tools: Components.Schemas.MessageObject.attachmentsPayloadPayload.toolsPayload?
+                /// Creates a new `attachmentsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - file_id: The ID of the file to attach to the message.
+                ///   - tools: The tools to add this file to.
+                public init(
+                    file_id: Swift.String? = nil,
+                    tools: Components.Schemas.MessageObject.attachmentsPayloadPayload.toolsPayload? = nil
+                ) {
+                    self.file_id = file_id
+                    self.tools = tools
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case file_id
+                    case tools
+                }
+            }
+            /// A list of files attached to the message, and the tools they were added to.
             ///
-            /// - Remark: Generated from `#/components/schemas/MessageObject/file_ids`.
-            public var file_ids: [Swift.String]
+            /// - Remark: Generated from `#/components/schemas/MessageObject/attachments`.
+            public typealias attachmentsPayload = [Components.Schemas.MessageObject.attachmentsPayloadPayload]
+            /// A list of files attached to the message, and the tools they were added to.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageObject/attachments`.
+            public var attachments: Components.Schemas.MessageObject.attachmentsPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
@@ -8628,33 +10359,45 @@ public enum Components {
             ///   - object: The object type, which is always `thread.message`.
             ///   - created_at: The Unix timestamp (in seconds) for when the message was created.
             ///   - thread_id: The [thread](/docs/api-reference/threads) ID that this message belongs to.
+            ///   - status: The status of the message, which can be either `in_progress`, `incomplete`, or `completed`.
+            ///   - incomplete_details: On an incomplete message, details about why the message is incomplete.
+            ///   - completed_at: The Unix timestamp (in seconds) for when the message was completed.
+            ///   - incomplete_at: The Unix timestamp (in seconds) for when the message was marked as incomplete.
             ///   - role: The entity that produced the message. One of `user` or `assistant`.
             ///   - content: The content of the message in array of text and/or images.
             ///   - assistant_id: If applicable, the ID of the [assistant](/docs/api-reference/assistants) that authored this message.
-            ///   - run_id: If applicable, the ID of the [run](/docs/api-reference/runs) associated with the authoring of this message.
-            ///   - file_ids: A list of [file](/docs/api-reference/files) IDs that the assistant should use. Useful for tools like retrieval and code_interpreter that can access files. A maximum of 10 files can be attached to a message.
+            ///   - run_id: The ID of the [run](/docs/api-reference/runs) associated with the creation of this message. Value is `null` when messages are created manually using the create message or create thread endpoints.
+            ///   - attachments: A list of files attached to the message, and the tools they were added to.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             public init(
                 id: Swift.String,
                 object: Components.Schemas.MessageObject.objectPayload,
                 created_at: Swift.Int,
                 thread_id: Swift.String,
+                status: Components.Schemas.MessageObject.statusPayload,
+                incomplete_details: Components.Schemas.MessageObject.incomplete_detailsPayload? = nil,
+                completed_at: Swift.Int? = nil,
+                incomplete_at: Swift.Int? = nil,
                 role: Components.Schemas.MessageObject.rolePayload,
                 content: Components.Schemas.MessageObject.contentPayload,
                 assistant_id: Swift.String? = nil,
                 run_id: Swift.String? = nil,
-                file_ids: [Swift.String],
+                attachments: Components.Schemas.MessageObject.attachmentsPayload? = nil,
                 metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
             ) {
                 self.id = id
                 self.object = object
                 self.created_at = created_at
                 self.thread_id = thread_id
+                self.status = status
+                self.incomplete_details = incomplete_details
+                self.completed_at = completed_at
+                self.incomplete_at = incomplete_at
                 self.role = role
                 self.content = content
                 self.assistant_id = assistant_id
                 self.run_id = run_id
-                self.file_ids = file_ids
+                self.attachments = attachments
                 self.metadata = metadata
             }
             public enum CodingKeys: String, CodingKey {
@@ -8662,23 +10405,153 @@ public enum Components {
                 case object
                 case created_at
                 case thread_id
+                case status
+                case incomplete_details
+                case completed_at
+                case incomplete_at
                 case role
                 case content
                 case assistant_id
                 case run_id
-                case file_ids
+                case attachments
                 case metadata
+            }
+        }
+        /// Represents a message delta i.e. any changed fields on a message during streaming.
+        ///
+        ///
+        /// - Remark: Generated from `#/components/schemas/MessageDeltaObject`.
+        public struct MessageDeltaObject: Codable, Hashable, Sendable {
+            /// The identifier of the message, which can be referenced in API endpoints.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/id`.
+            public var id: Swift.String
+            /// The object type, which is always `thread.message.delta`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case thread_period_message_period_delta = "thread.message.delta"
+            }
+            /// The object type, which is always `thread.message.delta`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/object`.
+            public var object: Components.Schemas.MessageDeltaObject.objectPayload
+            /// The delta containing the fields that have changed on the Message.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta`.
+            public struct deltaPayload: Codable, Hashable, Sendable {
+                /// The entity that produced the message. One of `user` or `assistant`.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/role`.
+                @frozen public enum rolePayload: String, Codable, Hashable, Sendable {
+                    case user = "user"
+                    case assistant = "assistant"
+                }
+                /// The entity that produced the message. One of `user` or `assistant`.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/role`.
+                public var role: Components.Schemas.MessageDeltaObject.deltaPayload.rolePayload?
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/contentPayload`.
+                @frozen public enum contentPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/contentPayload/case1`.
+                    case MessageDeltaContentImageFileObject(Components.Schemas.MessageDeltaContentImageFileObject)
+                    /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/contentPayload/case2`.
+                    case MessageDeltaContentTextObject(Components.Schemas.MessageDeltaContentTextObject)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .MessageDeltaContentImageFileObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .MessageDeltaContentTextObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .MessageDeltaContentImageFileObject(value):
+                            try value.encode(to: encoder)
+                        case let .MessageDeltaContentTextObject(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// The content of the message in array of text and/or images.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/content`.
+                public typealias contentPayload = [Components.Schemas.MessageDeltaObject.deltaPayload.contentPayloadPayload]
+                /// The content of the message in array of text and/or images.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta/content`.
+                public var content: Components.Schemas.MessageDeltaObject.deltaPayload.contentPayload?
+                /// Creates a new `deltaPayload`.
+                ///
+                /// - Parameters:
+                ///   - role: The entity that produced the message. One of `user` or `assistant`.
+                ///   - content: The content of the message in array of text and/or images.
+                public init(
+                    role: Components.Schemas.MessageDeltaObject.deltaPayload.rolePayload? = nil,
+                    content: Components.Schemas.MessageDeltaObject.deltaPayload.contentPayload? = nil
+                ) {
+                    self.role = role
+                    self.content = content
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case role
+                    case content
+                }
+            }
+            /// The delta containing the fields that have changed on the Message.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaObject/delta`.
+            public var delta: Components.Schemas.MessageDeltaObject.deltaPayload
+            /// Creates a new `MessageDeltaObject`.
+            ///
+            /// - Parameters:
+            ///   - id: The identifier of the message, which can be referenced in API endpoints.
+            ///   - object: The object type, which is always `thread.message.delta`.
+            ///   - delta: The delta containing the fields that have changed on the Message.
+            public init(
+                id: Swift.String,
+                object: Components.Schemas.MessageDeltaObject.objectPayload,
+                delta: Components.Schemas.MessageDeltaObject.deltaPayload
+            ) {
+                self.id = id
+                self.object = object
+                self.delta = delta
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case object
+                case delta
             }
         }
         /// - Remark: Generated from `#/components/schemas/CreateMessageRequest`.
         public struct CreateMessageRequest: Codable, Hashable, Sendable {
-            /// The role of the entity that is creating the message. Currently only `user` is supported.
+            /// The role of the entity that is creating the message. Allowed values include:
+            /// - `user`: Indicates the message is sent by an actual user and should be used in most cases to represent user-generated messages.
+            /// - `assistant`: Indicates the message is generated by the assistant. Use this value to insert messages from the assistant into the conversation.
+            ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/role`.
             @frozen public enum rolePayload: String, Codable, Hashable, Sendable {
                 case user = "user"
+                case assistant = "assistant"
             }
-            /// The role of the entity that is creating the message. Currently only `user` is supported.
+            /// The role of the entity that is creating the message. Allowed values include:
+            /// - `user`: Indicates the message is sent by an actual user and should be used in most cases to represent user-generated messages.
+            /// - `assistant`: Indicates the message is generated by the assistant. Use this value to insert messages from the assistant into the conversation.
+            ///
             ///
             /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/role`.
             public var role: Components.Schemas.CreateMessageRequest.rolePayload
@@ -8686,10 +10559,80 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/content`.
             public var content: Swift.String
-            /// A list of [File](/docs/api-reference/files) IDs that the message should use. There can be a maximum of 10 files attached to a message. Useful for tools like `retrieval` and `code_interpreter` that can access and use files.
+            /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload`.
+            public struct attachmentsPayloadPayload: Codable, Hashable, Sendable {
+                /// The ID of the file to attach to the message.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload/file_id`.
+                public var file_id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload/toolsPayload`.
+                @frozen public enum toolsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload/toolsPayload/case1`.
+                    case AssistantToolsCode(Components.Schemas.AssistantToolsCode)
+                    /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload/toolsPayload/case2`.
+                    case AssistantToolsFileSearch(Components.Schemas.AssistantToolsFileSearch)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .AssistantToolsCode(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .AssistantToolsFileSearch(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .AssistantToolsCode(value):
+                            try value.encode(to: encoder)
+                        case let .AssistantToolsFileSearch(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// The tools to add this file to.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload/tools`.
+                public typealias toolsPayload = [Components.Schemas.CreateMessageRequest.attachmentsPayloadPayload.toolsPayloadPayload]
+                /// The tools to add this file to.
+                ///
+                /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachmentsPayload/tools`.
+                public var tools: Components.Schemas.CreateMessageRequest.attachmentsPayloadPayload.toolsPayload?
+                /// Creates a new `attachmentsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - file_id: The ID of the file to attach to the message.
+                ///   - tools: The tools to add this file to.
+                public init(
+                    file_id: Swift.String? = nil,
+                    tools: Components.Schemas.CreateMessageRequest.attachmentsPayloadPayload.toolsPayload? = nil
+                ) {
+                    self.file_id = file_id
+                    self.tools = tools
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case file_id
+                    case tools
+                }
+            }
+            /// A list of files attached to the message, and the tools they should be added to.
             ///
-            /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/file_ids`.
-            public var file_ids: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachments`.
+            public typealias attachmentsPayload = [Components.Schemas.CreateMessageRequest.attachmentsPayloadPayload]
+            /// A list of files attached to the message, and the tools they should be added to.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateMessageRequest/attachments`.
+            public var attachments: Components.Schemas.CreateMessageRequest.attachmentsPayload?
             /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             ///
             ///
@@ -8698,25 +10641,25 @@ public enum Components {
             /// Creates a new `CreateMessageRequest`.
             ///
             /// - Parameters:
-            ///   - role: The role of the entity that is creating the message. Currently only `user` is supported.
+            ///   - role: The role of the entity that is creating the message. Allowed values include:
             ///   - content: The content of the message.
-            ///   - file_ids: A list of [File](/docs/api-reference/files) IDs that the message should use. There can be a maximum of 10 files attached to a message. Useful for tools like `retrieval` and `code_interpreter` that can access and use files.
+            ///   - attachments: A list of files attached to the message, and the tools they should be added to.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             public init(
                 role: Components.Schemas.CreateMessageRequest.rolePayload,
                 content: Swift.String,
-                file_ids: [Swift.String]? = nil,
+                attachments: Components.Schemas.CreateMessageRequest.attachmentsPayload? = nil,
                 metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
             ) {
                 self.role = role
                 self.content = content
-                self.file_ids = file_ids
+                self.attachments = attachments
                 self.metadata = metadata
             }
             public enum CodingKeys: String, CodingKey {
                 case role
                 case content
-                case file_ids
+                case attachments
                 case metadata
             }
             public init(from decoder: any Decoder) throws {
@@ -8729,9 +10672,9 @@ public enum Components {
                     Swift.String.self,
                     forKey: .content
                 )
-                file_ids = try container.decodeIfPresent(
-                    [Swift.String].self,
-                    forKey: .file_ids
+                attachments = try container.decodeIfPresent(
+                    Components.Schemas.CreateMessageRequest.attachmentsPayload.self,
+                    forKey: .attachments
                 )
                 metadata = try container.decodeIfPresent(
                     OpenAPIRuntime.OpenAPIObjectContainer.self,
@@ -8740,7 +10683,7 @@ public enum Components {
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "role",
                     "content",
-                    "file_ids",
+                    "attachments",
                     "metadata"
                 ])
             }
@@ -8897,6 +10840,64 @@ public enum Components {
                 case image_file
             }
         }
+        /// References an image [File](/docs/api-reference/files) in the content of a message.
+        ///
+        /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject`.
+        public struct MessageDeltaContentImageFileObject: Codable, Hashable, Sendable {
+            /// The index of the content part in the message.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject/index`.
+            public var index: Swift.Int
+            /// Always `image_file`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case image_file = "image_file"
+            }
+            /// Always `image_file`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject/type`.
+            public var _type: Components.Schemas.MessageDeltaContentImageFileObject._typePayload
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject/image_file`.
+            public struct image_filePayload: Codable, Hashable, Sendable {
+                /// The [File](/docs/api-reference/files) ID of the image in the message content.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject/image_file/file_id`.
+                public var file_id: Swift.String?
+                /// Creates a new `image_filePayload`.
+                ///
+                /// - Parameters:
+                ///   - file_id: The [File](/docs/api-reference/files) ID of the image in the message content.
+                public init(file_id: Swift.String? = nil) {
+                    self.file_id = file_id
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case file_id
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentImageFileObject/image_file`.
+            public var image_file: Components.Schemas.MessageDeltaContentImageFileObject.image_filePayload?
+            /// Creates a new `MessageDeltaContentImageFileObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the content part in the message.
+            ///   - _type: Always `image_file`.
+            ///   - image_file:
+            public init(
+                index: Swift.Int,
+                _type: Components.Schemas.MessageDeltaContentImageFileObject._typePayload,
+                image_file: Components.Schemas.MessageDeltaContentImageFileObject.image_filePayload? = nil
+            ) {
+                self.index = index
+                self._type = _type
+                self.image_file = image_file
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case _type = "type"
+                case image_file
+            }
+        }
         /// The text content that is part of a message.
         ///
         /// - Remark: Generated from `#/components/schemas/MessageContentTextObject`.
@@ -8992,7 +10993,7 @@ public enum Components {
                 case text
             }
         }
-        /// A citation within the message that points to a specific quote from a specific File associated with the assistant or the message. Generated when the assistant uses the "retrieval" tool to search files.
+        /// A citation within the message that points to a specific quote from a specific File associated with the assistant or the message. Generated when the assistant uses the "file_search" tool to search files.
         ///
         /// - Remark: Generated from `#/components/schemas/MessageContentTextAnnotationsFileCitationObject`.
         public struct MessageContentTextAnnotationsFileCitationObject: Codable, Hashable, Sendable {
@@ -9142,6 +11143,275 @@ public enum Components {
                 case end_index
             }
         }
+        /// The text content that is part of a message.
+        ///
+        /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject`.
+        public struct MessageDeltaContentTextObject: Codable, Hashable, Sendable {
+            /// The index of the content part in the message.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/index`.
+            public var index: Swift.Int
+            /// Always `text`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case text = "text"
+            }
+            /// Always `text`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/type`.
+            public var _type: Components.Schemas.MessageDeltaContentTextObject._typePayload
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text`.
+            public struct textPayload: Codable, Hashable, Sendable {
+                /// The data that makes up the text.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text/value`.
+                public var value: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text/annotationsPayload`.
+                @frozen public enum annotationsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text/annotationsPayload/case1`.
+                    case MessageDeltaContentTextAnnotationsFileCitationObject(Components.Schemas.MessageDeltaContentTextAnnotationsFileCitationObject)
+                    /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text/annotationsPayload/case2`.
+                    case MessageDeltaContentTextAnnotationsFilePathObject(Components.Schemas.MessageDeltaContentTextAnnotationsFilePathObject)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .MessageDeltaContentTextAnnotationsFileCitationObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .MessageDeltaContentTextAnnotationsFilePathObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .MessageDeltaContentTextAnnotationsFileCitationObject(value):
+                            try value.encode(to: encoder)
+                        case let .MessageDeltaContentTextAnnotationsFilePathObject(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text/annotations`.
+                public typealias annotationsPayload = [Components.Schemas.MessageDeltaContentTextObject.textPayload.annotationsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text/annotations`.
+                public var annotations: Components.Schemas.MessageDeltaContentTextObject.textPayload.annotationsPayload?
+                /// Creates a new `textPayload`.
+                ///
+                /// - Parameters:
+                ///   - value: The data that makes up the text.
+                ///   - annotations:
+                public init(
+                    value: Swift.String? = nil,
+                    annotations: Components.Schemas.MessageDeltaContentTextObject.textPayload.annotationsPayload? = nil
+                ) {
+                    self.value = value
+                    self.annotations = annotations
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case value
+                    case annotations
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextObject/text`.
+            public var text: Components.Schemas.MessageDeltaContentTextObject.textPayload?
+            /// Creates a new `MessageDeltaContentTextObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the content part in the message.
+            ///   - _type: Always `text`.
+            ///   - text:
+            public init(
+                index: Swift.Int,
+                _type: Components.Schemas.MessageDeltaContentTextObject._typePayload,
+                text: Components.Schemas.MessageDeltaContentTextObject.textPayload? = nil
+            ) {
+                self.index = index
+                self._type = _type
+                self.text = text
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case _type = "type"
+                case text
+            }
+        }
+        /// A citation within the message that points to a specific quote from a specific File associated with the assistant or the message. Generated when the assistant uses the "file_search" tool to search files.
+        ///
+        /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject`.
+        public struct MessageDeltaContentTextAnnotationsFileCitationObject: Codable, Hashable, Sendable {
+            /// The index of the annotation in the text content part.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/index`.
+            public var index: Swift.Int
+            /// Always `file_citation`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case file_citation = "file_citation"
+            }
+            /// Always `file_citation`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/type`.
+            public var _type: Components.Schemas.MessageDeltaContentTextAnnotationsFileCitationObject._typePayload
+            /// The text in the message content that needs to be replaced.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/text`.
+            public var text: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/file_citation`.
+            public struct file_citationPayload: Codable, Hashable, Sendable {
+                /// The ID of the specific File the citation is from.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/file_citation/file_id`.
+                public var file_id: Swift.String?
+                /// The specific quote in the file.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/file_citation/quote`.
+                public var quote: Swift.String?
+                /// Creates a new `file_citationPayload`.
+                ///
+                /// - Parameters:
+                ///   - file_id: The ID of the specific File the citation is from.
+                ///   - quote: The specific quote in the file.
+                public init(
+                    file_id: Swift.String? = nil,
+                    quote: Swift.String? = nil
+                ) {
+                    self.file_id = file_id
+                    self.quote = quote
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case file_id
+                    case quote
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/file_citation`.
+            public var file_citation: Components.Schemas.MessageDeltaContentTextAnnotationsFileCitationObject.file_citationPayload?
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/start_index`.
+            public var start_index: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFileCitationObject/end_index`.
+            public var end_index: Swift.Int?
+            /// Creates a new `MessageDeltaContentTextAnnotationsFileCitationObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the annotation in the text content part.
+            ///   - _type: Always `file_citation`.
+            ///   - text: The text in the message content that needs to be replaced.
+            ///   - file_citation:
+            ///   - start_index:
+            ///   - end_index:
+            public init(
+                index: Swift.Int,
+                _type: Components.Schemas.MessageDeltaContentTextAnnotationsFileCitationObject._typePayload,
+                text: Swift.String? = nil,
+                file_citation: Components.Schemas.MessageDeltaContentTextAnnotationsFileCitationObject.file_citationPayload? = nil,
+                start_index: Swift.Int? = nil,
+                end_index: Swift.Int? = nil
+            ) {
+                self.index = index
+                self._type = _type
+                self.text = text
+                self.file_citation = file_citation
+                self.start_index = start_index
+                self.end_index = end_index
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case _type = "type"
+                case text
+                case file_citation
+                case start_index
+                case end_index
+            }
+        }
+        /// A URL for the file that's generated when the assistant used the `code_interpreter` tool to generate a file.
+        ///
+        /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject`.
+        public struct MessageDeltaContentTextAnnotationsFilePathObject: Codable, Hashable, Sendable {
+            /// The index of the annotation in the text content part.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/index`.
+            public var index: Swift.Int
+            /// Always `file_path`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case file_path = "file_path"
+            }
+            /// Always `file_path`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/type`.
+            public var _type: Components.Schemas.MessageDeltaContentTextAnnotationsFilePathObject._typePayload
+            /// The text in the message content that needs to be replaced.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/text`.
+            public var text: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/file_path`.
+            public struct file_pathPayload: Codable, Hashable, Sendable {
+                /// The ID of the file that was generated.
+                ///
+                /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/file_path/file_id`.
+                public var file_id: Swift.String?
+                /// Creates a new `file_pathPayload`.
+                ///
+                /// - Parameters:
+                ///   - file_id: The ID of the file that was generated.
+                public init(file_id: Swift.String? = nil) {
+                    self.file_id = file_id
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case file_id
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/file_path`.
+            public var file_path: Components.Schemas.MessageDeltaContentTextAnnotationsFilePathObject.file_pathPayload?
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/start_index`.
+            public var start_index: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/MessageDeltaContentTextAnnotationsFilePathObject/end_index`.
+            public var end_index: Swift.Int?
+            /// Creates a new `MessageDeltaContentTextAnnotationsFilePathObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the annotation in the text content part.
+            ///   - _type: Always `file_path`.
+            ///   - text: The text in the message content that needs to be replaced.
+            ///   - file_path:
+            ///   - start_index:
+            ///   - end_index:
+            public init(
+                index: Swift.Int,
+                _type: Components.Schemas.MessageDeltaContentTextAnnotationsFilePathObject._typePayload,
+                text: Swift.String? = nil,
+                file_path: Components.Schemas.MessageDeltaContentTextAnnotationsFilePathObject.file_pathPayload? = nil,
+                start_index: Swift.Int? = nil,
+                end_index: Swift.Int? = nil
+            ) {
+                self.index = index
+                self._type = _type
+                self.text = text
+                self.file_path = file_path
+                self.start_index = start_index
+                self.end_index = end_index
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case _type = "type"
+                case text
+                case file_path
+                case start_index
+                case end_index
+            }
+        }
         /// Represents a step in execution of a run.
         ///
         ///
@@ -9151,13 +11421,13 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepObject/id`.
             public var id: Swift.String
-            /// The object type, which is always `thread.run.step``.
+            /// The object type, which is always `thread.run.step`.
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepObject/object`.
             @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
                 case thread_period_run_period_step = "thread.run.step"
             }
-            /// The object type, which is always `thread.run.step``.
+            /// The object type, which is always `thread.run.step`.
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepObject/object`.
             public var object: Components.Schemas.RunStepObject.objectPayload
@@ -9304,11 +11574,13 @@ public enum Components {
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepObject/metadata`.
             public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// - Remark: Generated from `#/components/schemas/RunStepObject/usage`.
+            public var usage: Components.Schemas.RunStepCompletionUsage?
             /// Creates a new `RunStepObject`.
             ///
             /// - Parameters:
             ///   - id: The identifier of the run step, which can be referenced in API endpoints.
-            ///   - object: The object type, which is always `thread.run.step``.
+            ///   - object: The object type, which is always `thread.run.step`.
             ///   - created_at: The Unix timestamp (in seconds) for when the run step was created.
             ///   - assistant_id: The ID of the [assistant](/docs/api-reference/assistants) associated with the run step.
             ///   - thread_id: The ID of the [thread](/docs/api-reference/threads) that was run.
@@ -9322,6 +11594,7 @@ public enum Components {
             ///   - failed_at: The Unix timestamp (in seconds) for when the run step failed.
             ///   - completed_at: The Unix timestamp (in seconds) for when the run step completed.
             ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///   - usage:
             public init(
                 id: Swift.String,
                 object: Components.Schemas.RunStepObject.objectPayload,
@@ -9337,7 +11610,8 @@ public enum Components {
                 cancelled_at: Swift.Int? = nil,
                 failed_at: Swift.Int? = nil,
                 completed_at: Swift.Int? = nil,
-                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                usage: Components.Schemas.RunStepCompletionUsage? = nil
             ) {
                 self.id = id
                 self.object = object
@@ -9354,6 +11628,7 @@ public enum Components {
                 self.failed_at = failed_at
                 self.completed_at = completed_at
                 self.metadata = metadata
+                self.usage = usage
             }
             public enum CodingKeys: String, CodingKey {
                 case id
@@ -9371,6 +11646,107 @@ public enum Components {
                 case failed_at
                 case completed_at
                 case metadata
+                case usage
+            }
+        }
+        /// Represents a run step delta i.e. any changed fields on a run step during streaming.
+        ///
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject`.
+        public struct RunStepDeltaObject: Codable, Hashable, Sendable {
+            /// The identifier of the run step, which can be referenced in API endpoints.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/id`.
+            public var id: Swift.String
+            /// The object type, which is always `thread.run.step.delta`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case thread_period_run_period_step_period_delta = "thread.run.step.delta"
+            }
+            /// The object type, which is always `thread.run.step.delta`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/object`.
+            public var object: Components.Schemas.RunStepDeltaObject.objectPayload
+            /// The delta containing the fields that have changed on the run step.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/delta`.
+            public struct deltaPayload: Codable, Hashable, Sendable {
+                /// The details of the run step.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/delta/step_details`.
+                @frozen public enum step_detailsPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/delta/step_details/case1`.
+                    case RunStepDeltaStepDetailsMessageCreationObject(Components.Schemas.RunStepDeltaStepDetailsMessageCreationObject)
+                    /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/delta/step_details/case2`.
+                    case RunStepDeltaStepDetailsToolCallsObject(Components.Schemas.RunStepDeltaStepDetailsToolCallsObject)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .RunStepDeltaStepDetailsMessageCreationObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .RunStepDeltaStepDetailsToolCallsObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .RunStepDeltaStepDetailsMessageCreationObject(value):
+                            try value.encode(to: encoder)
+                        case let .RunStepDeltaStepDetailsToolCallsObject(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// The details of the run step.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/delta/step_details`.
+                public var step_details: Components.Schemas.RunStepDeltaObject.deltaPayload.step_detailsPayload?
+                /// Creates a new `deltaPayload`.
+                ///
+                /// - Parameters:
+                ///   - step_details: The details of the run step.
+                public init(step_details: Components.Schemas.RunStepDeltaObject.deltaPayload.step_detailsPayload? = nil) {
+                    self.step_details = step_details
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case step_details
+                }
+            }
+            /// The delta containing the fields that have changed on the run step.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaObject/delta`.
+            public var delta: Components.Schemas.RunStepDeltaObject.deltaPayload
+            /// Creates a new `RunStepDeltaObject`.
+            ///
+            /// - Parameters:
+            ///   - id: The identifier of the run step, which can be referenced in API endpoints.
+            ///   - object: The object type, which is always `thread.run.step.delta`.
+            ///   - delta: The delta containing the fields that have changed on the run step.
+            public init(
+                id: Swift.String,
+                object: Components.Schemas.RunStepDeltaObject.objectPayload,
+                delta: Components.Schemas.RunStepDeltaObject.deltaPayload
+            ) {
+                self.id = id
+                self.object = object
+                self.delta = delta
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case object
+                case delta
             }
         }
         /// - Remark: Generated from `#/components/schemas/ListRunStepsResponse`.
@@ -9418,13 +11794,13 @@ public enum Components {
         ///
         /// - Remark: Generated from `#/components/schemas/RunStepDetailsMessageCreationObject`.
         public struct RunStepDetailsMessageCreationObject: Codable, Hashable, Sendable {
-            /// Always `message_creation``.
+            /// Always `message_creation`.
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepDetailsMessageCreationObject/type`.
             @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
                 case message_creation = "message_creation"
             }
-            /// Always `message_creation``.
+            /// Always `message_creation`.
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepDetailsMessageCreationObject/type`.
             public var _type: Components.Schemas.RunStepDetailsMessageCreationObject._typePayload
@@ -9450,11 +11826,61 @@ public enum Components {
             /// Creates a new `RunStepDetailsMessageCreationObject`.
             ///
             /// - Parameters:
-            ///   - _type: Always `message_creation``.
+            ///   - _type: Always `message_creation`.
             ///   - message_creation:
             public init(
                 _type: Components.Schemas.RunStepDetailsMessageCreationObject._typePayload,
                 message_creation: Components.Schemas.RunStepDetailsMessageCreationObject.message_creationPayload
+            ) {
+                self._type = _type
+                self.message_creation = message_creation
+            }
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case message_creation
+            }
+        }
+        /// Details of the message creation by the run step.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsMessageCreationObject`.
+        public struct RunStepDeltaStepDetailsMessageCreationObject: Codable, Hashable, Sendable {
+            /// Always `message_creation`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsMessageCreationObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case message_creation = "message_creation"
+            }
+            /// Always `message_creation`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsMessageCreationObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsMessageCreationObject._typePayload
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsMessageCreationObject/message_creation`.
+            public struct message_creationPayload: Codable, Hashable, Sendable {
+                /// The ID of the message that was created by this run step.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsMessageCreationObject/message_creation/message_id`.
+                public var message_id: Swift.String?
+                /// Creates a new `message_creationPayload`.
+                ///
+                /// - Parameters:
+                ///   - message_id: The ID of the message that was created by this run step.
+                public init(message_id: Swift.String? = nil) {
+                    self.message_id = message_id
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case message_id
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsMessageCreationObject/message_creation`.
+            public var message_creation: Components.Schemas.RunStepDeltaStepDetailsMessageCreationObject.message_creationPayload?
+            /// Creates a new `RunStepDeltaStepDetailsMessageCreationObject`.
+            ///
+            /// - Parameters:
+            ///   - _type: Always `message_creation`.
+            ///   - message_creation:
+            public init(
+                _type: Components.Schemas.RunStepDeltaStepDetailsMessageCreationObject._typePayload,
+                message_creation: Components.Schemas.RunStepDeltaStepDetailsMessageCreationObject.message_creationPayload? = nil
             ) {
                 self._type = _type
                 self.message_creation = message_creation
@@ -9483,7 +11909,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsObject/tool_callsPayload/case1`.
                 case RunStepDetailsToolCallsCodeObject(Components.Schemas.RunStepDetailsToolCallsCodeObject)
                 /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsObject/tool_callsPayload/case2`.
-                case RunStepDetailsToolCallsRetrievalObject(Components.Schemas.RunStepDetailsToolCallsRetrievalObject)
+                case RunStepDetailsToolCallsFileSearchObject(Components.Schemas.RunStepDetailsToolCallsFileSearchObject)
                 /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsObject/tool_callsPayload/case3`.
                 case RunStepDetailsToolCallsFunctionObject(Components.Schemas.RunStepDetailsToolCallsFunctionObject)
                 public init(from decoder: any Decoder) throws {
@@ -9495,7 +11921,7 @@ public enum Components {
                         errors.append(error)
                     }
                     do {
-                        self = .RunStepDetailsToolCallsRetrievalObject(try .init(from: decoder))
+                        self = .RunStepDetailsToolCallsFileSearchObject(try .init(from: decoder))
                         return
                     } catch {
                         errors.append(error)
@@ -9516,19 +11942,19 @@ public enum Components {
                     switch self {
                     case let .RunStepDetailsToolCallsCodeObject(value):
                         try value.encode(to: encoder)
-                    case let .RunStepDetailsToolCallsRetrievalObject(value):
+                    case let .RunStepDetailsToolCallsFileSearchObject(value):
                         try value.encode(to: encoder)
                     case let .RunStepDetailsToolCallsFunctionObject(value):
                         try value.encode(to: encoder)
                     }
                 }
             }
-            /// An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `retrieval`, or `function`.
+            /// An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsObject/tool_calls`.
             public typealias tool_callsPayload = [Components.Schemas.RunStepDetailsToolCallsObject.tool_callsPayloadPayload]
-            /// An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `retrieval`, or `function`.
+            /// An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `file_search`, or `function`.
             ///
             ///
             /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsObject/tool_calls`.
@@ -9537,10 +11963,96 @@ public enum Components {
             ///
             /// - Parameters:
             ///   - _type: Always `tool_calls`.
-            ///   - tool_calls: An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `retrieval`, or `function`.
+            ///   - tool_calls: An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `file_search`, or `function`.
             public init(
                 _type: Components.Schemas.RunStepDetailsToolCallsObject._typePayload,
                 tool_calls: Components.Schemas.RunStepDetailsToolCallsObject.tool_callsPayload
+            ) {
+                self._type = _type
+                self.tool_calls = tool_calls
+            }
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case tool_calls
+            }
+        }
+        /// Details of the tool call.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject`.
+        public struct RunStepDeltaStepDetailsToolCallsObject: Codable, Hashable, Sendable {
+            /// Always `tool_calls`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case tool_calls = "tool_calls"
+            }
+            /// Always `tool_calls`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsObject._typePayload
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/tool_callsPayload`.
+            @frozen public enum tool_callsPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/tool_callsPayload/case1`.
+                case RunStepDeltaStepDetailsToolCallsCodeObject(Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject)
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/tool_callsPayload/case2`.
+                case RunStepDeltaStepDetailsToolCallsFileSearchObject(Components.Schemas.RunStepDeltaStepDetailsToolCallsFileSearchObject)
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/tool_callsPayload/case3`.
+                case RunStepDeltaStepDetailsToolCallsFunctionObject(Components.Schemas.RunStepDeltaStepDetailsToolCallsFunctionObject)
+                public init(from decoder: any Decoder) throws {
+                    var errors: [any Error] = []
+                    do {
+                        self = .RunStepDeltaStepDetailsToolCallsCodeObject(try .init(from: decoder))
+                        return
+                    } catch {
+                        errors.append(error)
+                    }
+                    do {
+                        self = .RunStepDeltaStepDetailsToolCallsFileSearchObject(try .init(from: decoder))
+                        return
+                    } catch {
+                        errors.append(error)
+                    }
+                    do {
+                        self = .RunStepDeltaStepDetailsToolCallsFunctionObject(try .init(from: decoder))
+                        return
+                    } catch {
+                        errors.append(error)
+                    }
+                    throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                        type: Self.self,
+                        codingPath: decoder.codingPath,
+                        errors: errors
+                    )
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    switch self {
+                    case let .RunStepDeltaStepDetailsToolCallsCodeObject(value):
+                        try value.encode(to: encoder)
+                    case let .RunStepDeltaStepDetailsToolCallsFileSearchObject(value):
+                        try value.encode(to: encoder)
+                    case let .RunStepDeltaStepDetailsToolCallsFunctionObject(value):
+                        try value.encode(to: encoder)
+                    }
+                }
+            }
+            /// An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `file_search`, or `function`.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/tool_calls`.
+            public typealias tool_callsPayload = [Components.Schemas.RunStepDeltaStepDetailsToolCallsObject.tool_callsPayloadPayload]
+            /// An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `file_search`, or `function`.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsObject/tool_calls`.
+            public var tool_calls: Components.Schemas.RunStepDeltaStepDetailsToolCallsObject.tool_callsPayload?
+            /// Creates a new `RunStepDeltaStepDetailsToolCallsObject`.
+            ///
+            /// - Parameters:
+            ///   - _type: Always `tool_calls`.
+            ///   - tool_calls: An array of tool calls the run step was involved in. These can be associated with one of three types of tools: `code_interpreter`, `file_search`, or `function`.
+            public init(
+                _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsObject._typePayload,
+                tool_calls: Components.Schemas.RunStepDeltaStepDetailsToolCallsObject.tool_callsPayload? = nil
             ) {
                 self._type = _type
                 self.tool_calls = tool_calls
@@ -9661,6 +12173,125 @@ public enum Components {
                 case code_interpreter
             }
         }
+        /// Details of the Code Interpreter tool call the run step was involved in.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject`.
+        public struct RunStepDeltaStepDetailsToolCallsCodeObject: Codable, Hashable, Sendable {
+            /// The index of the tool call in the tool calls array.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/index`.
+            public var index: Swift.Int
+            /// The ID of the tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/id`.
+            public var id: Swift.String?
+            /// The type of tool call. This is always going to be `code_interpreter` for this type of tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case code_interpreter = "code_interpreter"
+            }
+            /// The type of tool call. This is always going to be `code_interpreter` for this type of tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject._typePayload
+            /// The Code Interpreter tool call definition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter`.
+            public struct code_interpreterPayload: Codable, Hashable, Sendable {
+                /// The input to the Code Interpreter tool call.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter/input`.
+                public var input: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter/outputsPayload`.
+                @frozen public enum outputsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter/outputsPayload/case1`.
+                    case RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject(Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject)
+                    /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter/outputsPayload/case2`.
+                    case RunStepDeltaStepDetailsToolCallsCodeOutputImageObject(Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputImageObject)
+                    public init(from decoder: any Decoder) throws {
+                        var errors: [any Error] = []
+                        do {
+                            self = .RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        do {
+                            self = .RunStepDeltaStepDetailsToolCallsCodeOutputImageObject(try .init(from: decoder))
+                            return
+                        } catch {
+                            errors.append(error)
+                        }
+                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                            type: Self.self,
+                            codingPath: decoder.codingPath,
+                            errors: errors
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        case let .RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject(value):
+                            try value.encode(to: encoder)
+                        case let .RunStepDeltaStepDetailsToolCallsCodeOutputImageObject(value):
+                            try value.encode(to: encoder)
+                        }
+                    }
+                }
+                /// The outputs from the Code Interpreter tool call. Code Interpreter can output one or more items, including text (`logs`) or images (`image`). Each of these are represented by a different object type.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter/outputs`.
+                public typealias outputsPayload = [Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject.code_interpreterPayload.outputsPayloadPayload]
+                /// The outputs from the Code Interpreter tool call. Code Interpreter can output one or more items, including text (`logs`) or images (`image`). Each of these are represented by a different object type.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter/outputs`.
+                public var outputs: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject.code_interpreterPayload.outputsPayload?
+                /// Creates a new `code_interpreterPayload`.
+                ///
+                /// - Parameters:
+                ///   - input: The input to the Code Interpreter tool call.
+                ///   - outputs: The outputs from the Code Interpreter tool call. Code Interpreter can output one or more items, including text (`logs`) or images (`image`). Each of these are represented by a different object type.
+                public init(
+                    input: Swift.String? = nil,
+                    outputs: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject.code_interpreterPayload.outputsPayload? = nil
+                ) {
+                    self.input = input
+                    self.outputs = outputs
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case input
+                    case outputs
+                }
+            }
+            /// The Code Interpreter tool call definition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeObject/code_interpreter`.
+            public var code_interpreter: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject.code_interpreterPayload?
+            /// Creates a new `RunStepDeltaStepDetailsToolCallsCodeObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the tool call in the tool calls array.
+            ///   - id: The ID of the tool call.
+            ///   - _type: The type of tool call. This is always going to be `code_interpreter` for this type of tool call.
+            ///   - code_interpreter: The Code Interpreter tool call definition.
+            public init(
+                index: Swift.Int,
+                id: Swift.String? = nil,
+                _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject._typePayload,
+                code_interpreter: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeObject.code_interpreterPayload? = nil
+            ) {
+                self.index = index
+                self.id = id
+                self._type = _type
+                self.code_interpreter = code_interpreter
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case id
+                case _type = "type"
+                case code_interpreter
+            }
+        }
         /// Text output from the Code Interpreter tool call as part of a run step.
         ///
         /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsCodeOutputLogsObject`.
@@ -9692,6 +12323,49 @@ public enum Components {
                 self.logs = logs
             }
             public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case logs
+            }
+        }
+        /// Text output from the Code Interpreter tool call as part of a run step.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject`.
+        public struct RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject: Codable, Hashable, Sendable {
+            /// The index of the output in the outputs array.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject/index`.
+            public var index: Swift.Int
+            /// Always `logs`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case logs = "logs"
+            }
+            /// Always `logs`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject._typePayload
+            /// The text output from the Code Interpreter tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject/logs`.
+            public var logs: Swift.String?
+            /// Creates a new `RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the output in the outputs array.
+            ///   - _type: Always `logs`.
+            ///   - logs: The text output from the Code Interpreter tool call.
+            public init(
+                index: Swift.Int,
+                _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputLogsObject._typePayload,
+                logs: Swift.String? = nil
+            ) {
+                self.index = index
+                self._type = _type
+                self.logs = logs
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
                 case _type = "type"
                 case logs
             }
@@ -9744,45 +12418,150 @@ public enum Components {
                 case image
             }
         }
-        /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsRetrievalObject`.
-        public struct RunStepDetailsToolCallsRetrievalObject: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject`.
+        public struct RunStepDeltaStepDetailsToolCallsCodeOutputImageObject: Codable, Hashable, Sendable {
+            /// The index of the output in the outputs array.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject/index`.
+            public var index: Swift.Int
+            /// Always `image`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case image = "image"
+            }
+            /// Always `image`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputImageObject._typePayload
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject/image`.
+            public struct imagePayload: Codable, Hashable, Sendable {
+                /// The [file](/docs/api-reference/files) ID of the image.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject/image/file_id`.
+                public var file_id: Swift.String?
+                /// Creates a new `imagePayload`.
+                ///
+                /// - Parameters:
+                ///   - file_id: The [file](/docs/api-reference/files) ID of the image.
+                public init(file_id: Swift.String? = nil) {
+                    self.file_id = file_id
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case file_id
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsCodeOutputImageObject/image`.
+            public var image: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputImageObject.imagePayload?
+            /// Creates a new `RunStepDeltaStepDetailsToolCallsCodeOutputImageObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the output in the outputs array.
+            ///   - _type: Always `image`.
+            ///   - image:
+            public init(
+                index: Swift.Int,
+                _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputImageObject._typePayload,
+                image: Components.Schemas.RunStepDeltaStepDetailsToolCallsCodeOutputImageObject.imagePayload? = nil
+            ) {
+                self.index = index
+                self._type = _type
+                self.image = image
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case _type = "type"
+                case image
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsFileSearchObject`.
+        public struct RunStepDetailsToolCallsFileSearchObject: Codable, Hashable, Sendable {
             /// The ID of the tool call object.
             ///
-            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsRetrievalObject/id`.
+            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsFileSearchObject/id`.
             public var id: Swift.String
-            /// The type of tool call. This is always going to be `retrieval` for this type of tool call.
+            /// The type of tool call. This is always going to be `file_search` for this type of tool call.
             ///
-            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsRetrievalObject/type`.
+            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsFileSearchObject/type`.
             @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
-                case retrieval = "retrieval"
+                case file_search = "file_search"
             }
-            /// The type of tool call. This is always going to be `retrieval` for this type of tool call.
+            /// The type of tool call. This is always going to be `file_search` for this type of tool call.
             ///
-            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsRetrievalObject/type`.
-            public var _type: Components.Schemas.RunStepDetailsToolCallsRetrievalObject._typePayload
+            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsFileSearchObject/type`.
+            public var _type: Components.Schemas.RunStepDetailsToolCallsFileSearchObject._typePayload
             /// For now, this is always going to be an empty object.
             ///
-            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsRetrievalObject/retrieval`.
-            public var retrieval: OpenAPIRuntime.OpenAPIObjectContainer
-            /// Creates a new `RunStepDetailsToolCallsRetrievalObject`.
+            /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsFileSearchObject/file_search`.
+            public var file_search: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `RunStepDetailsToolCallsFileSearchObject`.
             ///
             /// - Parameters:
             ///   - id: The ID of the tool call object.
-            ///   - _type: The type of tool call. This is always going to be `retrieval` for this type of tool call.
-            ///   - retrieval: For now, this is always going to be an empty object.
+            ///   - _type: The type of tool call. This is always going to be `file_search` for this type of tool call.
+            ///   - file_search: For now, this is always going to be an empty object.
             public init(
                 id: Swift.String,
-                _type: Components.Schemas.RunStepDetailsToolCallsRetrievalObject._typePayload,
-                retrieval: OpenAPIRuntime.OpenAPIObjectContainer
+                _type: Components.Schemas.RunStepDetailsToolCallsFileSearchObject._typePayload,
+                file_search: OpenAPIRuntime.OpenAPIObjectContainer
             ) {
                 self.id = id
                 self._type = _type
-                self.retrieval = retrieval
+                self.file_search = file_search
             }
             public enum CodingKeys: String, CodingKey {
                 case id
                 case _type = "type"
-                case retrieval
+                case file_search
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFileSearchObject`.
+        public struct RunStepDeltaStepDetailsToolCallsFileSearchObject: Codable, Hashable, Sendable {
+            /// The index of the tool call in the tool calls array.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFileSearchObject/index`.
+            public var index: Swift.Int
+            /// The ID of the tool call object.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFileSearchObject/id`.
+            public var id: Swift.String?
+            /// The type of tool call. This is always going to be `file_search` for this type of tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFileSearchObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case file_search = "file_search"
+            }
+            /// The type of tool call. This is always going to be `file_search` for this type of tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFileSearchObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsFileSearchObject._typePayload
+            /// For now, this is always going to be an empty object.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFileSearchObject/file_search`.
+            public var file_search: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `RunStepDeltaStepDetailsToolCallsFileSearchObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the tool call in the tool calls array.
+            ///   - id: The ID of the tool call object.
+            ///   - _type: The type of tool call. This is always going to be `file_search` for this type of tool call.
+            ///   - file_search: For now, this is always going to be an empty object.
+            public init(
+                index: Swift.Int,
+                id: Swift.String? = nil,
+                _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsFileSearchObject._typePayload,
+                file_search: OpenAPIRuntime.OpenAPIObjectContainer
+            ) {
+                self.index = index
+                self.id = id
+                self._type = _type
+                self.file_search = file_search
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case id
+                case _type = "type"
+                case file_search
             }
         }
         /// - Remark: Generated from `#/components/schemas/RunStepDetailsToolCallsFunctionObject`.
@@ -9863,67 +12642,617 @@ public enum Components {
                 case function
             }
         }
-        /// A list of [Files](/docs/api-reference/files) attached to an `assistant`.
+        /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject`.
+        public struct RunStepDeltaStepDetailsToolCallsFunctionObject: Codable, Hashable, Sendable {
+            /// The index of the tool call in the tool calls array.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/index`.
+            public var index: Swift.Int
+            /// The ID of the tool call object.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/id`.
+            public var id: Swift.String?
+            /// The type of tool call. This is always going to be `function` for this type of tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable {
+                case function = "function"
+            }
+            /// The type of tool call. This is always going to be `function` for this type of tool call.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/type`.
+            public var _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsFunctionObject._typePayload
+            /// The definition of the function that was called.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/function`.
+            public struct functionPayload: Codable, Hashable, Sendable {
+                /// The name of the function.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/function/name`.
+                public var name: Swift.String?
+                /// The arguments passed to the function.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/function/arguments`.
+                public var arguments: Swift.String?
+                /// The output of the function. This will be `null` if the outputs have not been [submitted](/docs/api-reference/runs/submitToolOutputs) yet.
+                ///
+                /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/function/output`.
+                public var output: Swift.String?
+                /// Creates a new `functionPayload`.
+                ///
+                /// - Parameters:
+                ///   - name: The name of the function.
+                ///   - arguments: The arguments passed to the function.
+                ///   - output: The output of the function. This will be `null` if the outputs have not been [submitted](/docs/api-reference/runs/submitToolOutputs) yet.
+                public init(
+                    name: Swift.String? = nil,
+                    arguments: Swift.String? = nil,
+                    output: Swift.String? = nil
+                ) {
+                    self.name = name
+                    self.arguments = arguments
+                    self.output = output
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case name
+                    case arguments
+                    case output
+                }
+            }
+            /// The definition of the function that was called.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepDeltaStepDetailsToolCallsFunctionObject/function`.
+            public var function: Components.Schemas.RunStepDeltaStepDetailsToolCallsFunctionObject.functionPayload?
+            /// Creates a new `RunStepDeltaStepDetailsToolCallsFunctionObject`.
+            ///
+            /// - Parameters:
+            ///   - index: The index of the tool call in the tool calls array.
+            ///   - id: The ID of the tool call object.
+            ///   - _type: The type of tool call. This is always going to be `function` for this type of tool call.
+            ///   - function: The definition of the function that was called.
+            public init(
+                index: Swift.Int,
+                id: Swift.String? = nil,
+                _type: Components.Schemas.RunStepDeltaStepDetailsToolCallsFunctionObject._typePayload,
+                function: Components.Schemas.RunStepDeltaStepDetailsToolCallsFunctionObject.functionPayload? = nil
+            ) {
+                self.index = index
+                self.id = id
+                self._type = _type
+                self.function = function
+            }
+            public enum CodingKeys: String, CodingKey {
+                case index
+                case id
+                case _type = "type"
+                case function
+            }
+        }
+        /// The expiration policy for a vector store.
         ///
-        /// - Remark: Generated from `#/components/schemas/AssistantFileObject`.
-        public struct AssistantFileObject: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/VectorStoreExpirationAfter`.
+        public struct VectorStoreExpirationAfter: Codable, Hashable, Sendable {
+            /// Anchor timestamp after which the expiration policy applies. Supported anchors: `last_active_at`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreExpirationAfter/anchor`.
+            @frozen public enum anchorPayload: String, Codable, Hashable, Sendable {
+                case last_active_at = "last_active_at"
+            }
+            /// Anchor timestamp after which the expiration policy applies. Supported anchors: `last_active_at`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreExpirationAfter/anchor`.
+            public var anchor: Components.Schemas.VectorStoreExpirationAfter.anchorPayload
+            /// The number of days after the anchor time that the vector store will expire.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreExpirationAfter/days`.
+            public var days: Swift.Int
+            /// Creates a new `VectorStoreExpirationAfter`.
+            ///
+            /// - Parameters:
+            ///   - anchor: Anchor timestamp after which the expiration policy applies. Supported anchors: `last_active_at`.
+            ///   - days: The number of days after the anchor time that the vector store will expire.
+            public init(
+                anchor: Components.Schemas.VectorStoreExpirationAfter.anchorPayload,
+                days: Swift.Int
+            ) {
+                self.anchor = anchor
+                self.days = days
+            }
+            public enum CodingKeys: String, CodingKey {
+                case anchor
+                case days
+            }
+        }
+        /// A vector store is a collection of processed files can be used by the `file_search` tool.
+        ///
+        /// - Remark: Generated from `#/components/schemas/VectorStoreObject`.
+        public struct VectorStoreObject: Codable, Hashable, Sendable {
             /// The identifier, which can be referenced in API endpoints.
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantFileObject/id`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/id`.
             public var id: Swift.String
-            /// The object type, which is always `assistant.file`.
+            /// The object type, which is always `vector_store`.
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantFileObject/object`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/object`.
             @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case assistant_period_file = "assistant.file"
+                case vector_store = "vector_store"
             }
-            /// The object type, which is always `assistant.file`.
+            /// The object type, which is always `vector_store`.
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantFileObject/object`.
-            public var object: Components.Schemas.AssistantFileObject.objectPayload
-            /// The Unix timestamp (in seconds) for when the assistant file was created.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/object`.
+            public var object: Components.Schemas.VectorStoreObject.objectPayload
+            /// The Unix timestamp (in seconds) for when the vector store was created.
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantFileObject/created_at`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/created_at`.
             public var created_at: Swift.Int
-            /// The assistant ID that the file is attached to.
+            /// The name of the vector store.
             ///
-            /// - Remark: Generated from `#/components/schemas/AssistantFileObject/assistant_id`.
-            public var assistant_id: Swift.String
-            /// Creates a new `AssistantFileObject`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/name`.
+            public var name: Swift.String
+            /// The total number of bytes used by the files in the vector store.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/usage_bytes`.
+            public var usage_bytes: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts`.
+            public struct file_countsPayload: Codable, Hashable, Sendable {
+                /// The number of files that are currently being processed.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts/in_progress`.
+                public var in_progress: Swift.Int
+                /// The number of files that have been successfully processed.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts/completed`.
+                public var completed: Swift.Int
+                /// The number of files that have failed to process.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts/failed`.
+                public var failed: Swift.Int
+                /// The number of files that were cancelled.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts/cancelled`.
+                public var cancelled: Swift.Int
+                /// The total number of files.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts/total`.
+                public var total: Swift.Int
+                /// Creates a new `file_countsPayload`.
+                ///
+                /// - Parameters:
+                ///   - in_progress: The number of files that are currently being processed.
+                ///   - completed: The number of files that have been successfully processed.
+                ///   - failed: The number of files that have failed to process.
+                ///   - cancelled: The number of files that were cancelled.
+                ///   - total: The total number of files.
+                public init(
+                    in_progress: Swift.Int,
+                    completed: Swift.Int,
+                    failed: Swift.Int,
+                    cancelled: Swift.Int,
+                    total: Swift.Int
+                ) {
+                    self.in_progress = in_progress
+                    self.completed = completed
+                    self.failed = failed
+                    self.cancelled = cancelled
+                    self.total = total
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case in_progress
+                    case completed
+                    case failed
+                    case cancelled
+                    case total
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/file_counts`.
+            public var file_counts: Components.Schemas.VectorStoreObject.file_countsPayload
+            /// The status of the vector store, which can be either `expired`, `in_progress`, or `completed`. A status of `completed` indicates that the vector store is ready for use.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable {
+                case expired = "expired"
+                case in_progress = "in_progress"
+                case completed = "completed"
+            }
+            /// The status of the vector store, which can be either `expired`, `in_progress`, or `completed`. A status of `completed` indicates that the vector store is ready for use.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/status`.
+            public var status: Components.Schemas.VectorStoreObject.statusPayload
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/expires_after`.
+            public var expires_after: Components.Schemas.VectorStoreExpirationAfter?
+            /// The Unix timestamp (in seconds) for when the vector store will expire.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/expires_at`.
+            public var expires_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the vector store was last active.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/last_active_at`.
+            public var last_active_at: Swift.Int?
+            /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreObject/metadata`.
+            public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// Creates a new `VectorStoreObject`.
             ///
             /// - Parameters:
             ///   - id: The identifier, which can be referenced in API endpoints.
-            ///   - object: The object type, which is always `assistant.file`.
-            ///   - created_at: The Unix timestamp (in seconds) for when the assistant file was created.
-            ///   - assistant_id: The assistant ID that the file is attached to.
+            ///   - object: The object type, which is always `vector_store`.
+            ///   - created_at: The Unix timestamp (in seconds) for when the vector store was created.
+            ///   - name: The name of the vector store.
+            ///   - usage_bytes: The total number of bytes used by the files in the vector store.
+            ///   - file_counts:
+            ///   - status: The status of the vector store, which can be either `expired`, `in_progress`, or `completed`. A status of `completed` indicates that the vector store is ready for use.
+            ///   - expires_after:
+            ///   - expires_at: The Unix timestamp (in seconds) for when the vector store will expire.
+            ///   - last_active_at: The Unix timestamp (in seconds) for when the vector store was last active.
+            ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
             public init(
                 id: Swift.String,
-                object: Components.Schemas.AssistantFileObject.objectPayload,
+                object: Components.Schemas.VectorStoreObject.objectPayload,
                 created_at: Swift.Int,
-                assistant_id: Swift.String
+                name: Swift.String,
+                usage_bytes: Swift.Int,
+                file_counts: Components.Schemas.VectorStoreObject.file_countsPayload,
+                status: Components.Schemas.VectorStoreObject.statusPayload,
+                expires_after: Components.Schemas.VectorStoreExpirationAfter? = nil,
+                expires_at: Swift.Int? = nil,
+                last_active_at: Swift.Int? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
             ) {
                 self.id = id
                 self.object = object
                 self.created_at = created_at
-                self.assistant_id = assistant_id
+                self.name = name
+                self.usage_bytes = usage_bytes
+                self.file_counts = file_counts
+                self.status = status
+                self.expires_after = expires_after
+                self.expires_at = expires_at
+                self.last_active_at = last_active_at
+                self.metadata = metadata
             }
             public enum CodingKeys: String, CodingKey {
                 case id
                 case object
                 case created_at
-                case assistant_id
+                case name
+                case usage_bytes
+                case file_counts
+                case status
+                case expires_after
+                case expires_at
+                case last_active_at
+                case metadata
             }
         }
-        /// - Remark: Generated from `#/components/schemas/CreateAssistantFileRequest`.
-        public struct CreateAssistantFileRequest: Codable, Hashable, Sendable {
-            /// A [File](/docs/api-reference/files) ID (with `purpose="assistants"`) that the assistant should use. Useful for tools like `retrieval` and `code_interpreter` that can access files.
+        /// - Remark: Generated from `#/components/schemas/CreateVectorStoreRequest`.
+        public struct CreateVectorStoreRequest: Codable, Hashable, Sendable {
+            /// A list of [File](/docs/api-reference/files) IDs that the vector store should use. Useful for tools like `file_search` that can access files.
             ///
-            /// - Remark: Generated from `#/components/schemas/CreateAssistantFileRequest/file_id`.
-            public var file_id: Swift.String
-            /// Creates a new `CreateAssistantFileRequest`.
+            /// - Remark: Generated from `#/components/schemas/CreateVectorStoreRequest/file_ids`.
+            public var file_ids: [Swift.String]?
+            /// The name of the vector store.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateVectorStoreRequest/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/CreateVectorStoreRequest/expires_after`.
+            public var expires_after: Components.Schemas.VectorStoreExpirationAfter?
+            /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateVectorStoreRequest/metadata`.
+            public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// Creates a new `CreateVectorStoreRequest`.
             ///
             /// - Parameters:
-            ///   - file_id: A [File](/docs/api-reference/files) ID (with `purpose="assistants"`) that the assistant should use. Useful for tools like `retrieval` and `code_interpreter` that can access files.
+            ///   - file_ids: A list of [File](/docs/api-reference/files) IDs that the vector store should use. Useful for tools like `file_search` that can access files.
+            ///   - name: The name of the vector store.
+            ///   - expires_after:
+            ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            public init(
+                file_ids: [Swift.String]? = nil,
+                name: Swift.String? = nil,
+                expires_after: Components.Schemas.VectorStoreExpirationAfter? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+            ) {
+                self.file_ids = file_ids
+                self.name = name
+                self.expires_after = expires_after
+                self.metadata = metadata
+            }
+            public enum CodingKeys: String, CodingKey {
+                case file_ids
+                case name
+                case expires_after
+                case metadata
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                file_ids = try container.decodeIfPresent(
+                    [Swift.String].self,
+                    forKey: .file_ids
+                )
+                name = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .name
+                )
+                expires_after = try container.decodeIfPresent(
+                    Components.Schemas.VectorStoreExpirationAfter.self,
+                    forKey: .expires_after
+                )
+                metadata = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIObjectContainer.self,
+                    forKey: .metadata
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "file_ids",
+                    "name",
+                    "expires_after",
+                    "metadata"
+                ])
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/UpdateVectorStoreRequest`.
+        public struct UpdateVectorStoreRequest: Codable, Hashable, Sendable {
+            /// The name of the vector store.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UpdateVectorStoreRequest/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UpdateVectorStoreRequest/expires_after`.
+            public var expires_after: Components.Schemas.VectorStoreExpirationAfter?
+            /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/UpdateVectorStoreRequest/metadata`.
+            public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// Creates a new `UpdateVectorStoreRequest`.
+            ///
+            /// - Parameters:
+            ///   - name: The name of the vector store.
+            ///   - expires_after:
+            ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            public init(
+                name: Swift.String? = nil,
+                expires_after: Components.Schemas.VectorStoreExpirationAfter? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+            ) {
+                self.name = name
+                self.expires_after = expires_after
+                self.metadata = metadata
+            }
+            public enum CodingKeys: String, CodingKey {
+                case name
+                case expires_after
+                case metadata
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                name = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .name
+                )
+                expires_after = try container.decodeIfPresent(
+                    Components.Schemas.VectorStoreExpirationAfter.self,
+                    forKey: .expires_after
+                )
+                metadata = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIObjectContainer.self,
+                    forKey: .metadata
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "name",
+                    "expires_after",
+                    "metadata"
+                ])
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ListVectorStoresResponse`.
+        public struct ListVectorStoresResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoresResponse/object`.
+            public var object: Swift.String
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoresResponse/data`.
+            public var data: [Components.Schemas.VectorStoreObject]
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoresResponse/first_id`.
+            public var first_id: Swift.String
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoresResponse/last_id`.
+            public var last_id: Swift.String
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoresResponse/has_more`.
+            public var has_more: Swift.Bool
+            /// Creates a new `ListVectorStoresResponse`.
+            ///
+            /// - Parameters:
+            ///   - object:
+            ///   - data:
+            ///   - first_id:
+            ///   - last_id:
+            ///   - has_more:
+            public init(
+                object: Swift.String,
+                data: [Components.Schemas.VectorStoreObject],
+                first_id: Swift.String,
+                last_id: Swift.String,
+                has_more: Swift.Bool
+            ) {
+                self.object = object
+                self.data = data
+                self.first_id = first_id
+                self.last_id = last_id
+                self.has_more = has_more
+            }
+            public enum CodingKeys: String, CodingKey {
+                case object
+                case data
+                case first_id
+                case last_id
+                case has_more
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreResponse`.
+        public struct DeleteVectorStoreResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreResponse/id`.
+            public var id: Swift.String
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreResponse/deleted`.
+            public var deleted: Swift.Bool
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreResponse/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case vector_store_period_deleted = "vector_store.deleted"
+            }
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreResponse/object`.
+            public var object: Components.Schemas.DeleteVectorStoreResponse.objectPayload
+            /// Creates a new `DeleteVectorStoreResponse`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - deleted:
+            ///   - object:
+            public init(
+                id: Swift.String,
+                deleted: Swift.Bool,
+                object: Components.Schemas.DeleteVectorStoreResponse.objectPayload
+            ) {
+                self.id = id
+                self.deleted = deleted
+                self.object = object
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case deleted
+                case object
+            }
+        }
+        /// A list of files attached to a vector store.
+        ///
+        /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject`.
+        public struct VectorStoreFileObject: Codable, Hashable, Sendable {
+            /// The identifier, which can be referenced in API endpoints.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/id`.
+            public var id: Swift.String
+            /// The object type, which is always `vector_store.file`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case vector_store_period_file = "vector_store.file"
+            }
+            /// The object type, which is always `vector_store.file`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/object`.
+            public var object: Components.Schemas.VectorStoreFileObject.objectPayload
+            /// The total vector store usage in bytes. Note that this may be different from the original file size.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/usage_bytes`.
+            public var usage_bytes: Swift.Int
+            /// The Unix timestamp (in seconds) for when the vector store file was created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/created_at`.
+            public var created_at: Swift.Int
+            /// The ID of the [vector store](/docs/api-reference/vector-stores/object) that the [File](/docs/api-reference/files) is attached to.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/vector_store_id`.
+            public var vector_store_id: Swift.String
+            /// The status of the vector store file, which can be either `in_progress`, `completed`, `cancelled`, or `failed`. The status `completed` indicates that the vector store file is ready for use.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable {
+                case in_progress = "in_progress"
+                case completed = "completed"
+                case cancelled = "cancelled"
+                case failed = "failed"
+            }
+            /// The status of the vector store file, which can be either `in_progress`, `completed`, `cancelled`, or `failed`. The status `completed` indicates that the vector store file is ready for use.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/status`.
+            public var status: Components.Schemas.VectorStoreFileObject.statusPayload
+            /// The last error associated with this vector store file. Will be `null` if there are no errors.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/last_error`.
+            public struct last_errorPayload: Codable, Hashable, Sendable {
+                /// One of `server_error` or `rate_limit_exceeded`.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/last_error/code`.
+                @frozen public enum codePayload: String, Codable, Hashable, Sendable {
+                    case internal_error = "internal_error"
+                    case file_not_found = "file_not_found"
+                    case parsing_error = "parsing_error"
+                    case unhandled_mime_type = "unhandled_mime_type"
+                }
+                /// One of `server_error` or `rate_limit_exceeded`.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/last_error/code`.
+                public var code: Components.Schemas.VectorStoreFileObject.last_errorPayload.codePayload
+                /// A human-readable description of the error.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/last_error/message`.
+                public var message: Swift.String
+                /// Creates a new `last_errorPayload`.
+                ///
+                /// - Parameters:
+                ///   - code: One of `server_error` or `rate_limit_exceeded`.
+                ///   - message: A human-readable description of the error.
+                public init(
+                    code: Components.Schemas.VectorStoreFileObject.last_errorPayload.codePayload,
+                    message: Swift.String
+                ) {
+                    self.code = code
+                    self.message = message
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code
+                    case message
+                }
+            }
+            /// The last error associated with this vector store file. Will be `null` if there are no errors.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileObject/last_error`.
+            public var last_error: Components.Schemas.VectorStoreFileObject.last_errorPayload?
+            /// Creates a new `VectorStoreFileObject`.
+            ///
+            /// - Parameters:
+            ///   - id: The identifier, which can be referenced in API endpoints.
+            ///   - object: The object type, which is always `vector_store.file`.
+            ///   - usage_bytes: The total vector store usage in bytes. Note that this may be different from the original file size.
+            ///   - created_at: The Unix timestamp (in seconds) for when the vector store file was created.
+            ///   - vector_store_id: The ID of the [vector store](/docs/api-reference/vector-stores/object) that the [File](/docs/api-reference/files) is attached to.
+            ///   - status: The status of the vector store file, which can be either `in_progress`, `completed`, `cancelled`, or `failed`. The status `completed` indicates that the vector store file is ready for use.
+            ///   - last_error: The last error associated with this vector store file. Will be `null` if there are no errors.
+            public init(
+                id: Swift.String,
+                object: Components.Schemas.VectorStoreFileObject.objectPayload,
+                usage_bytes: Swift.Int,
+                created_at: Swift.Int,
+                vector_store_id: Swift.String,
+                status: Components.Schemas.VectorStoreFileObject.statusPayload,
+                last_error: Components.Schemas.VectorStoreFileObject.last_errorPayload? = nil
+            ) {
+                self.id = id
+                self.object = object
+                self.usage_bytes = usage_bytes
+                self.created_at = created_at
+                self.vector_store_id = vector_store_id
+                self.status = status
+                self.last_error = last_error
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case object
+                case usage_bytes
+                case created_at
+                case vector_store_id
+                case status
+                case last_error
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/CreateVectorStoreFileRequest`.
+        public struct CreateVectorStoreFileRequest: Codable, Hashable, Sendable {
+            /// A [File](/docs/api-reference/files) ID that the vector store should use. Useful for tools like `file_search` that can access files.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateVectorStoreFileRequest/file_id`.
+            public var file_id: Swift.String
+            /// Creates a new `CreateVectorStoreFileRequest`.
+            ///
+            /// - Parameters:
+            ///   - file_id: A [File](/docs/api-reference/files) ID that the vector store should use. Useful for tools like `file_search` that can access files.
             public init(file_id: Swift.String) {
                 self.file_id = file_id
             }
@@ -9941,21 +13270,60 @@ public enum Components {
                 ])
             }
         }
-        /// Deletes the association between the assistant and the file, but does not delete the [File](/docs/api-reference/files) object itself.
-        ///
-        /// - Remark: Generated from `#/components/schemas/DeleteAssistantFileResponse`.
-        public struct DeleteAssistantFileResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/DeleteAssistantFileResponse/id`.
-            public var id: Swift.String
-            /// - Remark: Generated from `#/components/schemas/DeleteAssistantFileResponse/deleted`.
-            public var deleted: Swift.Bool
-            /// - Remark: Generated from `#/components/schemas/DeleteAssistantFileResponse/object`.
-            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case assistant_period_file_period_deleted = "assistant.file.deleted"
+        /// - Remark: Generated from `#/components/schemas/ListVectorStoreFilesResponse`.
+        public struct ListVectorStoreFilesResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoreFilesResponse/object`.
+            public var object: Swift.String
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoreFilesResponse/data`.
+            public var data: [Components.Schemas.VectorStoreFileObject]
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoreFilesResponse/first_id`.
+            public var first_id: Swift.String
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoreFilesResponse/last_id`.
+            public var last_id: Swift.String
+            /// - Remark: Generated from `#/components/schemas/ListVectorStoreFilesResponse/has_more`.
+            public var has_more: Swift.Bool
+            /// Creates a new `ListVectorStoreFilesResponse`.
+            ///
+            /// - Parameters:
+            ///   - object:
+            ///   - data:
+            ///   - first_id:
+            ///   - last_id:
+            ///   - has_more:
+            public init(
+                object: Swift.String,
+                data: [Components.Schemas.VectorStoreFileObject],
+                first_id: Swift.String,
+                last_id: Swift.String,
+                has_more: Swift.Bool
+            ) {
+                self.object = object
+                self.data = data
+                self.first_id = first_id
+                self.last_id = last_id
+                self.has_more = has_more
             }
-            /// - Remark: Generated from `#/components/schemas/DeleteAssistantFileResponse/object`.
-            public var object: Components.Schemas.DeleteAssistantFileResponse.objectPayload
-            /// Creates a new `DeleteAssistantFileResponse`.
+            public enum CodingKeys: String, CodingKey {
+                case object
+                case data
+                case first_id
+                case last_id
+                case has_more
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreFileResponse`.
+        public struct DeleteVectorStoreFileResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreFileResponse/id`.
+            public var id: Swift.String
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreFileResponse/deleted`.
+            public var deleted: Swift.Bool
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreFileResponse/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case vector_store_period_file_period_deleted = "vector_store.file.deleted"
+            }
+            /// - Remark: Generated from `#/components/schemas/DeleteVectorStoreFileResponse/object`.
+            public var object: Components.Schemas.DeleteVectorStoreFileResponse.objectPayload
+            /// Creates a new `DeleteVectorStoreFileResponse`.
             ///
             /// - Parameters:
             ///   - id:
@@ -9964,7 +13332,7 @@ public enum Components {
             public init(
                 id: Swift.String,
                 deleted: Swift.Bool,
-                object: Components.Schemas.DeleteAssistantFileResponse.objectPayload
+                object: Components.Schemas.DeleteVectorStoreFileResponse.objectPayload
             ) {
                 self.id = id
                 self.deleted = deleted
@@ -9976,137 +13344,1763 @@ public enum Components {
                 case object
             }
         }
-        /// - Remark: Generated from `#/components/schemas/ListAssistantFilesResponse`.
-        public struct ListAssistantFilesResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/ListAssistantFilesResponse/object`.
-            public var object: Swift.String
-            /// - Remark: Generated from `#/components/schemas/ListAssistantFilesResponse/data`.
-            public var data: [Components.Schemas.AssistantFileObject]
-            /// - Remark: Generated from `#/components/schemas/ListAssistantFilesResponse/first_id`.
-            public var first_id: Swift.String
-            /// - Remark: Generated from `#/components/schemas/ListAssistantFilesResponse/last_id`.
-            public var last_id: Swift.String
-            /// - Remark: Generated from `#/components/schemas/ListAssistantFilesResponse/has_more`.
-            public var has_more: Swift.Bool
-            /// Creates a new `ListAssistantFilesResponse`.
-            ///
-            /// - Parameters:
-            ///   - object:
-            ///   - data:
-            ///   - first_id:
-            ///   - last_id:
-            ///   - has_more:
-            public init(
-                object: Swift.String,
-                data: [Components.Schemas.AssistantFileObject],
-                first_id: Swift.String,
-                last_id: Swift.String,
-                has_more: Swift.Bool
-            ) {
-                self.object = object
-                self.data = data
-                self.first_id = first_id
-                self.last_id = last_id
-                self.has_more = has_more
-            }
-            public enum CodingKeys: String, CodingKey {
-                case object
-                case data
-                case first_id
-                case last_id
-                case has_more
-            }
-        }
-        /// A list of files attached to a `message`.
+        /// A batch of files attached to a vector store.
         ///
-        /// - Remark: Generated from `#/components/schemas/MessageFileObject`.
-        public struct MessageFileObject: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject`.
+        public struct VectorStoreFileBatchObject: Codable, Hashable, Sendable {
             /// The identifier, which can be referenced in API endpoints.
             ///
-            /// - Remark: Generated from `#/components/schemas/MessageFileObject/id`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/id`.
             public var id: Swift.String
-            /// The object type, which is always `thread.message.file`.
+            /// The object type, which is always `vector_store.file_batch`.
             ///
-            /// - Remark: Generated from `#/components/schemas/MessageFileObject/object`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/object`.
             @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
-                case thread_period_message_period_file = "thread.message.file"
+                case vector_store_period_files_batch = "vector_store.files_batch"
             }
-            /// The object type, which is always `thread.message.file`.
+            /// The object type, which is always `vector_store.file_batch`.
             ///
-            /// - Remark: Generated from `#/components/schemas/MessageFileObject/object`.
-            public var object: Components.Schemas.MessageFileObject.objectPayload
-            /// The Unix timestamp (in seconds) for when the message file was created.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/object`.
+            public var object: Components.Schemas.VectorStoreFileBatchObject.objectPayload
+            /// The Unix timestamp (in seconds) for when the vector store files batch was created.
             ///
-            /// - Remark: Generated from `#/components/schemas/MessageFileObject/created_at`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/created_at`.
             public var created_at: Swift.Int
-            /// The ID of the [message](/docs/api-reference/messages) that the [File](/docs/api-reference/files) is attached to.
+            /// The ID of the [vector store](/docs/api-reference/vector-stores/object) that the [File](/docs/api-reference/files) is attached to.
             ///
-            /// - Remark: Generated from `#/components/schemas/MessageFileObject/message_id`.
-            public var message_id: Swift.String
-            /// Creates a new `MessageFileObject`.
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/vector_store_id`.
+            public var vector_store_id: Swift.String
+            /// The status of the vector store files batch, which can be either `in_progress`, `completed`, `cancelled` or `failed`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable {
+                case in_progress = "in_progress"
+                case completed = "completed"
+                case cancelled = "cancelled"
+                case failed = "failed"
+            }
+            /// The status of the vector store files batch, which can be either `in_progress`, `completed`, `cancelled` or `failed`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/status`.
+            public var status: Components.Schemas.VectorStoreFileBatchObject.statusPayload
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts`.
+            public struct file_countsPayload: Codable, Hashable, Sendable {
+                /// The number of files that are currently being processed.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts/in_progress`.
+                public var in_progress: Swift.Int
+                /// The number of files that have been processed.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts/completed`.
+                public var completed: Swift.Int
+                /// The number of files that have failed to process.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts/failed`.
+                public var failed: Swift.Int
+                /// The number of files that where cancelled.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts/cancelled`.
+                public var cancelled: Swift.Int
+                /// The total number of files.
+                ///
+                /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts/total`.
+                public var total: Swift.Int
+                /// Creates a new `file_countsPayload`.
+                ///
+                /// - Parameters:
+                ///   - in_progress: The number of files that are currently being processed.
+                ///   - completed: The number of files that have been processed.
+                ///   - failed: The number of files that have failed to process.
+                ///   - cancelled: The number of files that where cancelled.
+                ///   - total: The total number of files.
+                public init(
+                    in_progress: Swift.Int,
+                    completed: Swift.Int,
+                    failed: Swift.Int,
+                    cancelled: Swift.Int,
+                    total: Swift.Int
+                ) {
+                    self.in_progress = in_progress
+                    self.completed = completed
+                    self.failed = failed
+                    self.cancelled = cancelled
+                    self.total = total
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case in_progress
+                    case completed
+                    case failed
+                    case cancelled
+                    case total
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/VectorStoreFileBatchObject/file_counts`.
+            public var file_counts: Components.Schemas.VectorStoreFileBatchObject.file_countsPayload
+            /// Creates a new `VectorStoreFileBatchObject`.
             ///
             /// - Parameters:
             ///   - id: The identifier, which can be referenced in API endpoints.
-            ///   - object: The object type, which is always `thread.message.file`.
-            ///   - created_at: The Unix timestamp (in seconds) for when the message file was created.
-            ///   - message_id: The ID of the [message](/docs/api-reference/messages) that the [File](/docs/api-reference/files) is attached to.
+            ///   - object: The object type, which is always `vector_store.file_batch`.
+            ///   - created_at: The Unix timestamp (in seconds) for when the vector store files batch was created.
+            ///   - vector_store_id: The ID of the [vector store](/docs/api-reference/vector-stores/object) that the [File](/docs/api-reference/files) is attached to.
+            ///   - status: The status of the vector store files batch, which can be either `in_progress`, `completed`, `cancelled` or `failed`.
+            ///   - file_counts:
             public init(
                 id: Swift.String,
-                object: Components.Schemas.MessageFileObject.objectPayload,
+                object: Components.Schemas.VectorStoreFileBatchObject.objectPayload,
                 created_at: Swift.Int,
-                message_id: Swift.String
+                vector_store_id: Swift.String,
+                status: Components.Schemas.VectorStoreFileBatchObject.statusPayload,
+                file_counts: Components.Schemas.VectorStoreFileBatchObject.file_countsPayload
             ) {
                 self.id = id
                 self.object = object
                 self.created_at = created_at
-                self.message_id = message_id
+                self.vector_store_id = vector_store_id
+                self.status = status
+                self.file_counts = file_counts
             }
             public enum CodingKeys: String, CodingKey {
                 case id
                 case object
                 case created_at
-                case message_id
+                case vector_store_id
+                case status
+                case file_counts
             }
         }
-        /// - Remark: Generated from `#/components/schemas/ListMessageFilesResponse`.
-        public struct ListMessageFilesResponse: Codable, Hashable, Sendable {
-            /// - Remark: Generated from `#/components/schemas/ListMessageFilesResponse/object`.
-            public var object: Swift.String
-            /// - Remark: Generated from `#/components/schemas/ListMessageFilesResponse/data`.
-            public var data: [Components.Schemas.MessageFileObject]
-            /// - Remark: Generated from `#/components/schemas/ListMessageFilesResponse/first_id`.
-            public var first_id: Swift.String
-            /// - Remark: Generated from `#/components/schemas/ListMessageFilesResponse/last_id`.
-            public var last_id: Swift.String
-            /// - Remark: Generated from `#/components/schemas/ListMessageFilesResponse/has_more`.
-            public var has_more: Swift.Bool
-            /// Creates a new `ListMessageFilesResponse`.
+        /// - Remark: Generated from `#/components/schemas/CreateVectorStoreFileBatchRequest`.
+        public struct CreateVectorStoreFileBatchRequest: Codable, Hashable, Sendable {
+            /// A list of [File](/docs/api-reference/files) IDs that the vector store should use. Useful for tools like `file_search` that can access files.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreateVectorStoreFileBatchRequest/file_ids`.
+            public var file_ids: [Swift.String]
+            /// Creates a new `CreateVectorStoreFileBatchRequest`.
             ///
             /// - Parameters:
-            ///   - object:
+            ///   - file_ids: A list of [File](/docs/api-reference/files) IDs that the vector store should use. Useful for tools like `file_search` that can access files.
+            public init(file_ids: [Swift.String]) {
+                self.file_ids = file_ids
+            }
+            public enum CodingKeys: String, CodingKey {
+                case file_ids
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                file_ids = try container.decode(
+                    [Swift.String].self,
+                    forKey: .file_ids
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "file_ids"
+                ])
+            }
+        }
+        /// Represents an event emitted when streaming a Run.
+        ///
+        /// Each event in a server-sent events stream has an `event` and `data` property:
+        ///
+        /// ```
+        /// event: thread.created
+        /// data: {"id": "thread_123", "object": "thread", ...}
+        /// ```
+        ///
+        /// We emit events whenever a new object is created, transitions to a new state, or is being
+        /// streamed in parts (deltas). For example, we emit `thread.run.created` when a new run
+        /// is created, `thread.run.completed` when a run completes, and so on. When an Assistant chooses
+        /// to create a message during a run, we emit a `thread.message.created event`, a
+        /// `thread.message.in_progress` event, many `thread.message.delta` events, and finally a
+        /// `thread.message.completed` event.
+        ///
+        /// We may add additional events over time, so we recommend handling unknown events gracefully
+        /// in your code. See the [Assistants API quickstart](/docs/assistants/overview) to learn how to
+        /// integrate the Assistants API with streaming.
+        ///
+        ///
+        /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent`.
+        @frozen public enum AssistantStreamEvent: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent/case1`.
+            case ThreadStreamEvent(Components.Schemas.ThreadStreamEvent)
+            /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent/case2`.
+            case RunStreamEvent(Components.Schemas.RunStreamEvent)
+            /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent/case3`.
+            case RunStepStreamEvent(Components.Schemas.RunStepStreamEvent)
+            /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent/case4`.
+            case MessageStreamEvent(Components.Schemas.MessageStreamEvent)
+            /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent/case5`.
+            case ErrorEvent(Components.Schemas.ErrorEvent)
+            /// - Remark: Generated from `#/components/schemas/AssistantStreamEvent/case6`.
+            case DoneEvent(Components.Schemas.DoneEvent)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .ThreadStreamEvent(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .RunStreamEvent(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .RunStepStreamEvent(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .MessageStreamEvent(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .ErrorEvent(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .DoneEvent(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .ThreadStreamEvent(value):
+                    try value.encode(to: encoder)
+                case let .RunStreamEvent(value):
+                    try value.encode(to: encoder)
+                case let .RunStepStreamEvent(value):
+                    try value.encode(to: encoder)
+                case let .MessageStreamEvent(value):
+                    try value.encode(to: encoder)
+                case let .ErrorEvent(value):
+                    try value.encode(to: encoder)
+                case let .DoneEvent(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ThreadStreamEvent`.
+        @frozen public enum ThreadStreamEvent: Codable, Hashable, Sendable {
+            /// Occurs when a new [thread](/docs/api-reference/threads/object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ThreadStreamEvent/case1`.
+            public struct Case1Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ThreadStreamEvent/case1/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_created = "thread.created"
+                }
+                /// - Remark: Generated from `#/components/schemas/ThreadStreamEvent/case1/event`.
+                public var event: Components.Schemas.ThreadStreamEvent.Case1Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/ThreadStreamEvent/case1/data`.
+                public var data: Components.Schemas.ThreadObject
+                /// Creates a new `Case1Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.ThreadStreamEvent.Case1Payload.eventPayload,
+                    data: Components.Schemas.ThreadObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a new [thread](/docs/api-reference/threads/object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ThreadStreamEvent/case1`.
+            case case1(Components.Schemas.ThreadStreamEvent.Case1Payload)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .case1(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .case1(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/RunStreamEvent`.
+        @frozen public enum RunStreamEvent: Codable, Hashable, Sendable {
+            /// Occurs when a new [run](/docs/api-reference/runs/object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case1`.
+            public struct Case1Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case1/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_created = "thread.run.created"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case1/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case1Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case1/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case1Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case1Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a new [run](/docs/api-reference/runs/object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case1`.
+            case case1(Components.Schemas.RunStreamEvent.Case1Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to a `queued` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case2`.
+            public struct Case2Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case2/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_queued = "thread.run.queued"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case2/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case2Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case2/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case2Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case2Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to a `queued` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case2`.
+            case case2(Components.Schemas.RunStreamEvent.Case2Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to an `in_progress` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case3`.
+            public struct Case3Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case3/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_in_progress = "thread.run.in_progress"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case3/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case3Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case3/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case3Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case3Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to an `in_progress` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case3`.
+            case case3(Components.Schemas.RunStreamEvent.Case3Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to a `requires_action` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case4`.
+            public struct Case4Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case4/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_requires_action = "thread.run.requires_action"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case4/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case4Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case4/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case4Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case4Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to a `requires_action` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case4`.
+            case case4(Components.Schemas.RunStreamEvent.Case4Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case5`.
+            public struct Case5Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case5/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_completed = "thread.run.completed"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case5/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case5Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case5/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case5Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case5Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case5`.
+            case case5(Components.Schemas.RunStreamEvent.Case5Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) fails.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case6`.
+            public struct Case6Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case6/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_failed = "thread.run.failed"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case6/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case6Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case6/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case6Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case6Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) fails.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case6`.
+            case case6(Components.Schemas.RunStreamEvent.Case6Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to a `cancelling` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case7`.
+            public struct Case7Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case7/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_cancelling = "thread.run.cancelling"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case7/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case7Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case7/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case7Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case7Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) moves to a `cancelling` status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case7`.
+            case case7(Components.Schemas.RunStreamEvent.Case7Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) is cancelled.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case8`.
+            public struct Case8Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case8/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_cancelled = "thread.run.cancelled"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case8/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case8Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case8/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case8Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case8Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) is cancelled.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case8`.
+            case case8(Components.Schemas.RunStreamEvent.Case8Payload)
+            /// Occurs when a [run](/docs/api-reference/runs/object) expires.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case9`.
+            public struct Case9Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case9/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_expired = "thread.run.expired"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case9/event`.
+                public var event: Components.Schemas.RunStreamEvent.Case9Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case9/data`.
+                public var data: Components.Schemas.RunObject
+                /// Creates a new `Case9Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStreamEvent.Case9Payload.eventPayload,
+                    data: Components.Schemas.RunObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run](/docs/api-reference/runs/object) expires.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStreamEvent/case9`.
+            case case9(Components.Schemas.RunStreamEvent.Case9Payload)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .case1(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case2(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case3(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case4(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case5(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case6(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case7(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case8(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case9(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .case1(value):
+                    try value.encode(to: encoder)
+                case let .case2(value):
+                    try value.encode(to: encoder)
+                case let .case3(value):
+                    try value.encode(to: encoder)
+                case let .case4(value):
+                    try value.encode(to: encoder)
+                case let .case5(value):
+                    try value.encode(to: encoder)
+                case let .case6(value):
+                    try value.encode(to: encoder)
+                case let .case7(value):
+                    try value.encode(to: encoder)
+                case let .case8(value):
+                    try value.encode(to: encoder)
+                case let .case9(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent`.
+        @frozen public enum RunStepStreamEvent: Codable, Hashable, Sendable {
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case1`.
+            public struct Case1Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case1/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_created = "thread.run.step.created"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case1/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case1Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case1/data`.
+                public var data: Components.Schemas.RunStepObject
+                /// Creates a new `Case1Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case1Payload.eventPayload,
+                    data: Components.Schemas.RunStepObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case1`.
+            case case1(Components.Schemas.RunStepStreamEvent.Case1Payload)
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) moves to an `in_progress` state.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case2`.
+            public struct Case2Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case2/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_in_progress = "thread.run.step.in_progress"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case2/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case2Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case2/data`.
+                public var data: Components.Schemas.RunStepObject
+                /// Creates a new `Case2Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case2Payload.eventPayload,
+                    data: Components.Schemas.RunStepObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) moves to an `in_progress` state.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case2`.
+            case case2(Components.Schemas.RunStepStreamEvent.Case2Payload)
+            /// Occurs when parts of a [run step](/docs/api-reference/runs/step-object) are being streamed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case3`.
+            public struct Case3Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case3/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_delta = "thread.run.step.delta"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case3/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case3Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case3/data`.
+                public var data: Components.Schemas.RunStepDeltaObject
+                /// Creates a new `Case3Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case3Payload.eventPayload,
+                    data: Components.Schemas.RunStepDeltaObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when parts of a [run step](/docs/api-reference/runs/step-object) are being streamed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case3`.
+            case case3(Components.Schemas.RunStepStreamEvent.Case3Payload)
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case4`.
+            public struct Case4Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case4/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_completed = "thread.run.step.completed"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case4/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case4Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case4/data`.
+                public var data: Components.Schemas.RunStepObject
+                /// Creates a new `Case4Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case4Payload.eventPayload,
+                    data: Components.Schemas.RunStepObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case4`.
+            case case4(Components.Schemas.RunStepStreamEvent.Case4Payload)
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) fails.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case5`.
+            public struct Case5Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case5/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_failed = "thread.run.step.failed"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case5/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case5Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case5/data`.
+                public var data: Components.Schemas.RunStepObject
+                /// Creates a new `Case5Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case5Payload.eventPayload,
+                    data: Components.Schemas.RunStepObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) fails.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case5`.
+            case case5(Components.Schemas.RunStepStreamEvent.Case5Payload)
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) is cancelled.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case6`.
+            public struct Case6Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case6/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_cancelled = "thread.run.step.cancelled"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case6/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case6Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case6/data`.
+                public var data: Components.Schemas.RunStepObject
+                /// Creates a new `Case6Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case6Payload.eventPayload,
+                    data: Components.Schemas.RunStepObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) is cancelled.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case6`.
+            case case6(Components.Schemas.RunStepStreamEvent.Case6Payload)
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) expires.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case7`.
+            public struct Case7Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case7/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_run_period_step_period_expired = "thread.run.step.expired"
+                }
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case7/event`.
+                public var event: Components.Schemas.RunStepStreamEvent.Case7Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case7/data`.
+                public var data: Components.Schemas.RunStepObject
+                /// Creates a new `Case7Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.RunStepStreamEvent.Case7Payload.eventPayload,
+                    data: Components.Schemas.RunStepObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [run step](/docs/api-reference/runs/step-object) expires.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RunStepStreamEvent/case7`.
+            case case7(Components.Schemas.RunStepStreamEvent.Case7Payload)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .case1(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case2(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case3(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case4(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case5(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case6(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case7(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .case1(value):
+                    try value.encode(to: encoder)
+                case let .case2(value):
+                    try value.encode(to: encoder)
+                case let .case3(value):
+                    try value.encode(to: encoder)
+                case let .case4(value):
+                    try value.encode(to: encoder)
+                case let .case5(value):
+                    try value.encode(to: encoder)
+                case let .case6(value):
+                    try value.encode(to: encoder)
+                case let .case7(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/MessageStreamEvent`.
+        @frozen public enum MessageStreamEvent: Codable, Hashable, Sendable {
+            /// Occurs when a [message](/docs/api-reference/messages/object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case1`.
+            public struct Case1Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case1/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_message_period_created = "thread.message.created"
+                }
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case1/event`.
+                public var event: Components.Schemas.MessageStreamEvent.Case1Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case1/data`.
+                public var data: Components.Schemas.MessageObject
+                /// Creates a new `Case1Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.MessageStreamEvent.Case1Payload.eventPayload,
+                    data: Components.Schemas.MessageObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [message](/docs/api-reference/messages/object) is created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case1`.
+            case case1(Components.Schemas.MessageStreamEvent.Case1Payload)
+            /// Occurs when a [message](/docs/api-reference/messages/object) moves to an `in_progress` state.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case2`.
+            public struct Case2Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case2/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_message_period_in_progress = "thread.message.in_progress"
+                }
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case2/event`.
+                public var event: Components.Schemas.MessageStreamEvent.Case2Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case2/data`.
+                public var data: Components.Schemas.MessageObject
+                /// Creates a new `Case2Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.MessageStreamEvent.Case2Payload.eventPayload,
+                    data: Components.Schemas.MessageObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [message](/docs/api-reference/messages/object) moves to an `in_progress` state.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case2`.
+            case case2(Components.Schemas.MessageStreamEvent.Case2Payload)
+            /// Occurs when parts of a [Message](/docs/api-reference/messages/object) are being streamed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case3`.
+            public struct Case3Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case3/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_message_period_delta = "thread.message.delta"
+                }
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case3/event`.
+                public var event: Components.Schemas.MessageStreamEvent.Case3Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case3/data`.
+                public var data: Components.Schemas.MessageDeltaObject
+                /// Creates a new `Case3Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.MessageStreamEvent.Case3Payload.eventPayload,
+                    data: Components.Schemas.MessageDeltaObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when parts of a [Message](/docs/api-reference/messages/object) are being streamed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case3`.
+            case case3(Components.Schemas.MessageStreamEvent.Case3Payload)
+            /// Occurs when a [message](/docs/api-reference/messages/object) is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case4`.
+            public struct Case4Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case4/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_message_period_completed = "thread.message.completed"
+                }
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case4/event`.
+                public var event: Components.Schemas.MessageStreamEvent.Case4Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case4/data`.
+                public var data: Components.Schemas.MessageObject
+                /// Creates a new `Case4Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.MessageStreamEvent.Case4Payload.eventPayload,
+                    data: Components.Schemas.MessageObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [message](/docs/api-reference/messages/object) is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case4`.
+            case case4(Components.Schemas.MessageStreamEvent.Case4Payload)
+            /// Occurs when a [message](/docs/api-reference/messages/object) ends before it is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case5`.
+            public struct Case5Payload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case5/event`.
+                @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                    case thread_period_message_period_incomplete = "thread.message.incomplete"
+                }
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case5/event`.
+                public var event: Components.Schemas.MessageStreamEvent.Case5Payload.eventPayload
+                /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case5/data`.
+                public var data: Components.Schemas.MessageObject
+                /// Creates a new `Case5Payload`.
+                ///
+                /// - Parameters:
+                ///   - event:
+                ///   - data:
+                public init(
+                    event: Components.Schemas.MessageStreamEvent.Case5Payload.eventPayload,
+                    data: Components.Schemas.MessageObject
+                ) {
+                    self.event = event
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case event
+                    case data
+                }
+            }
+            /// Occurs when a [message](/docs/api-reference/messages/object) ends before it is completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/MessageStreamEvent/case5`.
+            case case5(Components.Schemas.MessageStreamEvent.Case5Payload)
+            public init(from decoder: any Decoder) throws {
+                var errors: [any Error] = []
+                do {
+                    self = .case1(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case2(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case3(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case4(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                do {
+                    self = .case5(try .init(from: decoder))
+                    return
+                } catch {
+                    errors.append(error)
+                }
+                throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                    type: Self.self,
+                    codingPath: decoder.codingPath,
+                    errors: errors
+                )
+            }
+            public func encode(to encoder: any Encoder) throws {
+                switch self {
+                case let .case1(value):
+                    try value.encode(to: encoder)
+                case let .case2(value):
+                    try value.encode(to: encoder)
+                case let .case3(value):
+                    try value.encode(to: encoder)
+                case let .case4(value):
+                    try value.encode(to: encoder)
+                case let .case5(value):
+                    try value.encode(to: encoder)
+                }
+            }
+        }
+        /// Occurs when an [error](/docs/guides/error-codes/api-errors) occurs. This can happen due to an internal server error or a timeout.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ErrorEvent`.
+        public struct ErrorEvent: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ErrorEvent/event`.
+            @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                case error = "error"
+            }
+            /// - Remark: Generated from `#/components/schemas/ErrorEvent/event`.
+            public var event: Components.Schemas.ErrorEvent.eventPayload
+            /// - Remark: Generated from `#/components/schemas/ErrorEvent/data`.
+            public var data: Components.Schemas._Error
+            /// Creates a new `ErrorEvent`.
+            ///
+            /// - Parameters:
+            ///   - event:
+            ///   - data:
+            public init(
+                event: Components.Schemas.ErrorEvent.eventPayload,
+                data: Components.Schemas._Error
+            ) {
+                self.event = event
+                self.data = data
+            }
+            public enum CodingKeys: String, CodingKey {
+                case event
+                case data
+            }
+        }
+        /// Occurs when a stream ends.
+        ///
+        /// - Remark: Generated from `#/components/schemas/DoneEvent`.
+        public struct DoneEvent: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/DoneEvent/event`.
+            @frozen public enum eventPayload: String, Codable, Hashable, Sendable {
+                case done = "done"
+            }
+            /// - Remark: Generated from `#/components/schemas/DoneEvent/event`.
+            public var event: Components.Schemas.DoneEvent.eventPayload
+            /// - Remark: Generated from `#/components/schemas/DoneEvent/data`.
+            @frozen public enum dataPayload: String, Codable, Hashable, Sendable {
+                case _lbrack_DONE_rbrack_ = "[DONE]"
+            }
+            /// - Remark: Generated from `#/components/schemas/DoneEvent/data`.
+            public var data: Components.Schemas.DoneEvent.dataPayload
+            /// Creates a new `DoneEvent`.
+            ///
+            /// - Parameters:
+            ///   - event:
+            ///   - data:
+            public init(
+                event: Components.Schemas.DoneEvent.eventPayload,
+                data: Components.Schemas.DoneEvent.dataPayload
+            ) {
+                self.event = event
+                self.data = data
+            }
+            public enum CodingKeys: String, CodingKey {
+                case event
+                case data
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/Batch`.
+        public struct Batch: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/Batch/id`.
+            public var id: Swift.String
+            /// The object type, which is always `batch`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case batch = "batch"
+            }
+            /// The object type, which is always `batch`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/object`.
+            public var object: Components.Schemas.Batch.objectPayload
+            /// The OpenAI API endpoint used by the batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/endpoint`.
+            public var endpoint: Swift.String
+            /// - Remark: Generated from `#/components/schemas/Batch/errors`.
+            public struct errorsPayload: Codable, Hashable, Sendable {
+                /// The object type, which is always `list`.
+                ///
+                /// - Remark: Generated from `#/components/schemas/Batch/errors/object`.
+                public var object: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/Batch/errors/dataPayload`.
+                public struct dataPayloadPayload: Codable, Hashable, Sendable {
+                    /// An error code identifying the error type.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/Batch/errors/dataPayload/code`.
+                    public var code: Swift.String?
+                    /// A human-readable message providing more details about the error.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/Batch/errors/dataPayload/message`.
+                    public var message: Swift.String?
+                    /// The name of the parameter that caused the error, if applicable.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/Batch/errors/dataPayload/param`.
+                    public var param: Swift.String?
+                    /// The line number of the input file where the error occurred, if applicable.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/Batch/errors/dataPayload/line`.
+                    public var line: Swift.Int?
+                    /// Creates a new `dataPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - code: An error code identifying the error type.
+                    ///   - message: A human-readable message providing more details about the error.
+                    ///   - param: The name of the parameter that caused the error, if applicable.
+                    ///   - line: The line number of the input file where the error occurred, if applicable.
+                    public init(
+                        code: Swift.String? = nil,
+                        message: Swift.String? = nil,
+                        param: Swift.String? = nil,
+                        line: Swift.Int? = nil
+                    ) {
+                        self.code = code
+                        self.message = message
+                        self.param = param
+                        self.line = line
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case code
+                        case message
+                        case param
+                        case line
+                    }
+                }
+                /// - Remark: Generated from `#/components/schemas/Batch/errors/data`.
+                public typealias dataPayload = [Components.Schemas.Batch.errorsPayload.dataPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/Batch/errors/data`.
+                public var data: Components.Schemas.Batch.errorsPayload.dataPayload?
+                /// Creates a new `errorsPayload`.
+                ///
+                /// - Parameters:
+                ///   - object: The object type, which is always `list`.
+                ///   - data:
+                public init(
+                    object: Swift.String? = nil,
+                    data: Components.Schemas.Batch.errorsPayload.dataPayload? = nil
+                ) {
+                    self.object = object
+                    self.data = data
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case object
+                    case data
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/Batch/errors`.
+            public var errors: Components.Schemas.Batch.errorsPayload?
+            /// The ID of the input file for the batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/input_file_id`.
+            public var input_file_id: Swift.String
+            /// The time frame within which the batch should be processed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/completion_window`.
+            public var completion_window: Swift.String
+            /// The current status of the batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable {
+                case validating = "validating"
+                case failed = "failed"
+                case in_progress = "in_progress"
+                case finalizing = "finalizing"
+                case completed = "completed"
+                case expired = "expired"
+                case cancelling = "cancelling"
+                case cancelled = "cancelled"
+            }
+            /// The current status of the batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/status`.
+            public var status: Components.Schemas.Batch.statusPayload
+            /// The ID of the file containing the outputs of successfully executed requests.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/output_file_id`.
+            public var output_file_id: Swift.String?
+            /// The ID of the file containing the outputs of requests with errors.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/error_file_id`.
+            public var error_file_id: Swift.String?
+            /// The Unix timestamp (in seconds) for when the batch was created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/created_at`.
+            public var created_at: Swift.Int
+            /// The Unix timestamp (in seconds) for when the batch started processing.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/in_progress_at`.
+            public var in_progress_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch will expire.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/expires_at`.
+            public var expires_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch started finalizing.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/finalizing_at`.
+            public var finalizing_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch was completed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/completed_at`.
+            public var completed_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch failed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/failed_at`.
+            public var failed_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch expired.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/expired_at`.
+            public var expired_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch started cancelling.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/cancelling_at`.
+            public var cancelling_at: Swift.Int?
+            /// The Unix timestamp (in seconds) for when the batch was cancelled.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/cancelled_at`.
+            public var cancelled_at: Swift.Int?
+            /// The request counts for different statuses within the batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/request_counts`.
+            public struct request_countsPayload: Codable, Hashable, Sendable {
+                /// Total number of requests in the batch.
+                ///
+                /// - Remark: Generated from `#/components/schemas/Batch/request_counts/total`.
+                public var total: Swift.Int
+                /// Number of requests that have been completed successfully.
+                ///
+                /// - Remark: Generated from `#/components/schemas/Batch/request_counts/completed`.
+                public var completed: Swift.Int
+                /// Number of requests that have failed.
+                ///
+                /// - Remark: Generated from `#/components/schemas/Batch/request_counts/failed`.
+                public var failed: Swift.Int
+                /// Creates a new `request_countsPayload`.
+                ///
+                /// - Parameters:
+                ///   - total: Total number of requests in the batch.
+                ///   - completed: Number of requests that have been completed successfully.
+                ///   - failed: Number of requests that have failed.
+                public init(
+                    total: Swift.Int,
+                    completed: Swift.Int,
+                    failed: Swift.Int
+                ) {
+                    self.total = total
+                    self.completed = completed
+                    self.failed = failed
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case total
+                    case completed
+                    case failed
+                }
+            }
+            /// The request counts for different statuses within the batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/request_counts`.
+            public var request_counts: Components.Schemas.Batch.request_countsPayload?
+            /// Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            ///
+            ///
+            /// - Remark: Generated from `#/components/schemas/Batch/metadata`.
+            public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+            /// Creates a new `Batch`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - object: The object type, which is always `batch`.
+            ///   - endpoint: The OpenAI API endpoint used by the batch.
+            ///   - errors:
+            ///   - input_file_id: The ID of the input file for the batch.
+            ///   - completion_window: The time frame within which the batch should be processed.
+            ///   - status: The current status of the batch.
+            ///   - output_file_id: The ID of the file containing the outputs of successfully executed requests.
+            ///   - error_file_id: The ID of the file containing the outputs of requests with errors.
+            ///   - created_at: The Unix timestamp (in seconds) for when the batch was created.
+            ///   - in_progress_at: The Unix timestamp (in seconds) for when the batch started processing.
+            ///   - expires_at: The Unix timestamp (in seconds) for when the batch will expire.
+            ///   - finalizing_at: The Unix timestamp (in seconds) for when the batch started finalizing.
+            ///   - completed_at: The Unix timestamp (in seconds) for when the batch was completed.
+            ///   - failed_at: The Unix timestamp (in seconds) for when the batch failed.
+            ///   - expired_at: The Unix timestamp (in seconds) for when the batch expired.
+            ///   - cancelling_at: The Unix timestamp (in seconds) for when the batch started cancelling.
+            ///   - cancelled_at: The Unix timestamp (in seconds) for when the batch was cancelled.
+            ///   - request_counts: The request counts for different statuses within the batch.
+            ///   - metadata: Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long.
+            public init(
+                id: Swift.String,
+                object: Components.Schemas.Batch.objectPayload,
+                endpoint: Swift.String,
+                errors: Components.Schemas.Batch.errorsPayload? = nil,
+                input_file_id: Swift.String,
+                completion_window: Swift.String,
+                status: Components.Schemas.Batch.statusPayload,
+                output_file_id: Swift.String? = nil,
+                error_file_id: Swift.String? = nil,
+                created_at: Swift.Int,
+                in_progress_at: Swift.Int? = nil,
+                expires_at: Swift.Int? = nil,
+                finalizing_at: Swift.Int? = nil,
+                completed_at: Swift.Int? = nil,
+                failed_at: Swift.Int? = nil,
+                expired_at: Swift.Int? = nil,
+                cancelling_at: Swift.Int? = nil,
+                cancelled_at: Swift.Int? = nil,
+                request_counts: Components.Schemas.Batch.request_countsPayload? = nil,
+                metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+            ) {
+                self.id = id
+                self.object = object
+                self.endpoint = endpoint
+                self.errors = errors
+                self.input_file_id = input_file_id
+                self.completion_window = completion_window
+                self.status = status
+                self.output_file_id = output_file_id
+                self.error_file_id = error_file_id
+                self.created_at = created_at
+                self.in_progress_at = in_progress_at
+                self.expires_at = expires_at
+                self.finalizing_at = finalizing_at
+                self.completed_at = completed_at
+                self.failed_at = failed_at
+                self.expired_at = expired_at
+                self.cancelling_at = cancelling_at
+                self.cancelled_at = cancelled_at
+                self.request_counts = request_counts
+                self.metadata = metadata
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case object
+                case endpoint
+                case errors
+                case input_file_id
+                case completion_window
+                case status
+                case output_file_id
+                case error_file_id
+                case created_at
+                case in_progress_at
+                case expires_at
+                case finalizing_at
+                case completed_at
+                case failed_at
+                case expired_at
+                case cancelling_at
+                case cancelled_at
+                case request_counts
+                case metadata
+            }
+        }
+        /// The per-line object of the batch input file
+        ///
+        /// - Remark: Generated from `#/components/schemas/BatchRequestInput`.
+        public struct BatchRequestInput: Codable, Hashable, Sendable {
+            /// A developer-provided per-request id that will be used to match outputs to inputs. Must be unique for each request in a batch.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestInput/custom_id`.
+            public var custom_id: Swift.String?
+            /// The HTTP method to be used for the request. Currently only `POST` is supported.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestInput/method`.
+            @frozen public enum methodPayload: String, Codable, Hashable, Sendable {
+                case POST = "POST"
+            }
+            /// The HTTP method to be used for the request. Currently only `POST` is supported.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestInput/method`.
+            public var method: Components.Schemas.BatchRequestInput.methodPayload?
+            /// The OpenAI API relative URL to be used for the request. Currently only `/v1/chat/completions` is supported.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestInput/url`.
+            public var url: Swift.String?
+            /// Creates a new `BatchRequestInput`.
+            ///
+            /// - Parameters:
+            ///   - custom_id: A developer-provided per-request id that will be used to match outputs to inputs. Must be unique for each request in a batch.
+            ///   - method: The HTTP method to be used for the request. Currently only `POST` is supported.
+            ///   - url: The OpenAI API relative URL to be used for the request. Currently only `/v1/chat/completions` is supported.
+            public init(
+                custom_id: Swift.String? = nil,
+                method: Components.Schemas.BatchRequestInput.methodPayload? = nil,
+                url: Swift.String? = nil
+            ) {
+                self.custom_id = custom_id
+                self.method = method
+                self.url = url
+            }
+            public enum CodingKeys: String, CodingKey {
+                case custom_id
+                case method
+                case url
+            }
+        }
+        /// The per-line object of the batch output and error files
+        ///
+        /// - Remark: Generated from `#/components/schemas/BatchRequestOutput`.
+        public struct BatchRequestOutput: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/id`.
+            public var id: Swift.String?
+            /// A developer-provided per-request id that will be used to match outputs to inputs.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/custom_id`.
+            public var custom_id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/response`.
+            public struct responsePayload: Codable, Hashable, Sendable {
+                /// The HTTP status code of the response
+                ///
+                /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/response/status_code`.
+                public var status_code: Swift.Int?
+                /// An unique identifier for the OpenAI API request. Please include this request ID when contacting support.
+                ///
+                /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/response/request_id`.
+                public var request_id: Swift.String?
+                /// The JSON body of the response
+                ///
+                /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/response/body`.
+                public var body: OpenAPIRuntime.OpenAPIObjectContainer?
+                /// Creates a new `responsePayload`.
+                ///
+                /// - Parameters:
+                ///   - status_code: The HTTP status code of the response
+                ///   - request_id: An unique identifier for the OpenAI API request. Please include this request ID when contacting support.
+                ///   - body: The JSON body of the response
+                public init(
+                    status_code: Swift.Int? = nil,
+                    request_id: Swift.String? = nil,
+                    body: OpenAPIRuntime.OpenAPIObjectContainer? = nil
+                ) {
+                    self.status_code = status_code
+                    self.request_id = request_id
+                    self.body = body
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case status_code
+                    case request_id
+                    case body
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/response`.
+            public var response: Components.Schemas.BatchRequestOutput.responsePayload?
+            /// For requests that failed with a non-HTTP error, this will contain more information on the cause of the failure.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/error`.
+            public struct errorPayload: Codable, Hashable, Sendable {
+                /// A machine-readable error code.
+                ///
+                /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/error/code`.
+                public var code: Swift.String?
+                /// A human-readable error message.
+                ///
+                /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/error/message`.
+                public var message: Swift.String?
+                /// Creates a new `errorPayload`.
+                ///
+                /// - Parameters:
+                ///   - code: A machine-readable error code.
+                ///   - message: A human-readable error message.
+                public init(
+                    code: Swift.String? = nil,
+                    message: Swift.String? = nil
+                ) {
+                    self.code = code
+                    self.message = message
+                }
+                public enum CodingKeys: String, CodingKey {
+                    case code
+                    case message
+                }
+            }
+            /// For requests that failed with a non-HTTP error, this will contain more information on the cause of the failure.
+            ///
+            /// - Remark: Generated from `#/components/schemas/BatchRequestOutput/error`.
+            public var error: Components.Schemas.BatchRequestOutput.errorPayload?
+            /// Creates a new `BatchRequestOutput`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - custom_id: A developer-provided per-request id that will be used to match outputs to inputs.
+            ///   - response:
+            ///   - error: For requests that failed with a non-HTTP error, this will contain more information on the cause of the failure.
+            public init(
+                id: Swift.String? = nil,
+                custom_id: Swift.String? = nil,
+                response: Components.Schemas.BatchRequestOutput.responsePayload? = nil,
+                error: Components.Schemas.BatchRequestOutput.errorPayload? = nil
+            ) {
+                self.id = id
+                self.custom_id = custom_id
+                self.response = response
+                self.error = error
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case custom_id
+                case response
+                case error
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ListBatchesResponse`.
+        public struct ListBatchesResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListBatchesResponse/data`.
+            public var data: [Components.Schemas.Batch]
+            /// - Remark: Generated from `#/components/schemas/ListBatchesResponse/first_id`.
+            public var first_id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ListBatchesResponse/last_id`.
+            public var last_id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ListBatchesResponse/has_more`.
+            public var has_more: Swift.Bool
+            /// - Remark: Generated from `#/components/schemas/ListBatchesResponse/object`.
+            @frozen public enum objectPayload: String, Codable, Hashable, Sendable {
+                case list = "list"
+            }
+            /// - Remark: Generated from `#/components/schemas/ListBatchesResponse/object`.
+            public var object: Components.Schemas.ListBatchesResponse.objectPayload
+            /// Creates a new `ListBatchesResponse`.
+            ///
+            /// - Parameters:
             ///   - data:
             ///   - first_id:
             ///   - last_id:
             ///   - has_more:
+            ///   - object:
             public init(
-                object: Swift.String,
-                data: [Components.Schemas.MessageFileObject],
-                first_id: Swift.String,
-                last_id: Swift.String,
-                has_more: Swift.Bool
+                data: [Components.Schemas.Batch],
+                first_id: Swift.String? = nil,
+                last_id: Swift.String? = nil,
+                has_more: Swift.Bool,
+                object: Components.Schemas.ListBatchesResponse.objectPayload
             ) {
-                self.object = object
                 self.data = data
                 self.first_id = first_id
                 self.last_id = last_id
                 self.has_more = has_more
+                self.object = object
             }
             public enum CodingKeys: String, CodingKey {
-                case object
                 case data
                 case first_id
                 case last_id
                 case has_more
+                case object
             }
         }
     }
@@ -10164,25 +15158,6 @@ public enum Operations {
             public struct Ok: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/chat/completions/POST/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/chat/completions/POST/responses/200/content/text\/event-stream`.
-                    case text_event_hyphen_stream(OpenAPIRuntime.HTTPBody)
-                    /// The associated value of the enum case if `self` is `.text_event_hyphen_stream`.
-                    ///
-                    /// - Throws: An error if `self` is not `.text_event_hyphen_stream`.
-                    /// - SeeAlso: `.text_event_hyphen_stream`.
-                    public var text_event_hyphen_stream: OpenAPIRuntime.HTTPBody {
-                        get throws {
-                            switch self {
-                            case let .text_event_hyphen_stream(body):
-                                return body
-                            default:
-                                try throwUnexpectedResponseBody(
-                                    expectedContent: "text/event-stream",
-                                    body: self
-                                )
-                            }
-                        }
-                    }
                     /// - Remark: Generated from `#/paths/chat/completions/POST/responses/200/content/application\/json`.
                     case json(Components.Schemas.CreateChatCompletionResponse)
                     /// The associated value of the enum case if `self` is `.json`.
@@ -10194,11 +15169,6 @@ public enum Operations {
                             switch self {
                             case let .json(body):
                                 return body
-                            default:
-                                try throwUnexpectedResponseBody(
-                                    expectedContent: "application/json",
-                                    body: self
-                                )
                             }
                         }
                     }
@@ -10242,13 +15212,10 @@ public enum Operations {
             case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
         }
         @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case text_event_hyphen_stream
             case json
             case other(Swift.String)
             public init?(rawValue: Swift.String) {
                 switch rawValue.lowercased() {
-                case "text/event-stream":
-                    self = .text_event_hyphen_stream
                 case "application/json":
                     self = .json
                 default:
@@ -10259,15 +15226,12 @@ public enum Operations {
                 switch self {
                 case let .other(string):
                     return string
-                case .text_event_hyphen_stream:
-                    return "text/event-stream"
                 case .json:
                     return "application/json"
                 }
             }
             public static var allCases: [Self] {
                 [
-                    .text_event_hyphen_stream,
                     .json
                 ]
             }
@@ -10351,127 +15315,6 @@ public enum Operations {
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
             public var ok: Operations.createCompletion.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        return response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self
-                        )
-                    }
-                }
-            }
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    return string
-                case .json:
-                    return "application/json"
-                }
-            }
-            public static var allCases: [Self] {
-                [
-                    .json
-                ]
-            }
-        }
-    }
-    /// Creates a new edit for the provided input, instruction, and parameters.
-    ///
-    /// - Remark: HTTP `POST /edits`.
-    /// - Remark: Generated from `#/paths//edits/post(createEdit)`.
-    public enum createEdit {
-        public static let id: Swift.String = "createEdit"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/edits/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createEdit.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createEdit.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-            public var headers: Operations.createEdit.Input.Headers
-            /// - Remark: Generated from `#/paths/edits/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/edits/POST/requestBody/content/application\/json`.
-                case json(Components.Schemas.CreateEditRequest)
-            }
-            public var body: Operations.createEdit.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.createEdit.Input.Headers = .init(),
-                body: Operations.createEdit.Input.Body
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/edits/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/edits/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.CreateEditResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.CreateEditResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                return body
-                            }
-                        }
-                    }
-                }
-                /// Received HTTP response body
-                public var body: Operations.createEdit.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.createEdit.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//edits/post(createEdit)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.createEdit.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.createEdit.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -11057,16 +15900,16 @@ public enum Operations {
                 public var headers: Operations.createSpeech.Output.Ok.Headers
                 /// - Remark: Generated from `#/paths/audio/speech/POST/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/audio/speech/POST/responses/200/content/*\/*`.
-                    case any(OpenAPIRuntime.HTTPBody)
-                    /// The associated value of the enum case if `self` is `.any`.
+                    /// - Remark: Generated from `#/paths/audio/speech/POST/responses/200/content/application\/octet-stream`.
+                    case binary(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.binary`.
                     ///
-                    /// - Throws: An error if `self` is not `.any`.
-                    /// - SeeAlso: `.any`.
-                    public var any: OpenAPIRuntime.HTTPBody {
+                    /// - Throws: An error if `self` is not `.binary`.
+                    /// - SeeAlso: `.binary`.
+                    public var binary: OpenAPIRuntime.HTTPBody {
                         get throws {
                             switch self {
-                            case let .any(body):
+                            case let .binary(body):
                                 return body
                             }
                         }
@@ -11116,12 +15959,12 @@ public enum Operations {
             case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
         }
         @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case any
+            case binary
             case other(Swift.String)
             public init?(rawValue: Swift.String) {
                 switch rawValue.lowercased() {
-                case "*/*":
-                    self = .any
+                case "application/octet-stream":
+                    self = .binary
                 default:
                     self = .other(rawValue)
                 }
@@ -11130,13 +15973,13 @@ public enum Operations {
                 switch self {
                 case let .other(string):
                     return string
-                case .any:
-                    return "*/*"
+                case .binary:
+                    return "application/octet-stream"
                 }
             }
             public static var allCases: [Self] {
                 [
-                    .any
+                    .binary
                 ]
             }
         }
@@ -11183,13 +16026,48 @@ public enum Operations {
             public struct Ok: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/audio/transcriptions/POST/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/audio/transcriptions/POST/responses/200/content/json`.
+                    @frozen public enum jsonPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/paths/audio/transcriptions/POST/responses/200/content/json/case1`.
+                        case CreateTranscriptionResponseJson(Components.Schemas.CreateTranscriptionResponseJson)
+                        /// - Remark: Generated from `#/paths/audio/transcriptions/POST/responses/200/content/json/case2`.
+                        case CreateTranscriptionResponseVerboseJson(Components.Schemas.CreateTranscriptionResponseVerboseJson)
+                        public init(from decoder: any Decoder) throws {
+                            var errors: [any Error] = []
+                            do {
+                                self = .CreateTranscriptionResponseJson(try .init(from: decoder))
+                                return
+                            } catch {
+                                errors.append(error)
+                            }
+                            do {
+                                self = .CreateTranscriptionResponseVerboseJson(try .init(from: decoder))
+                                return
+                            } catch {
+                                errors.append(error)
+                            }
+                            throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                                type: Self.self,
+                                codingPath: decoder.codingPath,
+                                errors: errors
+                            )
+                        }
+                        public func encode(to encoder: any Encoder) throws {
+                            switch self {
+                            case let .CreateTranscriptionResponseJson(value):
+                                try value.encode(to: encoder)
+                            case let .CreateTranscriptionResponseVerboseJson(value):
+                                try value.encode(to: encoder)
+                            }
+                        }
+                    }
                     /// - Remark: Generated from `#/paths/audio/transcriptions/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.CreateTranscriptionResponse)
+                    case json(Operations.createTranscription.Output.Ok.Body.jsonPayload)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.CreateTranscriptionResponse {
+                    public var json: Operations.createTranscription.Output.Ok.Body.jsonPayload {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -11304,13 +16182,48 @@ public enum Operations {
             public struct Ok: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/audio/translations/POST/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/audio/translations/POST/responses/200/content/json`.
+                    @frozen public enum jsonPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/paths/audio/translations/POST/responses/200/content/json/case1`.
+                        case CreateTranslationResponseJson(Components.Schemas.CreateTranslationResponseJson)
+                        /// - Remark: Generated from `#/paths/audio/translations/POST/responses/200/content/json/case2`.
+                        case CreateTranslationResponseVerboseJson(Components.Schemas.CreateTranslationResponseVerboseJson)
+                        public init(from decoder: any Decoder) throws {
+                            var errors: [any Error] = []
+                            do {
+                                self = .CreateTranslationResponseJson(try .init(from: decoder))
+                                return
+                            } catch {
+                                errors.append(error)
+                            }
+                            do {
+                                self = .CreateTranslationResponseVerboseJson(try .init(from: decoder))
+                                return
+                            } catch {
+                                errors.append(error)
+                            }
+                            throw Swift.DecodingError.failedToDecodeOneOfSchema(
+                                type: Self.self,
+                                codingPath: decoder.codingPath,
+                                errors: errors
+                            )
+                        }
+                        public func encode(to encoder: any Encoder) throws {
+                            switch self {
+                            case let .CreateTranslationResponseJson(value):
+                                try value.encode(to: encoder)
+                            case let .CreateTranslationResponseVerboseJson(value):
+                                try value.encode(to: encoder)
+                            }
+                        }
+                    }
                     /// - Remark: Generated from `#/paths/audio/translations/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.CreateTranslationResponse)
+                    case json(Operations.createTranslation.Output.Ok.Body.jsonPayload)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.CreateTranslationResponse {
+                    public var json: Operations.createTranslation.Output.Ok.Body.jsonPayload {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -11513,9 +16426,9 @@ public enum Operations {
             }
         }
     }
-    /// Upload a file that can be used across various endpoints/features. The size of all the files uploaded by one organization can be up to 100 GB.
+    /// Upload a file that can be used across various endpoints. The size of all the files uploaded by one organization can be up to 100 GB.
     ///
-    /// The size of individual files for can be a maximum of 512MB. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.
+    /// The size of individual files can be a maximum of 512 MB or 2 million tokens for Assistants. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.
     ///
     /// Please [contact us](https://help.openai.com/) if you need to increase these storage limits.
     ///
@@ -12169,7 +17082,7 @@ public enum Operations {
             }
         }
     }
-    /// Creates a job that fine-tunes a specified model from a given dataset.
+    /// Creates a fine-tuning job which begins the process of creating a new model from a given dataset.
     ///
     /// Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
     ///
@@ -12720,568 +17633,66 @@ public enum Operations {
             }
         }
     }
-    /// List your organization's fine-tuning jobs
+    /// List checkpoints for a fine-tuning job.
     ///
     ///
-    /// - Remark: HTTP `GET /fine-tunes`.
-    /// - Remark: Generated from `#/paths//fine-tunes/get(listFineTunes)`.
-    public enum listFineTunes {
-        public static let id: Swift.String = "listFineTunes"
+    /// - Remark: HTTP `GET /fine_tuning/jobs/{fine_tuning_job_id}/checkpoints`.
+    /// - Remark: Generated from `#/paths//fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/get(listFineTuningJobCheckpoints)`.
+    public enum listFineTuningJobCheckpoints {
+        public static let id: Swift.String = "listFineTuningJobCheckpoints"
         public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/fine-tunes/GET/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFineTunes.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFineTunes.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-            public var headers: Operations.listFineTunes.Input.Headers
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            public init(headers: Operations.listFineTunes.Input.Headers = .init()) {
-                self.headers = headers
-            }
-        }
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/fine-tunes/GET/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/fine-tunes/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ListFineTunesResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ListFineTunesResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                return body
-                            }
-                        }
-                    }
-                }
-                /// Received HTTP response body
-                public var body: Operations.listFineTunes.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.listFineTunes.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//fine-tunes/get(listFineTunes)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.listFineTunes.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.listFineTunes.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        return response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self
-                        )
-                    }
-                }
-            }
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    return string
-                case .json:
-                    return "application/json"
-                }
-            }
-            public static var allCases: [Self] {
-                [
-                    .json
-                ]
-            }
-        }
-    }
-    /// Creates a job that fine-tunes a specified model from a given dataset.
-    ///
-    /// Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-    ///
-    /// [Learn more about fine-tuning](/docs/guides/legacy-fine-tuning)
-    ///
-    ///
-    /// - Remark: HTTP `POST /fine-tunes`.
-    /// - Remark: Generated from `#/paths//fine-tunes/post(createFineTune)`.
-    public enum createFineTune {
-        public static let id: Swift.String = "createFineTune"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/fine-tunes/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createFineTune.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createFineTune.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-            public var headers: Operations.createFineTune.Input.Headers
-            /// - Remark: Generated from `#/paths/fine-tunes/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/fine-tunes/POST/requestBody/content/application\/json`.
-                case json(Components.Schemas.CreateFineTuneRequest)
-            }
-            public var body: Operations.createFineTune.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.createFineTune.Input.Headers = .init(),
-                body: Operations.createFineTune.Input.Body
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/fine-tunes/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/fine-tunes/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.FineTune)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.FineTune {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                return body
-                            }
-                        }
-                    }
-                }
-                /// Received HTTP response body
-                public var body: Operations.createFineTune.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.createFineTune.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//fine-tunes/post(createFineTune)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.createFineTune.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.createFineTune.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        return response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self
-                        )
-                    }
-                }
-            }
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    return string
-                case .json:
-                    return "application/json"
-                }
-            }
-            public static var allCases: [Self] {
-                [
-                    .json
-                ]
-            }
-        }
-    }
-    /// Gets info about the fine-tune job.
-    ///
-    /// [Learn more about fine-tuning](/docs/guides/legacy-fine-tuning)
-    ///
-    ///
-    /// - Remark: HTTP `GET /fine-tunes/{fine_tune_id}`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/get(retrieveFineTune)`.
-    public enum retrieveFineTune {
-        public static let id: Swift.String = "retrieveFineTune"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/GET/path`.
+            /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/path`.
             public struct Path: Sendable, Hashable {
-                /// The ID of the fine-tune job
+                /// The ID of the fine-tuning job to get checkpoints for.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/GET/path/fine_tune_id`.
-                public var fine_tune_id: Swift.String
+                /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/path/fine_tuning_job_id`.
+                public var fine_tuning_job_id: Swift.String
                 /// Creates a new `Path`.
                 ///
                 /// - Parameters:
-                ///   - fine_tune_id: The ID of the fine-tune job
-                public init(fine_tune_id: Swift.String) {
-                    self.fine_tune_id = fine_tune_id
+                ///   - fine_tuning_job_id: The ID of the fine-tuning job to get checkpoints for.
+                public init(fine_tuning_job_id: Swift.String) {
+                    self.fine_tuning_job_id = fine_tuning_job_id
                 }
             }
-            public var path: Operations.retrieveFineTune.Input.Path
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/GET/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.retrieveFineTune.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.retrieveFineTune.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-            public var headers: Operations.retrieveFineTune.Input.Headers
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - path:
-            ///   - headers:
-            public init(
-                path: Operations.retrieveFineTune.Input.Path,
-                headers: Operations.retrieveFineTune.Input.Headers = .init()
-            ) {
-                self.path = path
-                self.headers = headers
-            }
-        }
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/GET/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.FineTune)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.FineTune {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                return body
-                            }
-                        }
-                    }
-                }
-                /// Received HTTP response body
-                public var body: Operations.retrieveFineTune.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.retrieveFineTune.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/get(retrieveFineTune)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.retrieveFineTune.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.retrieveFineTune.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        return response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self
-                        )
-                    }
-                }
-            }
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    return string
-                case .json:
-                    return "application/json"
-                }
-            }
-            public static var allCases: [Self] {
-                [
-                    .json
-                ]
-            }
-        }
-    }
-    /// Immediately cancel a fine-tune job.
-    ///
-    ///
-    /// - Remark: HTTP `POST /fine-tunes/{fine_tune_id}/cancel`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/cancel/post(cancelFineTune)`.
-    public enum cancelFineTune {
-        public static let id: Swift.String = "cancelFineTune"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/cancel/POST/path`.
-            public struct Path: Sendable, Hashable {
-                /// The ID of the fine-tune job to cancel
-                ///
-                ///
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/cancel/POST/path/fine_tune_id`.
-                public var fine_tune_id: Swift.String
-                /// Creates a new `Path`.
-                ///
-                /// - Parameters:
-                ///   - fine_tune_id: The ID of the fine-tune job to cancel
-                public init(fine_tune_id: Swift.String) {
-                    self.fine_tune_id = fine_tune_id
-                }
-            }
-            public var path: Operations.cancelFineTune.Input.Path
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/cancel/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.cancelFineTune.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.cancelFineTune.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-            public var headers: Operations.cancelFineTune.Input.Headers
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - path:
-            ///   - headers:
-            public init(
-                path: Operations.cancelFineTune.Input.Path,
-                headers: Operations.cancelFineTune.Input.Headers = .init()
-            ) {
-                self.path = path
-                self.headers = headers
-            }
-        }
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/cancel/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/cancel/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.FineTune)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.FineTune {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                return body
-                            }
-                        }
-                    }
-                }
-                /// Received HTTP response body
-                public var body: Operations.cancelFineTune.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.cancelFineTune.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/cancel/post(cancelFineTune)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.cancelFineTune.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.cancelFineTune.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        return response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self
-                        )
-                    }
-                }
-            }
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    return string
-                case .json:
-                    return "application/json"
-                }
-            }
-            public static var allCases: [Self] {
-                [
-                    .json
-                ]
-            }
-        }
-    }
-    /// Get fine-grained status updates for a fine-tune job.
-    ///
-    ///
-    /// - Remark: HTTP `GET /fine-tunes/{fine_tune_id}/events`.
-    /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/events/get(listFineTuneEvents)`.
-    public enum listFineTuneEvents {
-        public static let id: Swift.String = "listFineTuneEvents"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/path`.
-            public struct Path: Sendable, Hashable {
-                /// The ID of the fine-tune job to get events for.
-                ///
-                ///
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/path/fine_tune_id`.
-                public var fine_tune_id: Swift.String
-                /// Creates a new `Path`.
-                ///
-                /// - Parameters:
-                ///   - fine_tune_id: The ID of the fine-tune job to get events for.
-                public init(fine_tune_id: Swift.String) {
-                    self.fine_tune_id = fine_tune_id
-                }
-            }
-            public var path: Operations.listFineTuneEvents.Input.Path
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/query`.
+            public var path: Operations.listFineTuningJobCheckpoints.Input.Path
+            /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/query`.
             public struct Query: Sendable, Hashable {
-                /// Whether to stream events for the fine-tune job. If set to true,
-                /// events will be sent as data-only
-                /// [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
-                /// as they become available. The stream will terminate with a
-                /// `data: [DONE]` message when the job is finished (succeeded, cancelled,
-                /// or failed).
+                /// Identifier for the last checkpoint ID from the previous pagination request.
                 ///
-                /// If set to false, only events generated so far will be returned.
+                /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/query/after`.
+                public var after: Swift.String?
+                /// Number of checkpoints to retrieve.
                 ///
-                ///
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/query/stream`.
-                public var stream: Swift.Bool?
+                /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/query/limit`.
+                public var limit: Swift.Int?
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
-                ///   - stream: Whether to stream events for the fine-tune job. If set to true,
-                public init(stream: Swift.Bool? = nil) {
-                    self.stream = stream
+                ///   - after: Identifier for the last checkpoint ID from the previous pagination request.
+                ///   - limit: Number of checkpoints to retrieve.
+                public init(
+                    after: Swift.String? = nil,
+                    limit: Swift.Int? = nil
+                ) {
+                    self.after = after
+                    self.limit = limit
                 }
             }
-            public var query: Operations.listFineTuneEvents.Input.Query
-            /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/header`.
+            public var query: Operations.listFineTuningJobCheckpoints.Input.Query
+            /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/header`.
             public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFineTuneEvents.AcceptableContentType>]
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFineTuningJobCheckpoints.AcceptableContentType>]
                 /// Creates a new `Headers`.
                 ///
                 /// - Parameters:
                 ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFineTuneEvents.AcceptableContentType>] = .defaultValues()) {
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFineTuningJobCheckpoints.AcceptableContentType>] = .defaultValues()) {
                     self.accept = accept
                 }
             }
-            public var headers: Operations.listFineTuneEvents.Input.Headers
+            public var headers: Operations.listFineTuningJobCheckpoints.Input.Headers
             /// Creates a new `Input`.
             ///
             /// - Parameters:
@@ -13289,9 +17700,9 @@ public enum Operations {
             ///   - query:
             ///   - headers:
             public init(
-                path: Operations.listFineTuneEvents.Input.Path,
-                query: Operations.listFineTuneEvents.Input.Query = .init(),
-                headers: Operations.listFineTuneEvents.Input.Headers = .init()
+                path: Operations.listFineTuningJobCheckpoints.Input.Path,
+                query: Operations.listFineTuningJobCheckpoints.Input.Query = .init(),
+                headers: Operations.listFineTuningJobCheckpoints.Input.Headers = .init()
             ) {
                 self.path = path
                 self.query = query
@@ -13300,15 +17711,15 @@ public enum Operations {
         }
         @frozen public enum Output: Sendable, Hashable {
             public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/responses/200/content`.
+                /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/fine-tunes/{fine_tune_id}/events/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ListFineTuneEventsResponse)
+                    /// - Remark: Generated from `#/paths/fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListFineTuningJobCheckpointsResponse)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ListFineTuneEventsResponse {
+                    public var json: Components.Schemas.ListFineTuningJobCheckpointsResponse {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -13318,26 +17729,26 @@ public enum Operations {
                     }
                 }
                 /// Received HTTP response body
-                public var body: Operations.listFineTuneEvents.Output.Ok.Body
+                public var body: Operations.listFineTuningJobCheckpoints.Output.Ok.Body
                 /// Creates a new `Ok`.
                 ///
                 /// - Parameters:
                 ///   - body: Received HTTP response body
-                public init(body: Operations.listFineTuneEvents.Output.Ok.Body) {
+                public init(body: Operations.listFineTuningJobCheckpoints.Output.Ok.Body) {
                     self.body = body
                 }
             }
             /// OK
             ///
-            /// - Remark: Generated from `#/paths//fine-tunes/{fine_tune_id}/events/get(listFineTuneEvents)/responses/200`.
+            /// - Remark: Generated from `#/paths//fine_tuning/jobs/{fine_tuning_job_id}/checkpoints/get(listFineTuningJobCheckpoints)/responses/200`.
             ///
             /// HTTP response code: `200 ok`.
-            case ok(Operations.listFineTuneEvents.Output.Ok)
+            case ok(Operations.listFineTuningJobCheckpoints.Output.Ok)
             /// The associated value of the enum case if `self` is `.ok`.
             ///
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
-            public var ok: Operations.listFineTuneEvents.Output.Ok {
+            public var ok: Operations.listFineTuningJobCheckpoints.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -13751,7 +18162,7 @@ public enum Operations {
             }
         }
     }
-    /// Classifies if text violates OpenAI's Content Policy
+    /// Classifies if text is potentially harmful.
     ///
     /// - Remark: HTTP `POST /moderations`.
     /// - Remark: Generated from `#/paths//moderations/post(createModeration)`.
@@ -15123,6 +19534,11 @@ public enum Operations {
                 ///
                 /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/GET/query/before`.
                 public var before: Swift.String?
+                /// Filter messages by the run ID that generated them.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/GET/query/run_id`.
+                public var run_id: Swift.String?
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
@@ -15130,16 +19546,19 @@ public enum Operations {
                 ///   - order: Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.
                 ///   - after: A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
                 ///   - before: A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+                ///   - run_id: Filter messages by the run ID that generated them.
                 public init(
                     limit: Swift.Int? = nil,
                     order: Operations.listMessages.Input.Query.orderPayload? = nil,
                     after: Swift.String? = nil,
-                    before: Swift.String? = nil
+                    before: Swift.String? = nil,
+                    run_id: Swift.String? = nil
                 ) {
                     self.limit = limit
                     self.order = order
                     self.after = after
                     self.before = before
+                    self.run_id = run_id
                 }
             }
             public var query: Operations.listMessages.Input.Query
@@ -17030,36 +21449,21 @@ public enum Operations {
             }
         }
     }
-    /// Returns a list of assistant files.
+    /// Returns a list of vector stores.
     ///
-    /// - Remark: HTTP `GET /assistants/{assistant_id}/files`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/get(listAssistantFiles)`.
-    public enum listAssistantFiles {
-        public static let id: Swift.String = "listAssistantFiles"
+    /// - Remark: HTTP `GET /vector_stores`.
+    /// - Remark: Generated from `#/paths//vector_stores/get(listVectorStores)`.
+    public enum listVectorStores {
+        public static let id: Swift.String = "listVectorStores"
         public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/path`.
-            public struct Path: Sendable, Hashable {
-                /// The ID of the assistant the file belongs to.
-                ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/path/assistant_id`.
-                public var assistant_id: Swift.String
-                /// Creates a new `Path`.
-                ///
-                /// - Parameters:
-                ///   - assistant_id: The ID of the assistant the file belongs to.
-                public init(assistant_id: Swift.String) {
-                    self.assistant_id = assistant_id
-                }
-            }
-            public var path: Operations.listAssistantFiles.Input.Path
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/query`.
+            /// - Remark: Generated from `#/paths/vector_stores/GET/query`.
             public struct Query: Sendable, Hashable {
                 /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/query/limit`.
+                /// - Remark: Generated from `#/paths/vector_stores/GET/query/limit`.
                 public var limit: Swift.Int?
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/query/order`.
+                /// - Remark: Generated from `#/paths/vector_stores/GET/query/order`.
                 @frozen public enum orderPayload: String, Codable, Hashable, Sendable {
                     case asc = "asc"
                     case desc = "desc"
@@ -17067,17 +21471,17 @@ public enum Operations {
                 /// Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/query/order`.
-                public var order: Operations.listAssistantFiles.Input.Query.orderPayload?
+                /// - Remark: Generated from `#/paths/vector_stores/GET/query/order`.
+                public var order: Operations.listVectorStores.Input.Query.orderPayload?
                 /// A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/query/after`.
+                /// - Remark: Generated from `#/paths/vector_stores/GET/query/after`.
                 public var after: Swift.String?
                 /// A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/query/before`.
+                /// - Remark: Generated from `#/paths/vector_stores/GET/query/before`.
                 public var before: Swift.String?
                 /// Creates a new `Query`.
                 ///
@@ -17088,7 +21492,7 @@ public enum Operations {
                 ///   - before: A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
                 public init(
                     limit: Swift.Int? = nil,
-                    order: Operations.listAssistantFiles.Input.Query.orderPayload? = nil,
+                    order: Operations.listVectorStores.Input.Query.orderPayload? = nil,
                     after: Swift.String? = nil,
                     before: Swift.String? = nil
                 ) {
@@ -17098,46 +21502,43 @@ public enum Operations {
                     self.before = before
                 }
             }
-            public var query: Operations.listAssistantFiles.Input.Query
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/header`.
+            public var query: Operations.listVectorStores.Input.Query
+            /// - Remark: Generated from `#/paths/vector_stores/GET/header`.
             public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listAssistantFiles.AcceptableContentType>]
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listVectorStores.AcceptableContentType>]
                 /// Creates a new `Headers`.
                 ///
                 /// - Parameters:
                 ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listAssistantFiles.AcceptableContentType>] = .defaultValues()) {
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listVectorStores.AcceptableContentType>] = .defaultValues()) {
                     self.accept = accept
                 }
             }
-            public var headers: Operations.listAssistantFiles.Input.Headers
+            public var headers: Operations.listVectorStores.Input.Headers
             /// Creates a new `Input`.
             ///
             /// - Parameters:
-            ///   - path:
             ///   - query:
             ///   - headers:
             public init(
-                path: Operations.listAssistantFiles.Input.Path,
-                query: Operations.listAssistantFiles.Input.Query = .init(),
-                headers: Operations.listAssistantFiles.Input.Headers = .init()
+                query: Operations.listVectorStores.Input.Query = .init(),
+                headers: Operations.listVectorStores.Input.Headers = .init()
             ) {
-                self.path = path
                 self.query = query
                 self.headers = headers
             }
         }
         @frozen public enum Output: Sendable, Hashable {
             public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/responses/200/content`.
+                /// - Remark: Generated from `#/paths/vector_stores/GET/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ListAssistantFilesResponse)
+                    /// - Remark: Generated from `#/paths/vector_stores/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListVectorStoresResponse)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ListAssistantFilesResponse {
+                    public var json: Components.Schemas.ListVectorStoresResponse {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -17147,26 +21548,26 @@ public enum Operations {
                     }
                 }
                 /// Received HTTP response body
-                public var body: Operations.listAssistantFiles.Output.Ok.Body
+                public var body: Operations.listVectorStores.Output.Ok.Body
                 /// Creates a new `Ok`.
                 ///
                 /// - Parameters:
                 ///   - body: Received HTTP response body
-                public init(body: Operations.listAssistantFiles.Output.Ok.Body) {
+                public init(body: Operations.listVectorStores.Output.Ok.Body) {
                     self.body = body
                 }
             }
             /// OK
             ///
-            /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/get(listAssistantFiles)/responses/200`.
+            /// - Remark: Generated from `#/paths//vector_stores/get(listVectorStores)/responses/200`.
             ///
             /// HTTP response code: `200 ok`.
-            case ok(Operations.listAssistantFiles.Output.Ok)
+            case ok(Operations.listVectorStores.Output.Ok)
             /// The associated value of the enum case if `self` is `.ok`.
             ///
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
-            public var ok: Operations.listAssistantFiles.Output.Ok {
+            public var ok: Operations.listVectorStores.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -17210,47 +21611,297 @@ public enum Operations {
             }
         }
     }
-    /// Create an assistant file by attaching a [File](/docs/api-reference/files) to an [assistant](/docs/api-reference/assistants).
+    /// Create a vector store.
     ///
-    /// - Remark: HTTP `POST /assistants/{assistant_id}/files`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/post(createAssistantFile)`.
-    public enum createAssistantFile {
-        public static let id: Swift.String = "createAssistantFile"
+    /// - Remark: HTTP `POST /vector_stores`.
+    /// - Remark: Generated from `#/paths//vector_stores/post(createVectorStore)`.
+    public enum createVectorStore {
+        public static let id: Swift.String = "createVectorStore"
         public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/path`.
-            public struct Path: Sendable, Hashable {
-                /// The ID of the assistant for which to create a File.
-                ///
-                ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/path/assistant_id`.
-                public var assistant_id: Swift.String
-                /// Creates a new `Path`.
-                ///
-                /// - Parameters:
-                ///   - assistant_id: The ID of the assistant for which to create a File.
-                public init(assistant_id: Swift.String) {
-                    self.assistant_id = assistant_id
-                }
-            }
-            public var path: Operations.createAssistantFile.Input.Path
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/header`.
+            /// - Remark: Generated from `#/paths/vector_stores/POST/header`.
             public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createAssistantFile.AcceptableContentType>]
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createVectorStore.AcceptableContentType>]
                 /// Creates a new `Headers`.
                 ///
                 /// - Parameters:
                 ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createAssistantFile.AcceptableContentType>] = .defaultValues()) {
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createVectorStore.AcceptableContentType>] = .defaultValues()) {
                     self.accept = accept
                 }
             }
-            public var headers: Operations.createAssistantFile.Input.Headers
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/requestBody`.
+            public var headers: Operations.createVectorStore.Input.Headers
+            /// - Remark: Generated from `#/paths/vector_stores/POST/requestBody`.
             @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/requestBody/content/application\/json`.
-                case json(Components.Schemas.CreateAssistantFileRequest)
+                /// - Remark: Generated from `#/paths/vector_stores/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.CreateVectorStoreRequest)
             }
-            public var body: Operations.createAssistantFile.Input.Body
+            public var body: Operations.createVectorStore.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.createVectorStore.Input.Headers = .init(),
+                body: Operations.createVectorStore.Input.Body
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreObject)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.VectorStoreObject {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createVectorStore.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createVectorStore.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/post(createVectorStore)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.createVectorStore.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.createVectorStore.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Retrieves a vector store.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/get(getVectorStore)`.
+    public enum getVectorStore {
+        public static let id: Swift.String = "getVectorStore"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/GET/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store to retrieve.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/GET/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store to retrieve.
+                public init(vector_store_id: Swift.String) {
+                    self.vector_store_id = vector_store_id
+                }
+            }
+            public var path: Operations.getVectorStore.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getVectorStore.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getVectorStore.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.getVectorStore.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.getVectorStore.Input.Path,
+                headers: Operations.getVectorStore.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreObject)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.VectorStoreObject {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.getVectorStore.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.getVectorStore.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/get(getVectorStore)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.getVectorStore.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.getVectorStore.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Modifies a vector store.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/post(modifyVectorStore)`.
+    public enum modifyVectorStore {
+        public static let id: Swift.String = "modifyVectorStore"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store to modify.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store to modify.
+                public init(vector_store_id: Swift.String) {
+                    self.vector_store_id = vector_store_id
+                }
+            }
+            public var path: Operations.modifyVectorStore.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.modifyVectorStore.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.modifyVectorStore.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.modifyVectorStore.Input.Headers
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.UpdateVectorStoreRequest)
+            }
+            public var body: Operations.modifyVectorStore.Input.Body
             /// Creates a new `Input`.
             ///
             /// - Parameters:
@@ -17258,9 +21909,9 @@ public enum Operations {
             ///   - headers:
             ///   - body:
             public init(
-                path: Operations.createAssistantFile.Input.Path,
-                headers: Operations.createAssistantFile.Input.Headers = .init(),
-                body: Operations.createAssistantFile.Input.Body
+                path: Operations.modifyVectorStore.Input.Path,
+                headers: Operations.modifyVectorStore.Input.Headers = .init(),
+                body: Operations.modifyVectorStore.Input.Body
             ) {
                 self.path = path
                 self.headers = headers
@@ -17269,15 +21920,15 @@ public enum Operations {
         }
         @frozen public enum Output: Sendable, Hashable {
             public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/responses/200/content`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AssistantFileObject)
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreObject)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AssistantFileObject {
+                    public var json: Components.Schemas.VectorStoreObject {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -17287,26 +21938,26 @@ public enum Operations {
                     }
                 }
                 /// Received HTTP response body
-                public var body: Operations.createAssistantFile.Output.Ok.Body
+                public var body: Operations.modifyVectorStore.Output.Ok.Body
                 /// Creates a new `Ok`.
                 ///
                 /// - Parameters:
                 ///   - body: Received HTTP response body
-                public init(body: Operations.createAssistantFile.Output.Ok.Body) {
+                public init(body: Operations.modifyVectorStore.Output.Ok.Body) {
                     self.body = body
                 }
             }
             /// OK
             ///
-            /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/post(createAssistantFile)/responses/200`.
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/post(modifyVectorStore)/responses/200`.
             ///
             /// HTTP response code: `200 ok`.
-            case ok(Operations.createAssistantFile.Output.Ok)
+            case ok(Operations.modifyVectorStore.Output.Ok)
             /// The associated value of the enum case if `self` is `.ok`.
             ///
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
-            public var ok: Operations.createAssistantFile.Output.Ok {
+            public var ok: Operations.modifyVectorStore.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -17350,57 +22001,48 @@ public enum Operations {
             }
         }
     }
-    /// Retrieves an AssistantFile.
+    /// Delete a vector store.
     ///
-    /// - Remark: HTTP `GET /assistants/{assistant_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/get(getAssistantFile)`.
-    public enum getAssistantFile {
-        public static let id: Swift.String = "getAssistantFile"
+    /// - Remark: HTTP `DELETE /vector_stores/{vector_store_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/delete(deleteVectorStore)`.
+    public enum deleteVectorStore {
+        public static let id: Swift.String = "deleteVectorStore"
         public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/GET/path`.
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/DELETE/path`.
             public struct Path: Sendable, Hashable {
-                /// The ID of the assistant who the file belongs to.
+                /// The ID of the vector store to delete.
                 ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/GET/path/assistant_id`.
-                public var assistant_id: Swift.String
-                /// The ID of the file we're getting.
-                ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/GET/path/file_id`.
-                public var file_id: Swift.String
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/DELETE/path/vector_store_id`.
+                public var vector_store_id: Swift.String
                 /// Creates a new `Path`.
                 ///
                 /// - Parameters:
-                ///   - assistant_id: The ID of the assistant who the file belongs to.
-                ///   - file_id: The ID of the file we're getting.
-                public init(
-                    assistant_id: Swift.String,
-                    file_id: Swift.String
-                ) {
-                    self.assistant_id = assistant_id
-                    self.file_id = file_id
+                ///   - vector_store_id: The ID of the vector store to delete.
+                public init(vector_store_id: Swift.String) {
+                    self.vector_store_id = vector_store_id
                 }
             }
-            public var path: Operations.getAssistantFile.Input.Path
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/GET/header`.
+            public var path: Operations.deleteVectorStore.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/DELETE/header`.
             public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getAssistantFile.AcceptableContentType>]
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.deleteVectorStore.AcceptableContentType>]
                 /// Creates a new `Headers`.
                 ///
                 /// - Parameters:
                 ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getAssistantFile.AcceptableContentType>] = .defaultValues()) {
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.deleteVectorStore.AcceptableContentType>] = .defaultValues()) {
                     self.accept = accept
                 }
             }
-            public var headers: Operations.getAssistantFile.Input.Headers
+            public var headers: Operations.deleteVectorStore.Input.Headers
             /// Creates a new `Input`.
             ///
             /// - Parameters:
             ///   - path:
             ///   - headers:
             public init(
-                path: Operations.getAssistantFile.Input.Path,
-                headers: Operations.getAssistantFile.Input.Headers = .init()
+                path: Operations.deleteVectorStore.Input.Path,
+                headers: Operations.deleteVectorStore.Input.Headers = .init()
             ) {
                 self.path = path
                 self.headers = headers
@@ -17408,15 +22050,15 @@ public enum Operations {
         }
         @frozen public enum Output: Sendable, Hashable {
             public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/GET/responses/200/content`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/DELETE/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AssistantFileObject)
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/DELETE/responses/200/content/application\/json`.
+                    case json(Components.Schemas.DeleteVectorStoreResponse)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AssistantFileObject {
+                    public var json: Components.Schemas.DeleteVectorStoreResponse {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -17426,26 +22068,26 @@ public enum Operations {
                     }
                 }
                 /// Received HTTP response body
-                public var body: Operations.getAssistantFile.Output.Ok.Body
+                public var body: Operations.deleteVectorStore.Output.Ok.Body
                 /// Creates a new `Ok`.
                 ///
                 /// - Parameters:
                 ///   - body: Received HTTP response body
-                public init(body: Operations.getAssistantFile.Output.Ok.Body) {
+                public init(body: Operations.deleteVectorStore.Output.Ok.Body) {
                     self.body = body
                 }
             }
             /// OK
             ///
-            /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/get(getAssistantFile)/responses/200`.
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/delete(deleteVectorStore)/responses/200`.
             ///
             /// HTTP response code: `200 ok`.
-            case ok(Operations.getAssistantFile.Output.Ok)
+            case ok(Operations.deleteVectorStore.Output.Ok)
             /// The associated value of the enum case if `self` is `.ok`.
             ///
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
-            public var ok: Operations.getAssistantFile.Output.Ok {
+            public var ok: Operations.deleteVectorStore.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -17489,184 +22131,36 @@ public enum Operations {
             }
         }
     }
-    /// Delete an assistant file.
+    /// Returns a list of vector store files.
     ///
-    /// - Remark: HTTP `DELETE /assistants/{assistant_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/delete(deleteAssistantFile)`.
-    public enum deleteAssistantFile {
-        public static let id: Swift.String = "deleteAssistantFile"
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/get(listVectorStoreFiles)`.
+    public enum listVectorStoreFiles {
+        public static let id: Swift.String = "listVectorStoreFiles"
         public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/DELETE/path`.
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/path`.
             public struct Path: Sendable, Hashable {
-                /// The ID of the assistant that the file belongs to.
+                /// The ID of the vector store that the files belong to.
                 ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/DELETE/path/assistant_id`.
-                public var assistant_id: Swift.String
-                /// The ID of the file to delete.
-                ///
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/DELETE/path/file_id`.
-                public var file_id: Swift.String
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/path/vector_store_id`.
+                public var vector_store_id: Swift.String
                 /// Creates a new `Path`.
                 ///
                 /// - Parameters:
-                ///   - assistant_id: The ID of the assistant that the file belongs to.
-                ///   - file_id: The ID of the file to delete.
-                public init(
-                    assistant_id: Swift.String,
-                    file_id: Swift.String
-                ) {
-                    self.assistant_id = assistant_id
-                    self.file_id = file_id
+                ///   - vector_store_id: The ID of the vector store that the files belong to.
+                public init(vector_store_id: Swift.String) {
+                    self.vector_store_id = vector_store_id
                 }
             }
-            public var path: Operations.deleteAssistantFile.Input.Path
-            /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/DELETE/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.deleteAssistantFile.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.deleteAssistantFile.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-            public var headers: Operations.deleteAssistantFile.Input.Headers
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - path:
-            ///   - headers:
-            public init(
-                path: Operations.deleteAssistantFile.Input.Path,
-                headers: Operations.deleteAssistantFile.Input.Headers = .init()
-            ) {
-                self.path = path
-                self.headers = headers
-            }
-        }
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/DELETE/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/assistants/{assistant_id}/files/{file_id}/DELETE/responses/200/content/application\/json`.
-                    case json(Components.Schemas.DeleteAssistantFileResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.DeleteAssistantFileResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                return body
-                            }
-                        }
-                    }
-                }
-                /// Received HTTP response body
-                public var body: Operations.deleteAssistantFile.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.deleteAssistantFile.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//assistants/{assistant_id}/files/{file_id}/delete(deleteAssistantFile)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.deleteAssistantFile.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.deleteAssistantFile.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        return response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self
-                        )
-                    }
-                }
-            }
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    return string
-                case .json:
-                    return "application/json"
-                }
-            }
-            public static var allCases: [Self] {
-                [
-                    .json
-                ]
-            }
-        }
-    }
-    /// Returns a list of message files.
-    ///
-    /// - Remark: HTTP `GET /threads/{thread_id}/messages/{message_id}/files`.
-    /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/get(listMessageFiles)`.
-    public enum listMessageFiles {
-        public static let id: Swift.String = "listMessageFiles"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/path`.
-            public struct Path: Sendable, Hashable {
-                /// The ID of the thread that the message and files belong to.
-                ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/path/thread_id`.
-                public var thread_id: Swift.String
-                /// The ID of the message that the files belongs to.
-                ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/path/message_id`.
-                public var message_id: Swift.String
-                /// Creates a new `Path`.
-                ///
-                /// - Parameters:
-                ///   - thread_id: The ID of the thread that the message and files belong to.
-                ///   - message_id: The ID of the message that the files belongs to.
-                public init(
-                    thread_id: Swift.String,
-                    message_id: Swift.String
-                ) {
-                    self.thread_id = thread_id
-                    self.message_id = message_id
-                }
-            }
-            public var path: Operations.listMessageFiles.Input.Path
-            /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/query`.
+            public var path: Operations.listVectorStoreFiles.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query`.
             public struct Query: Sendable, Hashable {
                 /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/query/limit`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/limit`.
                 public var limit: Swift.Int?
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/query/order`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/order`.
                 @frozen public enum orderPayload: String, Codable, Hashable, Sendable {
                     case asc = "asc"
                     case desc = "desc"
@@ -17674,18 +22168,29 @@ public enum Operations {
                 /// Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/query/order`.
-                public var order: Operations.listMessageFiles.Input.Query.orderPayload?
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/order`.
+                public var order: Operations.listVectorStoreFiles.Input.Query.orderPayload?
                 /// A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/query/after`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/after`.
                 public var after: Swift.String?
                 /// A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
                 ///
                 ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/query/before`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/before`.
                 public var before: Swift.String?
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/filter`.
+                @frozen public enum filterPayload: String, Codable, Hashable, Sendable {
+                    case in_progress = "in_progress"
+                    case completed = "completed"
+                    case failed = "failed"
+                    case cancelled = "cancelled"
+                }
+                /// Filter by file status. One of `in_progress`, `completed`, `failed`, `cancelled`.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/query/filter`.
+                public var filter: Operations.listVectorStoreFiles.Input.Query.filterPayload?
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
@@ -17693,31 +22198,34 @@ public enum Operations {
                 ///   - order: Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.
                 ///   - after: A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
                 ///   - before: A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+                ///   - filter: Filter by file status. One of `in_progress`, `completed`, `failed`, `cancelled`.
                 public init(
                     limit: Swift.Int? = nil,
-                    order: Operations.listMessageFiles.Input.Query.orderPayload? = nil,
+                    order: Operations.listVectorStoreFiles.Input.Query.orderPayload? = nil,
                     after: Swift.String? = nil,
-                    before: Swift.String? = nil
+                    before: Swift.String? = nil,
+                    filter: Operations.listVectorStoreFiles.Input.Query.filterPayload? = nil
                 ) {
                     self.limit = limit
                     self.order = order
                     self.after = after
                     self.before = before
+                    self.filter = filter
                 }
             }
-            public var query: Operations.listMessageFiles.Input.Query
-            /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/header`.
+            public var query: Operations.listVectorStoreFiles.Input.Query
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/header`.
             public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listMessageFiles.AcceptableContentType>]
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listVectorStoreFiles.AcceptableContentType>]
                 /// Creates a new `Headers`.
                 ///
                 /// - Parameters:
                 ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listMessageFiles.AcceptableContentType>] = .defaultValues()) {
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listVectorStoreFiles.AcceptableContentType>] = .defaultValues()) {
                     self.accept = accept
                 }
             }
-            public var headers: Operations.listMessageFiles.Input.Headers
+            public var headers: Operations.listVectorStoreFiles.Input.Headers
             /// Creates a new `Input`.
             ///
             /// - Parameters:
@@ -17725,9 +22233,9 @@ public enum Operations {
             ///   - query:
             ///   - headers:
             public init(
-                path: Operations.listMessageFiles.Input.Path,
-                query: Operations.listMessageFiles.Input.Query = .init(),
-                headers: Operations.listMessageFiles.Input.Headers = .init()
+                path: Operations.listVectorStoreFiles.Input.Path,
+                query: Operations.listVectorStoreFiles.Input.Query = .init(),
+                headers: Operations.listVectorStoreFiles.Input.Headers = .init()
             ) {
                 self.path = path
                 self.query = query
@@ -17736,15 +22244,15 @@ public enum Operations {
         }
         @frozen public enum Output: Sendable, Hashable {
             public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/responses/200/content`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ListMessageFilesResponse)
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListVectorStoreFilesResponse)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ListMessageFilesResponse {
+                    public var json: Components.Schemas.ListVectorStoreFilesResponse {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -17754,26 +22262,26 @@ public enum Operations {
                     }
                 }
                 /// Received HTTP response body
-                public var body: Operations.listMessageFiles.Output.Ok.Body
+                public var body: Operations.listVectorStoreFiles.Output.Ok.Body
                 /// Creates a new `Ok`.
                 ///
                 /// - Parameters:
                 ///   - body: Received HTTP response body
-                public init(body: Operations.listMessageFiles.Output.Ok.Body) {
+                public init(body: Operations.listVectorStoreFiles.Output.Ok.Body) {
                     self.body = body
                 }
             }
             /// OK
             ///
-            /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/get(listMessageFiles)/responses/200`.
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/get(listVectorStoreFiles)/responses/200`.
             ///
             /// HTTP response code: `200 ok`.
-            case ok(Operations.listMessageFiles.Output.Ok)
+            case ok(Operations.listVectorStoreFiles.Output.Ok)
             /// The associated value of the enum case if `self` is `.ok`.
             ///
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
-            public var ok: Operations.listMessageFiles.Output.Ok {
+            public var ok: Operations.listVectorStoreFiles.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -17817,80 +22325,74 @@ public enum Operations {
             }
         }
     }
-    /// Retrieves a message file.
+    /// Create a vector store file by attaching a [File](/docs/api-reference/files) to a [vector store](/docs/api-reference/vector-stores/object).
     ///
-    /// - Remark: HTTP `GET /threads/{thread_id}/messages/{message_id}/files/{file_id}`.
-    /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/{file_id}/get(getMessageFile)`.
-    public enum getMessageFile {
-        public static let id: Swift.String = "getMessageFile"
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/post(createVectorStoreFile)`.
+    public enum createVectorStoreFile {
+        public static let id: Swift.String = "createVectorStoreFile"
         public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/path`.
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/path`.
             public struct Path: Sendable, Hashable {
-                /// The ID of the thread to which the message and File belong.
+                /// The ID of the vector store for which to create a File.
                 ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/path/thread_id`.
-                public var thread_id: Swift.String
-                /// The ID of the message the file belongs to.
                 ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/path/message_id`.
-                public var message_id: Swift.String
-                /// The ID of the file being retrieved.
-                ///
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/path/file_id`.
-                public var file_id: Swift.String
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/path/vector_store_id`.
+                public var vector_store_id: Swift.String
                 /// Creates a new `Path`.
                 ///
                 /// - Parameters:
-                ///   - thread_id: The ID of the thread to which the message and File belong.
-                ///   - message_id: The ID of the message the file belongs to.
-                ///   - file_id: The ID of the file being retrieved.
-                public init(
-                    thread_id: Swift.String,
-                    message_id: Swift.String,
-                    file_id: Swift.String
-                ) {
-                    self.thread_id = thread_id
-                    self.message_id = message_id
-                    self.file_id = file_id
+                ///   - vector_store_id: The ID of the vector store for which to create a File.
+                public init(vector_store_id: Swift.String) {
+                    self.vector_store_id = vector_store_id
                 }
             }
-            public var path: Operations.getMessageFile.Input.Path
-            /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/header`.
+            public var path: Operations.createVectorStoreFile.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/header`.
             public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getMessageFile.AcceptableContentType>]
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createVectorStoreFile.AcceptableContentType>]
                 /// Creates a new `Headers`.
                 ///
                 /// - Parameters:
                 ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getMessageFile.AcceptableContentType>] = .defaultValues()) {
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createVectorStoreFile.AcceptableContentType>] = .defaultValues()) {
                     self.accept = accept
                 }
             }
-            public var headers: Operations.getMessageFile.Input.Headers
+            public var headers: Operations.createVectorStoreFile.Input.Headers
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.CreateVectorStoreFileRequest)
+            }
+            public var body: Operations.createVectorStoreFile.Input.Body
             /// Creates a new `Input`.
             ///
             /// - Parameters:
             ///   - path:
             ///   - headers:
+            ///   - body:
             public init(
-                path: Operations.getMessageFile.Input.Path,
-                headers: Operations.getMessageFile.Input.Headers = .init()
+                path: Operations.createVectorStoreFile.Input.Path,
+                headers: Operations.createVectorStoreFile.Input.Headers = .init(),
+                body: Operations.createVectorStoreFile.Input.Body
             ) {
                 self.path = path
                 self.headers = headers
+                self.body = body
             }
         }
         @frozen public enum Output: Sendable, Hashable {
             public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/responses/200/content`.
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/responses/200/content`.
                 @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/threads/{thread_id}/messages/{message_id}/files/{file_id}/GET/responses/200/content/application\/json`.
-                    case json(Components.Schemas.MessageFileObject)
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreFileObject)
                     /// The associated value of the enum case if `self` is `.json`.
                     ///
                     /// - Throws: An error if `self` is not `.json`.
                     /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.MessageFileObject {
+                    public var json: Components.Schemas.VectorStoreFileObject {
                         get throws {
                             switch self {
                             case let .json(body):
@@ -17900,26 +22402,1527 @@ public enum Operations {
                     }
                 }
                 /// Received HTTP response body
-                public var body: Operations.getMessageFile.Output.Ok.Body
+                public var body: Operations.createVectorStoreFile.Output.Ok.Body
                 /// Creates a new `Ok`.
                 ///
                 /// - Parameters:
                 ///   - body: Received HTTP response body
-                public init(body: Operations.getMessageFile.Output.Ok.Body) {
+                public init(body: Operations.createVectorStoreFile.Output.Ok.Body) {
                     self.body = body
                 }
             }
             /// OK
             ///
-            /// - Remark: Generated from `#/paths//threads/{thread_id}/messages/{message_id}/files/{file_id}/get(getMessageFile)/responses/200`.
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/post(createVectorStoreFile)/responses/200`.
             ///
             /// HTTP response code: `200 ok`.
-            case ok(Operations.getMessageFile.Output.Ok)
+            case ok(Operations.createVectorStoreFile.Output.Ok)
             /// The associated value of the enum case if `self` is `.ok`.
             ///
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
-            public var ok: Operations.getMessageFile.Output.Ok {
+            public var ok: Operations.createVectorStoreFile.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Retrieves a vector store file.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/files/{file_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/get(getVectorStoreFile)`.
+    public enum getVectorStoreFile {
+        public static let id: Swift.String = "getVectorStoreFile"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/GET/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store that the file belongs to.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/GET/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// The ID of the file being retrieved.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/GET/path/file_id`.
+                public var file_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store that the file belongs to.
+                ///   - file_id: The ID of the file being retrieved.
+                public init(
+                    vector_store_id: Swift.String,
+                    file_id: Swift.String
+                ) {
+                    self.vector_store_id = vector_store_id
+                    self.file_id = file_id
+                }
+            }
+            public var path: Operations.getVectorStoreFile.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getVectorStoreFile.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getVectorStoreFile.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.getVectorStoreFile.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.getVectorStoreFile.Input.Path,
+                headers: Operations.getVectorStoreFile.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreFileObject)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.VectorStoreFileObject {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.getVectorStoreFile.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.getVectorStoreFile.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/get(getVectorStoreFile)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.getVectorStoreFile.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.getVectorStoreFile.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Delete a vector store file. This will remove the file from the vector store but the file itself will not be deleted. To delete the file, use the [delete file](/docs/api-reference/files/delete) endpoint.
+    ///
+    /// - Remark: HTTP `DELETE /vector_stores/{vector_store_id}/files/{file_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/delete(deleteVectorStoreFile)`.
+    public enum deleteVectorStoreFile {
+        public static let id: Swift.String = "deleteVectorStoreFile"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/DELETE/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store that the file belongs to.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/DELETE/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// The ID of the file to delete.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/DELETE/path/file_id`.
+                public var file_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store that the file belongs to.
+                ///   - file_id: The ID of the file to delete.
+                public init(
+                    vector_store_id: Swift.String,
+                    file_id: Swift.String
+                ) {
+                    self.vector_store_id = vector_store_id
+                    self.file_id = file_id
+                }
+            }
+            public var path: Operations.deleteVectorStoreFile.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/DELETE/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.deleteVectorStoreFile.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.deleteVectorStoreFile.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.deleteVectorStoreFile.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.deleteVectorStoreFile.Input.Path,
+                headers: Operations.deleteVectorStoreFile.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/DELETE/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/files/{file_id}/DELETE/responses/200/content/application\/json`.
+                    case json(Components.Schemas.DeleteVectorStoreFileResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.DeleteVectorStoreFileResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.deleteVectorStoreFile.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.deleteVectorStoreFile.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/files/{file_id}/delete(deleteVectorStoreFile)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.deleteVectorStoreFile.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.deleteVectorStoreFile.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Create a vector store file batch.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/file_batches`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/post(createVectorStoreFileBatch)`.
+    public enum createVectorStoreFileBatch {
+        public static let id: Swift.String = "createVectorStoreFileBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store for which to create a File Batch.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store for which to create a File Batch.
+                public init(vector_store_id: Swift.String) {
+                    self.vector_store_id = vector_store_id
+                }
+            }
+            public var path: Operations.createVectorStoreFileBatch.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createVectorStoreFileBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createVectorStoreFileBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.createVectorStoreFileBatch.Input.Headers
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.CreateVectorStoreFileBatchRequest)
+            }
+            public var body: Operations.createVectorStoreFileBatch.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            ///   - body:
+            public init(
+                path: Operations.createVectorStoreFileBatch.Input.Path,
+                headers: Operations.createVectorStoreFileBatch.Input.Headers = .init(),
+                body: Operations.createVectorStoreFileBatch.Input.Body
+            ) {
+                self.path = path
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreFileBatchObject)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.VectorStoreFileBatchObject {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createVectorStoreFileBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createVectorStoreFileBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/post(createVectorStoreFileBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.createVectorStoreFileBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.createVectorStoreFileBatch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Retrieves a vector store file batch.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/file_batches/{batch_id}`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/get(getVectorStoreFileBatch)`.
+    public enum getVectorStoreFileBatch {
+        public static let id: Swift.String = "getVectorStoreFileBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/GET/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store that the file batch belongs to.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/GET/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// The ID of the file batch being retrieved.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/GET/path/batch_id`.
+                public var batch_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store that the file batch belongs to.
+                ///   - batch_id: The ID of the file batch being retrieved.
+                public init(
+                    vector_store_id: Swift.String,
+                    batch_id: Swift.String
+                ) {
+                    self.vector_store_id = vector_store_id
+                    self.batch_id = batch_id
+                }
+            }
+            public var path: Operations.getVectorStoreFileBatch.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getVectorStoreFileBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.getVectorStoreFileBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.getVectorStoreFileBatch.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.getVectorStoreFileBatch.Input.Path,
+                headers: Operations.getVectorStoreFileBatch.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreFileBatchObject)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.VectorStoreFileBatchObject {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.getVectorStoreFileBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.getVectorStoreFileBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/get(getVectorStoreFileBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.getVectorStoreFileBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.getVectorStoreFileBatch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Cancel a vector store file batch. This attempts to cancel the processing of files in this batch as soon as possible.
+    ///
+    /// - Remark: HTTP `POST /vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/post(cancelVectorStoreFileBatch)`.
+    public enum cancelVectorStoreFileBatch {
+        public static let id: Swift.String = "cancelVectorStoreFileBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/POST/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store that the file batch belongs to.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/POST/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// The ID of the file batch to cancel.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/POST/path/batch_id`.
+                public var batch_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store that the file batch belongs to.
+                ///   - batch_id: The ID of the file batch to cancel.
+                public init(
+                    vector_store_id: Swift.String,
+                    batch_id: Swift.String
+                ) {
+                    self.vector_store_id = vector_store_id
+                    self.batch_id = batch_id
+                }
+            }
+            public var path: Operations.cancelVectorStoreFileBatch.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.cancelVectorStoreFileBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.cancelVectorStoreFileBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.cancelVectorStoreFileBatch.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.cancelVectorStoreFileBatch.Input.Path,
+                headers: Operations.cancelVectorStoreFileBatch.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.VectorStoreFileBatchObject)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.VectorStoreFileBatchObject {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.cancelVectorStoreFileBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.cancelVectorStoreFileBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/cancel/post(cancelVectorStoreFileBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.cancelVectorStoreFileBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.cancelVectorStoreFileBatch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Returns a list of vector store files in a batch.
+    ///
+    /// - Remark: HTTP `GET /vector_stores/{vector_store_id}/file_batches/{batch_id}/files`.
+    /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/files/get(listFilesInVectorStoreBatch)`.
+    public enum listFilesInVectorStoreBatch {
+        public static let id: Swift.String = "listFilesInVectorStoreBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the vector store that the files belong to.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/path/vector_store_id`.
+                public var vector_store_id: Swift.String
+                /// The ID of the file batch that the files belong to.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/path/batch_id`.
+                public var batch_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - vector_store_id: The ID of the vector store that the files belong to.
+                ///   - batch_id: The ID of the file batch that the files belong to.
+                public init(
+                    vector_store_id: Swift.String,
+                    batch_id: Swift.String
+                ) {
+                    self.vector_store_id = vector_store_id
+                    self.batch_id = batch_id
+                }
+            }
+            public var path: Operations.listFilesInVectorStoreBatch.Input.Path
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query`.
+            public struct Query: Sendable, Hashable {
+                /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/limit`.
+                public var limit: Swift.Int?
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/order`.
+                @frozen public enum orderPayload: String, Codable, Hashable, Sendable {
+                    case asc = "asc"
+                    case desc = "desc"
+                }
+                /// Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/order`.
+                public var order: Operations.listFilesInVectorStoreBatch.Input.Query.orderPayload?
+                /// A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/after`.
+                public var after: Swift.String?
+                /// A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/before`.
+                public var before: Swift.String?
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/filter`.
+                @frozen public enum filterPayload: String, Codable, Hashable, Sendable {
+                    case in_progress = "in_progress"
+                    case completed = "completed"
+                    case failed = "failed"
+                    case cancelled = "cancelled"
+                }
+                /// Filter by file status. One of `in_progress`, `completed`, `failed`, `cancelled`.
+                ///
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/query/filter`.
+                public var filter: Operations.listFilesInVectorStoreBatch.Input.Query.filterPayload?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - limit: A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.
+                ///   - order: Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.
+                ///   - after: A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
+                ///   - before: A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+                ///   - filter: Filter by file status. One of `in_progress`, `completed`, `failed`, `cancelled`.
+                public init(
+                    limit: Swift.Int? = nil,
+                    order: Operations.listFilesInVectorStoreBatch.Input.Query.orderPayload? = nil,
+                    after: Swift.String? = nil,
+                    before: Swift.String? = nil,
+                    filter: Operations.listFilesInVectorStoreBatch.Input.Query.filterPayload? = nil
+                ) {
+                    self.limit = limit
+                    self.order = order
+                    self.after = after
+                    self.before = before
+                    self.filter = filter
+                }
+            }
+            public var query: Operations.listFilesInVectorStoreBatch.Input.Query
+            /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFilesInVectorStoreBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listFilesInVectorStoreBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.listFilesInVectorStoreBatch.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - query:
+            ///   - headers:
+            public init(
+                path: Operations.listFilesInVectorStoreBatch.Input.Path,
+                query: Operations.listFilesInVectorStoreBatch.Input.Query = .init(),
+                headers: Operations.listFilesInVectorStoreBatch.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.query = query
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/vector_stores/{vector_store_id}/file_batches/{batch_id}/files/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListVectorStoreFilesResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.ListVectorStoreFilesResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.listFilesInVectorStoreBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.listFilesInVectorStoreBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//vector_stores/{vector_store_id}/file_batches/{batch_id}/files/get(listFilesInVectorStoreBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.listFilesInVectorStoreBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.listFilesInVectorStoreBatch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// List your organization's batches.
+    ///
+    /// - Remark: HTTP `GET /batches`.
+    /// - Remark: Generated from `#/paths//batches/get(listBatches)`.
+    public enum listBatches {
+        public static let id: Swift.String = "listBatches"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/batches/GET/query`.
+            public struct Query: Sendable, Hashable {
+                /// A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/batches/GET/query/after`.
+                public var after: Swift.String?
+                /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.
+                ///
+                ///
+                /// - Remark: Generated from `#/paths/batches/GET/query/limit`.
+                public var limit: Swift.Int?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - after: A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.
+                ///   - limit: A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.
+                public init(
+                    after: Swift.String? = nil,
+                    limit: Swift.Int? = nil
+                ) {
+                    self.after = after
+                    self.limit = limit
+                }
+            }
+            public var query: Operations.listBatches.Input.Query
+            /// - Remark: Generated from `#/paths/batches/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listBatches.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.listBatches.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.listBatches.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            public init(
+                query: Operations.listBatches.Input.Query = .init(),
+                headers: Operations.listBatches.Input.Headers = .init()
+            ) {
+                self.query = query
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/batches/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/batches/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListBatchesResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.ListBatchesResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.listBatches.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.listBatches.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Batch listed successfully.
+            ///
+            /// - Remark: Generated from `#/paths//batches/get(listBatches)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.listBatches.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.listBatches.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Creates and executes a batch from an uploaded file of requests
+    ///
+    /// - Remark: HTTP `POST /batches`.
+    /// - Remark: Generated from `#/paths//batches/post(createBatch)`.
+    public enum createBatch {
+        public static let id: Swift.String = "createBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/batches/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.createBatch.Input.Headers
+            /// - Remark: Generated from `#/paths/batches/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/batches/POST/requestBody/json`.
+                public struct jsonPayload: Codable, Hashable, Sendable {
+                    /// The ID of an uploaded file that contains requests for the new batch.
+                    ///
+                    /// See [upload file](/docs/api-reference/files/create) for how to upload a file.
+                    ///
+                    /// Your input file must be formatted as a [JSONL file](/docs/api-reference/batch/requestInput), and must be uploaded with the purpose `batch`.
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/input_file_id`.
+                    public var input_file_id: Swift.String
+                    /// The endpoint to be used for all requests in the batch. Currently only `/v1/chat/completions` is supported.
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/endpoint`.
+                    @frozen public enum endpointPayload: String, Codable, Hashable, Sendable {
+                        case _sol_v1_sol_chat_sol_completions = "/v1/chat/completions"
+                    }
+                    /// The endpoint to be used for all requests in the batch. Currently only `/v1/chat/completions` is supported.
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/endpoint`.
+                    public var endpoint: Operations.createBatch.Input.Body.jsonPayload.endpointPayload
+                    /// The time frame within which the batch should be processed. Currently only `24h` is supported.
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/completion_window`.
+                    @frozen public enum completion_windowPayload: String, Codable, Hashable, Sendable {
+                        case _24h = "24h"
+                    }
+                    /// The time frame within which the batch should be processed. Currently only `24h` is supported.
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/completion_window`.
+                    public var completion_window: Operations.createBatch.Input.Body.jsonPayload.completion_windowPayload
+                    /// Optional custom metadata for the batch.
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/metadata`.
+                    public struct metadataPayload: Codable, Hashable, Sendable {
+                        /// A container of undocumented properties.
+                        public var additionalProperties: [String: Swift.String]
+                        /// Creates a new `metadataPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - additionalProperties: A container of undocumented properties.
+                        public init(additionalProperties: [String: Swift.String] = .init()) {
+                            self.additionalProperties = additionalProperties
+                        }
+                        public init(from decoder: any Decoder) throws {
+                            additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                        }
+                        public func encode(to encoder: any Encoder) throws {
+                            try encoder.encodeAdditionalProperties(additionalProperties)
+                        }
+                    }
+                    /// Optional custom metadata for the batch.
+                    ///
+                    /// - Remark: Generated from `#/paths/batches/POST/requestBody/json/metadata`.
+                    public var metadata: Operations.createBatch.Input.Body.jsonPayload.metadataPayload?
+                    /// Creates a new `jsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - input_file_id: The ID of an uploaded file that contains requests for the new batch.
+                    ///   - endpoint: The endpoint to be used for all requests in the batch. Currently only `/v1/chat/completions` is supported.
+                    ///   - completion_window: The time frame within which the batch should be processed. Currently only `24h` is supported.
+                    ///   - metadata: Optional custom metadata for the batch.
+                    public init(
+                        input_file_id: Swift.String,
+                        endpoint: Operations.createBatch.Input.Body.jsonPayload.endpointPayload,
+                        completion_window: Operations.createBatch.Input.Body.jsonPayload.completion_windowPayload,
+                        metadata: Operations.createBatch.Input.Body.jsonPayload.metadataPayload? = nil
+                    ) {
+                        self.input_file_id = input_file_id
+                        self.endpoint = endpoint
+                        self.completion_window = completion_window
+                        self.metadata = metadata
+                    }
+                    public enum CodingKeys: String, CodingKey {
+                        case input_file_id
+                        case endpoint
+                        case completion_window
+                        case metadata
+                    }
+                }
+                /// - Remark: Generated from `#/paths/batches/POST/requestBody/content/application\/json`.
+                case json(Operations.createBatch.Input.Body.jsonPayload)
+            }
+            public var body: Operations.createBatch.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.createBatch.Input.Headers = .init(),
+                body: Operations.createBatch.Input.Body
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/batches/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/batches/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.Batch)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.Batch {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Batch created successfully.
+            ///
+            /// - Remark: Generated from `#/paths//batches/post(createBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.createBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.createBatch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Retrieves a batch.
+    ///
+    /// - Remark: HTTP `GET /batches/{batch_id}`.
+    /// - Remark: Generated from `#/paths//batches/{batch_id}/get(retrieveBatch)`.
+    public enum retrieveBatch {
+        public static let id: Swift.String = "retrieveBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/batches/{batch_id}/GET/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the batch to retrieve.
+                ///
+                /// - Remark: Generated from `#/paths/batches/{batch_id}/GET/path/batch_id`.
+                public var batch_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - batch_id: The ID of the batch to retrieve.
+                public init(batch_id: Swift.String) {
+                    self.batch_id = batch_id
+                }
+            }
+            public var path: Operations.retrieveBatch.Input.Path
+            /// - Remark: Generated from `#/paths/batches/{batch_id}/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.retrieveBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.retrieveBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.retrieveBatch.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.retrieveBatch.Input.Path,
+                headers: Operations.retrieveBatch.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/batches/{batch_id}/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/batches/{batch_id}/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.Batch)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.Batch {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.retrieveBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.retrieveBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Batch retrieved successfully.
+            ///
+            /// - Remark: Generated from `#/paths//batches/{batch_id}/get(retrieveBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.retrieveBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.retrieveBatch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Cancels an in-progress batch.
+    ///
+    /// - Remark: HTTP `POST /batches/{batch_id}/cancel`.
+    /// - Remark: Generated from `#/paths//batches/{batch_id}/cancel/post(cancelBatch)`.
+    public enum cancelBatch {
+        public static let id: Swift.String = "cancelBatch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/batches/{batch_id}/cancel/POST/path`.
+            public struct Path: Sendable, Hashable {
+                /// The ID of the batch to cancel.
+                ///
+                /// - Remark: Generated from `#/paths/batches/{batch_id}/cancel/POST/path/batch_id`.
+                public var batch_id: Swift.String
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - batch_id: The ID of the batch to cancel.
+                public init(batch_id: Swift.String) {
+                    self.batch_id = batch_id
+                }
+            }
+            public var path: Operations.cancelBatch.Input.Path
+            /// - Remark: Generated from `#/paths/batches/{batch_id}/cancel/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.cancelBatch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.cancelBatch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.cancelBatch.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.cancelBatch.Input.Path,
+                headers: Operations.cancelBatch.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/batches/{batch_id}/cancel/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/batches/{batch_id}/cancel/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.Batch)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.Batch {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.cancelBatch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.cancelBatch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Batch is cancelling. Returns the cancelling batch's details.
+            ///
+            /// - Remark: Generated from `#/paths//batches/{batch_id}/cancel/post(cancelBatch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.cancelBatch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.cancelBatch.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):

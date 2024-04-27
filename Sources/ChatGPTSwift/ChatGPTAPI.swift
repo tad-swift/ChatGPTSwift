@@ -82,38 +82,85 @@ public class ChatGPTAPI: @unchecked Sendable {
         self.historyList.append(Message(role: "assistant", content: responseText))
     }
     
-    public func sendMessageStream(text: String,
-                                  model: Components.Schemas.CreateChatCompletionRequest.modelPayload.Value2Payload = .gpt_hyphen_4,
-                                  systemText: String = ChatGPTAPI.Constants.defaultSystemText,
-                                  temperature: Double = ChatGPTAPI.Constants.defaultTemperature) async throws -> AsyncMapSequence<AsyncThrowingPrefixWhileSequence<AsyncThrowingMapSequence<ServerSentEventsDeserializationSequence<ServerSentEventsLineDeserializationSequence<HTTPBody>>, ServerSentEventWithJSONData<Components.Schemas.CreateChatCompletionStreamResponse>>>, String> {
-        let response = try await client.createChatCompletion(.init(headers: .init(accept: [.init(contentType: .text_event_hyphen_stream)]), body: .json(.init(
-            messages: self.generateInternalMessages(from: text, systemText: systemText),
-            model: .init(value1: nil, value2: model),
-            stream: true))))
+//    public func sendMessageStream(
+//        text: String,
+//        model: Components.Schemas.CreateChatCompletionRequest.modelPayload.Value2Payload = .gpt_hyphen_4,
+//        systemText: String = ChatGPTAPI.Constants.defaultSystemText,
+//        temperature: Double = ChatGPTAPI.Constants.defaultTemperature
+//    ) async throws -> AsyncMapSequence<AsyncThrowingPrefixWhileSequence<AsyncThrowingMapSequence<ServerSentEventsDeserializationSequence<ServerSentEventsLineDeserializationSequence<HTTPBody>>, ServerSentEventWithJSONData<Components.Schemas.CreateChatCompletionStreamResponse>>>, String> {
+//        let response = try await client.createChatCompletion(.init(headers: .init(accept: [.init(contentType: .other("text-stream"))]), body: .json(.init(
+//            messages: self.generateInternalMessages(from: text, systemText: systemText),
+//            model: .init(value1: nil, value2: model),
+//            stream: true))))
+//
+//        let stream = try response.ok.body.json.object.rawValue
+//        .prefix { chunk in
+//            if let choice = chunk.data?.choices.first {
+//                return choice.finish_reason != .stop
+//            } else {
+//                throw "Invalid data"
+//            }
+//        }
+//        .map{ $0.data?.choices.first?.delta.content ?? "" }
+//        return stream
+//    }
 
-        let stream = try response.ok.body.text_event_hyphen_stream.asDecodedServerSentEventsWithJSONData(
-            of: Components.Schemas.CreateChatCompletionStreamResponse.self
-        )
-        .prefix { chunk in
-            if let choice = chunk.data?.choices.first {
-                return choice.finish_reason != .stop
-            } else {
-                throw "Invalid data"
-            }
-        }
-        .map{ $0.data?.choices.first?.delta.content ?? "" }
-        return stream
-    }
-
-    public func sendMessage(text: String,
-                            model: Components.Schemas.CreateChatCompletionRequest.modelPayload.Value2Payload = .gpt_hyphen_4,
-                            systemText: String = ChatGPTAPI.Constants.defaultSystemText,
-                            temperature: Double = ChatGPTAPI.Constants.defaultTemperature) async throws -> String {
+    public func sendMessage(
+        text: String,
+        model: Components.Schemas.CreateChatCompletionRequest.modelPayload.Value2Payload = .gpt_hyphen_4,
+        systemText: String = ChatGPTAPI.Constants.defaultSystemText,
+        temperature: Double = ChatGPTAPI.Constants.defaultTemperature
+    ) async throws -> String {
 
         let response = try await client.createChatCompletion(body: .json(.init(
             messages: self.generateInternalMessages(from: text, systemText: systemText),
             model: .init(value1: nil, value2: model))))
     
+        switch response {
+        case .ok(let body):
+            let json = try body.body.json
+            guard let content = json.choices.first?.message.content else {
+                throw "No Response"
+            }
+            self.appendToHistoryList(userText: text, responseText: content)
+            return content
+        case .undocumented(let statusCode, let payload):
+            throw "OpenAIClientError - statuscode: \(statusCode), \(payload)"
+        }
+    }
+    
+    public func sendMessage(
+        _ image: String,
+        text: String,
+        model: Components.Schemas.CreateChatCompletionRequest.modelPayload.Value2Payload = .gpt_hyphen_4_hyphen_turbo,
+        systemText: String = ChatGPTAPI.Constants.defaultSystemText,
+        temperature: Double = ChatGPTAPI.Constants.defaultTemperature
+    ) async throws -> String {
+        
+        typealias ThisContent = [Components.Schemas.ChatCompletionRequestMessageContentPart]
+        
+        let content: ThisContent = [
+            .ChatCompletionRequestMessageContentPartImage(
+                .init(_type: .image_url, image_url: .init(url: "data:image/jpeg;base64,{\(image)}"))
+            ),
+            .ChatCompletionRequestMessageContentPartText(
+                .init(_type: .text, text: text)
+            )
+        ]
+        
+        let response = try await client.createChatCompletion(
+            body: .json(
+                .init(
+                    messages: [
+                        .ChatCompletionRequestUserMessage(
+                            .init(content: .case2(content), role: .user)
+                        )
+                    ],
+                    model: .init(value1: nil, value2: model)
+                )
+            )
+        )
+        
         switch response {
         case .ok(let body):
             let json = try body.body.json
@@ -166,7 +213,7 @@ public class ChatGPTAPI: @unchecked Sendable {
         switch response {
         case .ok(let response):
             switch response.body {
-            case .any(let body):
+            case .binary(let body):
                 var data = Data()
                 for try await byte in body {
                     data.append(contentsOf: byte)

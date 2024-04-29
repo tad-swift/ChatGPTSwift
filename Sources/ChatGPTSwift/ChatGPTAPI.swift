@@ -180,14 +180,11 @@ public class ChatGPTAPI: @unchecked Sendable {
             body: .json(
                 .init(
                     assistant_id: assistant,
-                    thread: .init(messages: [.init(role: .user, content: text)]),
-                    model: .init(value2: .gpt_hyphen_4_hyphen_turbo),
-                    temperature: 0.2,
-                    stream: false,
-                    max_completion_tokens: nil
+                    thread: .init(messages: [.init(role: .user, content: text)])
                 )
             )
         ).ok.body.json
+        print("creating messages")
         let messages = try await client.listMessages(path: .init(thread_id: runResponse.thread_id)).ok.body.json
         
         guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {
@@ -203,12 +200,11 @@ public class ChatGPTAPI: @unchecked Sendable {
     }
     
     public func createMessageOnThread(text: String, thread: String) async throws -> String {
-        let messages = try await client.listMessages(path: .init(thread_id: thread)).ok.body.json
-        
-        guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {
+        guard let createOp = try await client.createMessage(path: .init(thread_id: thread), body: .json(.init(role: .user, content: text))).ok.body.json.content.last else {
             return ""
         }
-        switch targetMessage {
+        
+        switch createOp {
         case .MessageContentTextObject(let message):
             return message.text.value
         case .MessageContentImageFileObject(let imageObject):

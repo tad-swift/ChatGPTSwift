@@ -129,7 +129,7 @@ public class ChatGPTAPI: @unchecked Sendable {
         }
     }
     
-    public func sendMessage(
+    public func analyzeImage(
         _ image: String,
         text: String,
         model: Components.Schemas.CreateChatCompletionRequest.modelPayload.Value2Payload = .gpt_hyphen_4_hyphen_turbo,
@@ -172,6 +172,38 @@ public class ChatGPTAPI: @unchecked Sendable {
         case .undocumented(let statusCode, let payload):
             throw "OpenAIClientError - statuscode: \(statusCode), \(payload)"
         }
+    }
+    
+    public func createThread(text: String) async throws -> (message: String, threadID: String) {
+        let runResponse = try await client.createThreadAndRun(
+            body: .json(
+                .init(
+                    assistant_id: "asst_jQyUNpzwTmOx89ZuvuMCAlp8",
+                    thread: .init(messages: [.init(role: .user, content: text)]),
+                    model: .init(value2: .gpt_hyphen_4_hyphen_turbo),
+                    temperature: 0.2,
+                    stream: false,
+                    max_completion_tokens: nil
+                )
+            )
+        ).ok.body.json
+        
+        let messages = try await client.listMessages(path: .init(thread_id: runResponse.thread_id)).ok.body.json
+        
+        guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {
+            return ("", runResponse.thread_id)
+        }
+        
+        switch targetMessage {
+        case .MessageContentTextObject(let message):
+            return (message.text.value, runResponse.thread_id)
+        case .MessageContentImageFileObject(let imageObject):
+            return (imageObject.image_file.file_id, runResponse.thread_id)
+        }
+    }
+    
+    public func deleteThread(id: String) async throws -> Bool {
+        try await client.deleteThread(path: .init(thread_id: id)).ok.body.json.deleted
     }
     
     public func callFunction(prompt: String,

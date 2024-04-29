@@ -185,7 +185,7 @@ public class ChatGPTAPI: @unchecked Sendable {
 //            )
 //        ).ok.body.json
         print("creating thread")
-        let threadResponse = try await client.createThread(body: .json(.init(messages: [.init(role: .user, content: text)]))).ok.body.json
+        let threadResponse = try await client.createThread(body: .json(.init())).ok.body.json
         print("starting run")
         let runResponse = try await client.createRun(path: .init(thread_id: threadResponse.id), body: .json(.init(assistant_id: assistant))).ok.body.json
         print("getting messages")

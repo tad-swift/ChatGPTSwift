@@ -188,18 +188,31 @@ public class ChatGPTAPI: @unchecked Sendable {
                 )
             )
         ).ok.body.json
-        
         let messages = try await client.listMessages(path: .init(thread_id: runResponse.thread_id)).ok.body.json
         
         guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {
             return ("", runResponse.thread_id)
         }
-        
         switch targetMessage {
         case .MessageContentTextObject(let message):
             return (message.text.value, runResponse.thread_id)
         case .MessageContentImageFileObject(let imageObject):
             return (imageObject.image_file.file_id, runResponse.thread_id)
+        }
+        
+    }
+    
+    public func createMessageOnThread(text: String, thread: String) async throws -> String {
+        let messages = try await client.listMessages(path: .init(thread_id: thread)).ok.body.json
+        
+        guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {
+            return ""
+        }
+        switch targetMessage {
+        case .MessageContentTextObject(let message):
+            return message.text.value
+        case .MessageContentImageFileObject(let imageObject):
+            return imageObject.image_file.file_id
         }
     }
     

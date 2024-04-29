@@ -174,11 +174,11 @@ public class ChatGPTAPI: @unchecked Sendable {
         }
     }
     
-    public func createThread(text: String) async throws -> (message: String, threadID: String) {
+    public func createThread(text: String, assistant: String) async throws -> (message: String, threadID: String) {
         let runResponse = try await client.createThreadAndRun(
             body: .json(
                 .init(
-                    assistant_id: "asst_jQyUNpzwTmOx89ZuvuMCAlp8",
+                    assistant_id: assistant,
                     thread: .init(messages: [.init(role: .user, content: text)]),
                     model: .init(value2: .gpt_hyphen_4_hyphen_turbo),
                     temperature: 0.2,

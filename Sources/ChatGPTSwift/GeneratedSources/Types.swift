@@ -10169,7 +10169,7 @@ public enum Components {
             /// The status of the message, which can be either `in_progress`, `incomplete`, or `completed`.
             ///
             /// - Remark: Generated from `#/components/schemas/MessageObject/status`.
-            public var status: Components.Schemas.MessageObject.statusPayload
+            public var status: Components.Schemas.MessageObject.statusPayload?
             /// On an incomplete message, details about why the message is incomplete.
             ///
             /// - Remark: Generated from `#/components/schemas/MessageObject/incomplete_details`.
@@ -10374,7 +10374,7 @@ public enum Components {
                 object: Components.Schemas.MessageObject.objectPayload,
                 created_at: Swift.Int,
                 thread_id: Swift.String,
-                status: Components.Schemas.MessageObject.statusPayload,
+                status: Components.Schemas.MessageObject.statusPayload? = nil,
                 incomplete_details: Components.Schemas.MessageObject.incomplete_detailsPayload? = nil,
                 completed_at: Swift.Int? = nil,
                 incomplete_at: Swift.Int? = nil,

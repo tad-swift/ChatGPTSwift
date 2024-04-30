@@ -224,9 +224,10 @@ public class ChatGPTAPI: @unchecked Sendable {
                 break
             }
             try await Task.sleep(for: .seconds(1))
+            print("get run")
             status = try await client.getRun(path: .init(thread_id: thread, run_id: runResponse.id)).ok.body.json.status
         }
-        
+        print("list messages")
         let messages = try await client.listMessages(path: .init(thread_id: thread)).ok.body.json
         print("got messages")
         guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {

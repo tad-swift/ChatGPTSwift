@@ -20,6 +20,7 @@ struct AuthMiddleware: ClientMiddleware {
         var request = request
         // Adds the `Authorization` header field with the provided value.
         request.headerFields[.authorization] = "Bearer \(apiKey)"
+        request.headerFields.append(.init(name: .init("OpenAI-Beta")!, value: "assistants=v2"))
         return try await next(request, body, baseURL)
     }
 }

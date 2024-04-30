@@ -176,18 +176,17 @@ public class ChatGPTAPI: @unchecked Sendable {
         text: String,
         assistant: String
     ) async throws -> (message: String, threadID: String) {
-        print("creating thread and running")
-        let runResponse = try await client.createThreadAndRun(
-            body: .json(
-                .init(
-                    assistant_id: assistant,
-                    thread: .init(messages: [.init(role: .user, content: text)])
-                )
-            )
-        ).ok.body.json
+        
+        let thread = try await client.createThread(body: .json(.init(messages: [
+            .init(role: .user, content: text)
+        ]))).ok.body.json
+        
+        let runResponse = try await client.createRun(path: .init(thread_id: thread.id), body: .json(.init(assistant_id: assistant))).ok.body.json
+        
+        print(runResponse.status)
         
         print("getting messages")
-        let messages = try await client.listMessages(path: .init(thread_id: runResponse.thread_id)).ok.body.json
+        let messages = try await client.listMessages(path: .init(thread_id: thread.id)).ok.body.json
         print("got messages")
         guard let targetMessage = messages.data.last(where: { $0.role == .assistant })?.content.first else {
             return ("", runResponse.thread_id)

@@ -210,12 +210,13 @@ public class ChatGPTAPI: @unchecked Sendable {
     }
     
     public func createMessageOnThread(text: String, thread: String, assistant: String) async throws -> String {
-        guard let createOp = try await client.createMessage(path: .init(thread_id: thread), body: .json(.init(role: .user, content: text))).ok.body.json.content.last else {
-            return ""
-        }
+        print("create op")
+        let createOp = try await client.createMessage(path: .init(thread_id: thread), body: .json(.init(role: .user, content: text)))
+        
+        print("starting run")
         
         let runResponse = try await client.createRun(path: .init(thread_id: thread), body: .json(.init(assistant_id: assistant))).ok.body.json
-        
+        print("run complete")
         var status = runResponse.status
         
         for _ in 0...20 {

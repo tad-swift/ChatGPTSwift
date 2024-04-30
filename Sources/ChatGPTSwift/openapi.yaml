@@ -11125,17 +11125,8 @@ components:
             value:
               description: The data that makes up the text.
               type: string
-            annotations:
-              type: array
-              nullable: true
-              items:
-                oneOf:
-                  - $ref: "#/components/schemas/MessageContentTextAnnotationsFileCitationObject"
-                  - $ref: "#/components/schemas/MessageContentTextAnnotationsFilePathObject"
-                x-oaiExpandable: true
           required:
             - value
-            - annotations
       required:
         - type
         - text

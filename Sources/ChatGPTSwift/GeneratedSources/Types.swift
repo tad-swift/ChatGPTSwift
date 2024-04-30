@@ -10918,60 +10918,15 @@ public enum Components {
                 ///
                 /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/value`.
                 public var value: Swift.String
-                /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotationsPayload`.
-                @frozen public enum annotationsPayloadPayload: Codable, Hashable, Sendable {
-                    /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotationsPayload/case1`.
-                    case MessageContentTextAnnotationsFileCitationObject(Components.Schemas.MessageContentTextAnnotationsFileCitationObject)
-                    /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotationsPayload/case2`.
-                    case MessageContentTextAnnotationsFilePathObject(Components.Schemas.MessageContentTextAnnotationsFilePathObject)
-                    public init(from decoder: any Decoder) throws {
-                        var errors: [any Error] = []
-                        do {
-                            self = .MessageContentTextAnnotationsFileCitationObject(try .init(from: decoder))
-                            return
-                        } catch {
-                            errors.append(error)
-                        }
-                        do {
-                            self = .MessageContentTextAnnotationsFilePathObject(try .init(from: decoder))
-                            return
-                        } catch {
-                            errors.append(error)
-                        }
-                        throw Swift.DecodingError.failedToDecodeOneOfSchema(
-                            type: Self.self,
-                            codingPath: decoder.codingPath,
-                            errors: errors
-                        )
-                    }
-                    public func encode(to encoder: any Encoder) throws {
-                        switch self {
-                        case let .MessageContentTextAnnotationsFileCitationObject(value):
-                            try value.encode(to: encoder)
-                        case let .MessageContentTextAnnotationsFilePathObject(value):
-                            try value.encode(to: encoder)
-                        }
-                    }
-                }
-                /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotations`.
-                public typealias annotationsPayload = [Components.Schemas.MessageContentTextObject.textPayload.annotationsPayloadPayload]
-                /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotations`.
-                public var annotations: Components.Schemas.MessageContentTextObject.textPayload.annotationsPayload?
                 /// Creates a new `textPayload`.
                 ///
                 /// - Parameters:
                 ///   - value: The data that makes up the text.
-                ///   - annotations:
-                public init(
-                    value: Swift.String,
-                    annotations: Components.Schemas.MessageContentTextObject.textPayload.annotationsPayload? = nil
-                ) {
+                public init(value: Swift.String) {
                     self.value = value
-                    self.annotations = annotations
                 }
                 public enum CodingKeys: String, CodingKey {
                     case value
-                    case annotations
                 }
             }
             /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text`.

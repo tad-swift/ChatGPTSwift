@@ -10956,7 +10956,7 @@ public enum Components {
                 /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotations`.
                 public typealias annotationsPayload = [Components.Schemas.MessageContentTextObject.textPayload.annotationsPayloadPayload]
                 /// - Remark: Generated from `#/components/schemas/MessageContentTextObject/text/annotations`.
-                public var annotations: Components.Schemas.MessageContentTextObject.textPayload.annotationsPayload
+                public var annotations: Components.Schemas.MessageContentTextObject.textPayload.annotationsPayload?
                 /// Creates a new `textPayload`.
                 ///
                 /// - Parameters:
@@ -10964,7 +10964,7 @@ public enum Components {
                 ///   - annotations:
                 public init(
                     value: Swift.String,
-                    annotations: Components.Schemas.MessageContentTextObject.textPayload.annotationsPayload
+                    annotations: Components.Schemas.MessageContentTextObject.textPayload.annotationsPayload? = nil
                 ) {
                     self.value = value
                     self.annotations = annotations

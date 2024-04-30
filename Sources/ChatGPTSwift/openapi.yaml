@@ -11127,6 +11127,7 @@ components:
               type: string
             annotations:
               type: array
+              nullable: true
               items:
                 oneOf:
                   - $ref: "#/components/schemas/MessageContentTextAnnotationsFileCitationObject"

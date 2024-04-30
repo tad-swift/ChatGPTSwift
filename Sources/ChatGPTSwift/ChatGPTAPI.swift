@@ -185,7 +185,10 @@ public class ChatGPTAPI: @unchecked Sendable {
         
         var status = runResponse.status
         
-        while status != .completed || status != .cancelled || status != .cancelling || status != .failed || status != .expired {
+        for _ in 0...20 {
+            if status == .completed {
+                break
+            }
             try await Task.sleep(for: .seconds(1))
             status = try await client.getRun(path: .init(thread_id: thread.id, run_id: runResponse.id)).ok.body.json.status
         }
